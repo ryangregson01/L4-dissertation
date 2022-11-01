@@ -28,6 +28,8 @@
   - Create a dataset loader using DisProt database and PyTorch.
   - PyTorch practise.
 * **Week 7**
+  - Complete Dataset loader custom class.
+  - Test class.
 * **Week 8**
 * **Week 9**
 * **Week 10**

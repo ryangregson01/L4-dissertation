@@ -77,3 +77,15 @@
 
 ### 24 Oct 2022
 * *1 hour* Fixed GitHub.
+
+### 25 Oct 2022
+* *3 hours* Went through Datasets and Dataloaders PyTorch document: https://pytorch.org/tutorials/beginner/basics/data_tutorial.html. Made my own Dataset. Experimented with pandas and Disprot data.
+
+### 26 Oct 2022
+* *2 hours* Querying UniProt to get sequence. Encoding a sequence as disordered or ordered.
+
+### 27 Oct 2022
+* *0.5 hours* Creating separate Google colab to present at meeting.
+* *1.5 hours* Making sure encoding sequences worked for all sequences in Disprot data. Pre-processing of data.
+* *1.5 hours* Meeting with Kevin. Discussed Dataset loader, how the data could look and kernels.
+* *1 hour* Wrote up minutes after meeting.
