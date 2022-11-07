@@ -89,3 +89,11 @@
 * *1.5 hours* Making sure encoding sequences worked for all sequences in Disprot data. Pre-processing of data.
 * *1.5 hours* Meeting with Kevin. Discussed Dataset loader, how the data could look and kernels.
 * *1 hour* Wrote up minutes after meeting.
+
+### 1 Nov 2022
+* *2 hours* Dataloader class trialing.
+
+### 3 Nov 2022
+* *1 hour* Wrote up Dataloader class developments and errors to discuss at the meeting.
+* *1 hour* Meeting with Kevin. Discussed problems and steps for next week.
+* *1 hour* Wrote up minutes after meeting

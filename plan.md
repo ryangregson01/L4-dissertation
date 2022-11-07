@@ -31,6 +31,9 @@
   - Complete Dataset loader custom class.
   - Test class.
 * **Week 8**
+  - Make corrections to custom class.
+  - Read paper on Fully Connected Networks (FCN).
+  - Apply kernels to a sequence using PyTorch.
 * **Week 9**
 * **Week 10**
 * **Week 11 [PROJECT WEEK]**
