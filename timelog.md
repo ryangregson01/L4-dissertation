@@ -97,3 +97,20 @@
 * *1 hour* Wrote up Dataloader class developments and errors to discuss at the meeting.
 * *1 hour* Meeting with Kevin. Discussed problems and steps for next week.
 * *1 hour* Wrote up minutes after meeting
+
+### 7 Nov 2022
+* *1 hour* Made corrections to custom class. Now getitem returns the label for the sequence (0 for ordered, 1 for disordered).
+
+### 8 Nov 2022
+* *2 hours* Read through lab 3 (Convolutional networks) from DL moodle. It is primarily running cells and understanding their functionality.
+* *1.5 hours* Unsuccessfully attempted to apply network models to the protein sequence data. Errors thrown when model is used. Better understanding of input into the model now.
+* *2 hours* Read through book (https://www.deeplearningbook.org/) using assigned reading from DL lectures to strengthen understanding. Read Chapter 1 (Introduction) and some of Chapter 6 (Deep Feedforward Networks).
+
+### 9 Nov 2022
+* *2 hours* Redesigning dense model in lab 3 from DL moodle - so I can understand it better. Focused primarily on dense model even though two models are in this lab.
+* *3 hours* Used dense model design learnt from lab 3 and applied this to loaded protein sequence data. Runs on sequences without errors; however, questions to be raised about the model at the meeting.
+
+### 10 Nov 2022
+* *2 hours* Read 'Fully Convolutional Networks for Semantic Segmentation' paper. Took brief notes on the paper and highlighed parts I didn't understand.
+* *0.5 hours* Meeting with Kevin. Discussed problems with current neural network setup.
+* *0.5 hours* Wrote up minutes after meeting.

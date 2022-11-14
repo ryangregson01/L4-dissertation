@@ -35,6 +35,9 @@
   - Read paper on Fully Connected Networks (FCN).
   - Apply kernels to a sequence using PyTorch.
 * **Week 9**
+  - Organised questions on FCN paper for meeting.
+  - RMT L3 Review on the paper.
+  - Read documentation for PyTorch conv2D.
 * **Week 10**
 * **Week 11 [PROJECT WEEK]**
 * **Week 12 [PROJECT WEEK]** Status report submitted.
