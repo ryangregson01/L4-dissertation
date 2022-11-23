@@ -39,6 +39,9 @@
   - RMT L3 Review on the paper.
   - Read documentation for PyTorch conv2D.
 * **Week 10**
+  - Implement convolutions on a sequence.
+  - Implement convolutions over multiple sequences.
+  - Research into gradient accumulation
 * **Week 11 [PROJECT WEEK]**
 * **Week 12 [PROJECT WEEK]** Status report submitted.
 

@@ -114,3 +114,14 @@
 * *2 hours* Read 'Fully Convolutional Networks for Semantic Segmentation' paper. Took brief notes on the paper and highlighed parts I didn't understand.
 * *0.5 hours* Meeting with Kevin. Discussed problems with current neural network setup.
 * *0.5 hours* Wrote up minutes after meeting.
+
+### 14 Nov 2022
+* *2 hours* Going through 'Fully Convolutional Networks for Semantic Segmentation' paper and looking into parts I didn't understand.
+
+### 16 Nov 2022
+* *3 hours* Continuing to go through the same paper, making comparisons to my project and researching concepts I didn't understand.
+* *1 hour* Meeting with Kevin. Discussed FCN paper together
+* *0.5 hours* Wrote up minutes after meeting.
+
+### 17 Nov 2022
+* *1.5 hours* Experiments with conv2D on random tensors, then applying convolution to a single protein sequence.
