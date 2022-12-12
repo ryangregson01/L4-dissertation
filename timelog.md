@@ -135,3 +135,8 @@
 * *1 hour* Meeting with Kevin. Discussed current model, and potential refactoring.
 * *1 hour* Wrote up minutes after meeting.
 * *1 hour* Cleaned up Notebook. Inserted markdown throughout notebook to help the notebook read well and be understandle. Can commit this code so far (src/Notebooks).
+
+### 9 Dec 2022
+* *1 hour* Refactored amino acid map so that protein images now have 20 channels. Vectorised one protein with this map. Tested a 1D convolution on this protein.
+* *1 hour* Meeting with Kevin.
+* *0.5 hours* Wrote up minutes after meeting.

@@ -49,6 +49,9 @@
     - Change amino acid vector map
     - Use 1D convolution kernels instead of 2D
 * **Week 12 [PROJECT WEEK]** Status report submitted.
+  - Complete status report
+  - Refactor all code that is using the 2D image and 2D convolutions.
+  - Get training loop working.
 
 ## Winter break
 
