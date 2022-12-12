@@ -7,42 +7,47 @@
 
 ## Winter semester
 
-* **Week 1**
+* **Week 0**
   - Read through proposals and make choices.
-* **Week 2**
+* **Week 1**
   - Organise meeting with supervisor (Kevin) for next Tuesday. 
   - Read recommended wikipedia and seed papers.
-* **Week 3**
+* **Week 2**
   - Finish recommended reading. 
   - Meet with Kevin on Tuesday.
-* **Week 4**
+* **Week 3**
   - Look at PyTorch, GraphQL and protein disorder databases. 
   - Look Deep Learning moodle.
   - Meet with Kevin on Friday.
-* **Week 5**
+* **Week 4**
   - PyTorch practise from the DL moodle. 
   - Look into what data is available on the PDB Database. 
   - Review DISOPRED papers. 
   - Make goal targets. 
-* **Week 6**
+* **Week 5**
   - Create a dataset loader using DisProt database and PyTorch.
   - PyTorch practise.
-* **Week 7**
+* **Week 6**
   - Complete Dataset loader custom class.
   - Test class.
-* **Week 8**
+* **Week 7**
   - Make corrections to custom class.
   - Read paper on Fully Connected Networks (FCN).
   - Apply kernels to a sequence using PyTorch.
-* **Week 9**
+* **Week 8**
   - Organised questions on FCN paper for meeting.
   - RMT L3 Review on the paper.
   - Read documentation for PyTorch conv2D.
-* **Week 10**
+* **Week 9**
   - Implement convolutions on a sequence.
   - Implement convolutions over multiple sequences.
   - Research into gradient accumulation
+* **Week 10**
+  - Complete week off project due to courseworks.
 * **Week 11 [PROJECT WEEK]**
+  - Refactor current code
+    - Change amino acid vector map
+    - Use 1D convolution kernels instead of 2D
 * **Week 12 [PROJECT WEEK]** Status report submitted.
 
 ## Winter break

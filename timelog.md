@@ -125,3 +125,13 @@
 
 ### 17 Nov 2022
 * *1.5 hours* Experiments with conv2D on random tensors, then applying convolution to a single protein sequence.
+
+### 23 Nov 2022
+* *1.5 hours* Applying multiple convolutions to two protein sequences. Experimented with padding.
+
+### 24 Nov 2022
+* *2 hours* Created a loose neural network model. Multiple convolution layer, followed by activation function. Tested with two protein sequences under a training loop. Not concentrated on what training loop really doing yet - mostly assessing loss can be calculated from model output and labels.
+* *2 hours* Combining previous work from Notebooks with new FCN model. All preprocessing. Now have access to more than two protein sequences.
+* *1 hour* Meeting with Kevin. Discussed current model, and potential refactoring.
+* *1 hour* Wrote up minutes after meeting.
+* *1 hour* Cleaned up Notebook. Inserted markdown throughout notebook to help the notebook read well and be understandle. Can commit this code so far (src/Notebooks).
