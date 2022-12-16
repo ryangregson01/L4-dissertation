@@ -55,17 +55,35 @@
 
 ## Winter break
 
+* **Winter Overall**
+  - Tidy up CNN model.
+    - Reduce training loss.
+    - Test model.
+  - Set up Django server.
+
 ## Spring Semester
 
 * **Week 13**
+  - Implement RNN model.
 * **Week 14**
+  - Compare RNN and CNN model.
 * **Week 15**
+  - Run experiment with all sequences connected together during training.
 * **Week 16**
+  - Evaluate models compared to other solutions using CASP.
 * **Week 17**
+  - Write-up results and draw conclusions from analysis.
 * **Week 19**
+  - Write results/evaluation section of dissertation.
+  - Add styling to Django servers webpage.
 * **Week 20**
+  - Add styling to webpage.
+  - Look at scheduling to refresh the trained model when new data is uploaded by DisProt.
 * **Week 21**
+  - Completed first draft of dissertation.
 * **Week 22**
+  - Presentation preparation.
+  - Redrafting dissertation.
 * **Week 23 [TERM ENDS]**
 * **Week 24** Dissertation submission deadline and presentations.
 

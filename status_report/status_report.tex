@@ -1,0 +1,106 @@
+    
+\documentclass[11pt]{article}
+\usepackage{times}
+\usepackage{fullpage}
+    
+\title{ {{Creating a server for protein disorder prediction based on deep neural networks}} }
+\author{ {{Ryan Gregson}} - {{2469038G}} }
+
+\begin{document}
+\maketitle
+
+\section{Status report}
+
+\subsection{Proposal}\label{proposal}
+
+\subsubsection{Motivation}\label{motivation}
+Identifying disordered proteins is important to researchers and doctors as disordered proteins cause neurodegenerative diseases. Use of deep learning methodologies have seen improvements in prediction classifiers. From recent use in protein disorder prediction these methodologies improve or match best solutions. Improved prediction classifiers will help identify these disorders with greater confidence.
+
+\subsubsection{Aims}\label{aims}
+This project will develop and examine how well a deep neural network is at predicting protein disorder. My deep neural network should be comparable to current solutions and perform better than a naïve solution. I will also develop a Django-based server for people to interact with my classifier. My deep neural network model can be used on the website by inputting a protein sequence. This web application should be hosted and accessible to users.
+
+\subsection{Progress}\label{progress}
+
+\begin{itemize}
+    \item{Worked with deep learning technology: PyTorch.}
+    \item{Preprocessing of data has been completed.}
+    \begin{itemize}
+        \item{Disordered protein data from DisProt.}
+        \item{Sequence data from UniProt.}
+        \item{Removed inappropriate sequences.}
+        \item{Vectorised protein data.}
+        \item{Dataset class implemented.}
+        \item{Data loader created.}
+    \end{itemize}
+    \item{Background research on DISOPRED and Fully Convolutional Networks.}
+    \item{CNN model implemented with PyTorch and 1D convolutions. CNN model also created using 2D convolutions}
+\end{itemize}
+
+\subsection{Problems and risks}\label{problems-and-risks}
+
+\subsubsection{Problems}\label{problems}
+
+\begin{itemize}
+    \item{Initial lack of understanding in deep learning. Majority of documentation using image data made it initially difficult in translating it to my projects needs.}
+    \item{Sequences of variable lengths.}
+    \item{Unclean dataset. Difficult to find error when running my training loop over sequences. Dataset had sequences that my solution was not compatible with (protein sequences that were deprecated or amino acids outwith the 20 letter codes were used).}
+\end{itemize}
+
+\subsubsection{Risks}\label{risks}
+
+\begin{itemize}
+    \item{Hosting the website on Glasgow server. Unsure what can be deployed on Glasgow server. \textbf{Mitigation:} research and find out how application has to be containerized to be deployed.}
+    \item{Model not working at all, or giving poor results. \textbf{Mitigation:} implementing both a CNN and a RNN, and experimenting with connecting all sequences together. Also experimenting through changing parameters of the optimiser should improve results. A reasonable model should be produced.}
+\end{itemize}
+
+\subsection{Plan}\label{plan}
+
+\textbf{Winter:}
+\begin{itemize}
+    \item{Tidy up current CNN model on Google Colab.}
+    \begin{itemize}
+        \item{Improve by reducing loss. Create plots over each training loop to monitor loss per epoch and ensure it is working appropriately.}
+        \item{Clearly separate training, validation and testing sequences. Test model.}
+    \end{itemize}
+    \item{Set up Django server.}
+    \begin{itemize}
+        \item{Implement webpage for user input.}
+        \item{Connect deep learning model with Django server.}
+        \item{Consider how to host Django server.}
+    \end{itemize}
+    \item{\textbf{Winter Deliverables:} Basic webpage that can return the input protein sequence with which amino acids are disordered - highlighting the intrinsically disordered region. Trained CNN model.}
+\end{itemize}
+
+\noindent
+\\ \textbf{Semester 2:}
+\begin{itemize}
+    \item{Week 1-2: Implement a RNN model. Compare this to the CNN model.}
+    \begin{itemize}
+        \item {\textbf{Deliverable:} RNN model and comparisons between testing it and the CNN.}
+    \end{itemize}
+    \item{Week 3: Experiment with connecting all the sequences together. Experiment purpose: to see if this speeds up training time and improves performance.}
+    \begin{itemize}
+        \item {\textbf{Deliverable:} Experiment results table of this technique with both models.}
+    \end{itemize}
+    \item{Week 4-6: Evaluation of models compared to other solutions. Use of CASP blind testing. Evaluate results and write this dissertation section fully.}
+    \begin{itemize}
+        \item {\textbf{Deliverable:}  Evaluation analysis of my models compared to a baseline standard and other state of the art models using comparable test data from CASP.}
+    \end{itemize}
+    \item{Week 6-8: Improving Django server.}
+    \begin{itemize}
+        \item{Visualisation of output. Either coloured amino acids or a line graph showing probability of amino acid being disordered.}
+        \item{Potential refreshing of trained model periodically, for when updated DisProt data is released.}
+    \end{itemize}
+    \begin{itemize}
+        \item {\textbf{Deliverable:} Polished Django server for people to use.}
+    \end{itemize}
+    \item{Week 8+: Focus on dissertation write-up.}
+    \begin{itemize}
+        \item {\textbf{Deliverable:} First draft completed by the end of week 8. Redraft each section in detail after this for final draft.}
+    \end{itemize}
+\end{itemize}
+
+\subsection{Ethics and data}\label{ethics}
+This project does not involve human subjects or data. No approval required.
+
+\end{document}

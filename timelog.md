@@ -140,3 +140,24 @@
 * *1 hour* Refactored amino acid map so that protein images now have 20 channels. Vectorised one protein with this map. Tested a 1D convolution on this protein.
 * *1 hour* Meeting with Kevin.
 * *0.5 hours* Wrote up minutes after meeting.
+
+### 12 Dec 2022
+* *2 hours* Implemented my FCN model with 1D convolutions.
+
+### 13 Dec 2022
+* *2 hours* Debugging training loop. Realised there was protein data incompatible with my solution. Implemented dataset cleaning for deprecated sequences. Looking up this protein accession number using the UniProt API returned an empty string otherwise.
+* *2 hours* Further debugging of training loop. More protein data that was incompatible with my solution. Added data cleaning for sequences that have amino acid letter codes outwith the basic 20 amino acids. This only removes a few proteins, so should not impact my solution.
+
+### 14 Dec 2022
+* *1 hour* Debugging training loop. Although incompatible protein data had been dropped from dictionary, the indices were not consecutive, causing errors. Wrote cleaned data into new dictionary where indices are consecutive and training loop runs fully without crashing.
+* *0.5 hour* Added gradient accumulation within training loop to see if training loss improved. This creates an effect of batching, as we only have a batch of size one in our dataloader.
+* *1 hour* Wrote up first half of status report: proposal and progress.
+
+### 15 Dec 2022
+* *1.5 hours* Wrote up plan for semester 2 on status report.
+* *1 hour* Meeting with Kevin. Discussed status report.
+* *0.5 hours* Wrote up minutes after meeting.
+* *1 hour* Tidied up status report.
+
+### 16 Dec 2022
+* *0.5 hours* Submitted status report.
