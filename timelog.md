@@ -161,3 +161,24 @@
 
 ### 16 Dec 2022
 * *0.5 hours* Submitted status report.
+
+
+## Winter
+
+### 20 Dec 2022
+* *1.5 hours* Started a practice web application by going through the start of the tango with django book for a quick refresher. Set up urls, an index view, an index template and ensured the static and media folders worked with the template.
+* *1 hour* Brief reading on Docker and Nginx. Familiarising myself with technologies I have used but not implemented before.
+
+### 21 Dec 2022
+* *2 hours* Continued with the tango with django book. Created a model and form. Now made practice web application more aligned to goal application. Form takes in a string (e.g. protein sequence) and returns it out to the webpage.
+
+### 22 Dec 2022
+* *2 hours* Focusing on form with input as a protein sequence. Wrapped output of form so that you could see the whole sequence on the webpage without scrolling. Handled cleaning and validating data (e.g. removing '\n' characters).
+* *2 hours* Used resizable form box from previous project for input form. Created a random disorder label, and in the template the amino acids that match each element of the label have a background colour of green or red for ordered or disordered prediction respectively.
+
+### 23 Dec 2022
+* *1.5 hours* Worked on CNN. Separated entire dataset and dataloader into train/validation/test datasets and dataloaders. Ran training loop with much more epochs (100), and plotted the average loss per epoch. Used trained model and test data to check the similarity of predicted protein sequences. Unsure if this similarity check has been carried out correctly.
+* *0.5 hours* Saved and reloaded model.
+
+### 24 Dec 2022
+* *1 hour* Prepared a test sequence for the loaded model to be used with the Django app. Tested it with an external Python file with just the model and single sequence.
