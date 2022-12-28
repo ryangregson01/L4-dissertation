@@ -11,4 +11,30 @@
     <p>Server for protein disorder prediction using a deep neural network.</p><br>
 </div>
 
+{% if form %}
+<div id="form">
+    <p>Protein sequence: </p>
+    <form id="seq_form" method="post">
+        {% csrf_token %}
+        {% for hidden in form.hidden_fields %}
+            {{ hidden }}
+        {% endfor %}
+        {% for field in form.visible_fields %}
+            {{ field.errors }}
+            {{ field.help_text }}
+            {{ field }}
+        {% endfor %}
+        <input type="submit" name="submit" value="Submit Sequence" />
+    </form>
+</div>
+{% endif %}
+
+<div id="returnedSeq">
+    {% if input_seq %}
+    <a href="{% url 'index' %}"><p>Return to home page</p></a>
+
+    <p>Your sequence: </p>
+    <p>{{ input_seq }}</p>
+    {% endif %}
+
 {% endblock %}
