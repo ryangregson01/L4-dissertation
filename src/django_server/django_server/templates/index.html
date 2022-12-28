@@ -34,34 +34,9 @@
     <a href="{% url 'index' %}"><p>Return to home page</p></a>
 
     <h4>Tabled disorder label: </h4>
+
     <script>
-    const string_seq = "{{ input_seq }}";
-    const string_label = "{{ generated_label }}";
-    // Table will have 60 characters along each row
-    const chunks = string_seq.match(/.{1,60}/g);
-    const table = document.createElement("table");
-    table.setAttribute('class', 'graph-wrapper');
-    // label indexer for separate label list as zipping the sequence and label together in a tuple is tricky to work with.
-    label_indexer = 0;
-    chunks.forEach(chunk => {
-        const row = document.createElement("tr");
-        for (let i = 0; i < chunk.length; i++) {
-            cell = document.createElement("td");
-            // chunk[i] is an amino acid identifier
-            cell.textContent = chunk[i]
-            // Identify if amino acid is labelled ordered/disordered
-            if (string_label[label_indexer] == '0') {
-                cell.setAttribute('class', 'ordered');
-            } else {
-                cell.setAttribute('class', 'disordered');
-            }
-            row.appendChild(cell);
-            label_indexer = label_indexer + 1;
-        }
-        table.appendChild(row);
-    });
-    
-    document.body.appendChild(table);
+        labelled_table("{{ input_seq }}", "{{ generated_label }}")
     </script>
     {% endif %}
 </div>
