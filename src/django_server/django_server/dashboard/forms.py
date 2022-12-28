@@ -4,7 +4,8 @@ from dashboard.models import Protein
 class seqForm(forms.ModelForm):
     MAX_LENGTH = 1200
     sequence = forms.CharField(max_length=MAX_LENGTH, 
-                            help_text="Please enter the protein sequence."
+                            help_text="Please enter the protein sequence.",
+                            widget=forms.Textarea(attrs={'class': 'resizeForm'})
     )
     # Initial is an empty string - meaning no label currently. Must have required as False for empty initial
     label = forms.CharField(widget=forms.HiddenInput(), 

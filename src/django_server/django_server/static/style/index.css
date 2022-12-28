@@ -2,6 +2,11 @@ h1 {
     color : blue;
 }
 
+.resizeForm {
+    width: 175px;
+    height: 30px;
+}
+
 /* Overflow class wraps long strings */
 .overflow {
     max-width: 30%;
