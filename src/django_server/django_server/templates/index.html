@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title_block %}
+    Protein Disorder Prediciton - Individual Project
+{% endblock %}
+
+{% block body_block %}
+<h1>Project Django Server</h1>
+<div id="intro">
+    <p>Server for protein disorder prediction using a deep neural network.</p><br>
+</div>
+
+{% if form %}
+<div id="form">
+    <p>Protein sequence: </p>
+    <form id="seq_form" method="post">
+        {% csrf_token %}
+        {% for hidden in form.hidden_fields %}
+            {{ hidden }}
+        {% endfor %}
+        {% for field in form.visible_fields %}
+            {{ field.errors }}
+            {{ field.help_text }}
+            {{ field }}
+        {% endfor %}
+        <input type="submit" name="submit" value="Submit Sequence" />
+    </form>
+</div>
+{% endif %}
+
+<div id="returnedSeq">
+    {% if input_seq %}
+    <a href="{% url 'index' %}"><p>Return to home page</p></a>
+
+    <h4>Tabled disorder label: </h4>
+
+    <script>
+        labelled_table("{{ input_seq }}", "{{ generated_label }}")
+    </script>
+    {% endif %}
+</div>
+
+{% endblock %}

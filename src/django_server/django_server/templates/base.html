@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="author" content="Ryan Gregson" />
+    <meta name="description" content="Protein disorder prediction using deep learning" />
+
+    <title>
+        {% block title_block %}
+        
+        {% endblock %}
+    </title>
+
+    <!-- scale web-page to client device width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- load stylesheets -->
+    <link rel="stylesheet" href="{% static 'style/index.css' %}" />
+
+    <!-- load scripts -->
+    <script src="{% static 'javascript/jquery-3.6.3.js' %}"></script>
+    <script type="text/javascript" src="{% static 'javascript/index.js' %}"></script>
+
+</head>
+<body>
+    <main>
+        {% block body_block %}
+
+        {% endblock %}
+    </main>
+
+</body>
+</html>

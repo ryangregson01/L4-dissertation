@@ -1,0 +1,28 @@
+h1 {
+    color : blue;
+}
+
+.resizeForm {
+    width: 175px;
+    height: 30px;
+}
+
+/* Overflow class wraps long strings */
+.overflow {
+    max-width: 30%;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
+}
+
+td {
+    text-align: center;
+}
+
+.ordered {
+    background-color: rgba(0,255,0,0.5);
+}
+
+.disordered {
+    background-color: rgba(255,0,0,0.5);
+}
