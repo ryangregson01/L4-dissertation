@@ -182,3 +182,13 @@
 
 ### 24 Dec 2022
 * *1 hour* Prepared a test sequence for the loaded model to be used with the Django app. Tested it with an external Python file with just the model and single sequence.
+
+### 27 Dec 2022
+* *2 hours* Following the work from 24 Dec, fitted the saved model into the Django app, and ensured the model could take its input from the Django form.
+
+### 28 Dec 2022
+* *1.5 hours* Created the django server I will use for this project. Created index view and template, protein sequence model and form using experimental web application created at the start of the winter break.
+* *1 hour* Added funtionality for the website that had been worked on on 22 December and fixed problems with it.
+
+### 29 Dec 2022
+* *0.5 hour* Added work from 27 Dec into project django server (trained model making predictions being outputted to user) and merged the django app setup branch with the main repository.
