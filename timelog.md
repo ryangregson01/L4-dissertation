@@ -192,3 +192,18 @@
 
 ### 29 Dec 2022
 * *0.5 hour* Added work from 27 Dec into project django server (trained model making predictions being outputted to user) and merged the django app setup branch with the main repository.
+
+### 4 Jan 2023
+* *1.5 hours* Learnt about Docker, made a Dockerfile. Ran webapp through docker build and docker run. This is currently on an uncommitted branch.
+
+### 7 Jan 2023
+* *3.5 hours* Setup basic nginx and gunicorn alongside Docker so my webapp can be deployed. Some parts working, but some less successful. More work is needed on this setup.
+
+## Semester 2
+
+### 9 Jan 2023
+* *4 hours* Read through chapter 10 of the deep learning book: "Sequence Modeling: Recurrent and Recursive Nets".
+
+### 10 Jan 2023
+* *2 hours* Watched the deep learning lectures on RNNs.
+* *2 hours* Went through the lab relevant to the deep learning lecture on RNNs.
