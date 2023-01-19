@@ -192,3 +192,45 @@
 
 ### 29 Dec 2022
 * *0.5 hour* Added work from 27 Dec into project django server (trained model making predictions being outputted to user) and merged the django app setup branch with the main repository.
+
+### 4 Jan 2023
+* *1.5 hours* Learnt about Docker, made a Dockerfile. Ran webapp through docker build and docker run. This is currently on an uncommitted branch.
+
+### 7 Jan 2023
+* *3.5 hours* Setup basic nginx and gunicorn alongside Docker so my webapp can be deployed. Some parts working, but some less successful. More work is needed on this setup.
+
+## Semester 2
+
+### 9 Jan 2023
+* *4 hours* Read through chapter 10 of the deep learning book: "Sequence Modeling: Recurrent and Recursive Nets".
+
+### 10 Jan 2023
+* *2 hours* Watched the deep learning lectures on RNNs.
+* *2 hours* Went through the lab relevant to the deep learning lecture on RNNs.
+
+### 11 Jan 2023
+* *1 hour* Created a training vs validation dataset plot. Uses the training loop and a validation loop each epoch (tested 50 epochs). Stores the total loss for training and total loss for the validation dataset each epoch and plots this. Validation plot not very readable.
+* *1 hour* Tried fixing Docker setup. Setup not working with the newer, less basic setup.
+* *2 hours* Created a docker compose file and got a better understanding of this Docker file and Nginx.
+
+### 13 Jan 2023
+* *2 hours* Went through lab from 10 Jan again. Tried the additional exercise of making my own RNN. This doesn't work how as I expected as with the new dataset the predictions compared to true values are very far off. I will fix this.
+
+### 16 Jan 2023
+* *1 hour* Worked on lab from 13 Jan seeing if I can tweak anything to improve the predictive model. Stopped and will wait to go over this with Kevin.
+* *1 hour* Worked on FCN: worked on training and validation loop by increasing number of epochs and monitoring plots to understand how model is behaving (e.g., when it is overfitting). Realised I wasn't utilising the cuda GPU, so set this up to move my tensors and model onto cuda. Greatly increased training speed.
+* *1 hour* Looking at disordered protein datasets and dataset augmentation techniques in deep learning as more data benefits deep learning architectures. Haven't got anything totally conclusive for dataset augmentation for my project.
+
+### 17 Jan 2023
+* *1 hour* Experimented with FCN model during training. Increased the number of layers the model had and increased regularisation up to 0.1 to see its effect on the validation dataset. Still not a very readable plot.
+* *2 hours* Followed different tutorials on how to setup my docker compose and how to setup Nginx correctly. Currently have a 502 bad gateway when ran using Nginx, but without Nginx docker compose works under localhost.
+* *1.5 hours* Downloaded the repository from https://testdriven.io/blog/dockerizing-masonite-with-postgres-gunicorn-and-nginx/ and took parts away from the Docker setup to see why different parts worked and why I would need them in my setup.
+
+### 18 Jan 2023
+* *1.5 hours* Continuing to break down the downloaded repository from yesterday.
+* *2 hours* Moved this new broken down Dockerfile and Nginx setup to my project django server. Some libraries, such as PyTorch did not work with the setup, so fixed these issues. The setup now works as expected, and should make future deployment easier. This branch can now be merged.
+
+### 19 Jan 2023
+* *1 hour* Prepared a powerpoint for easy discussion during my meeting.
+* *0.5 hours* Meeting with Kevin. Discussed progress on the project.
+* *0.5 hours* Wrote up minutes after meeting.
