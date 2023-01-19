@@ -229,3 +229,8 @@
 ### 18 Jan 2023
 * *1.5 hours* Continuing to break down the downloaded repository from yesterday.
 * *2 hours* Moved this new broken down Dockerfile and Nginx setup to my project django server. Some libraries, such as PyTorch did not work with the setup, so fixed these issues. The setup now works as expected, and should make future deployment easier. This branch can now be merged.
+
+### 19 Jan 2023
+* *1 hour* Prepared a powerpoint for easy discussion during my meeting.
+* *0.5 hours* Meeting with Kevin. Discussed progress on the project.
+* *0.5 hours* Wrote up minutes after meeting.
