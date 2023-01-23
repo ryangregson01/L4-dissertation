@@ -201,6 +201,8 @@
 
 ## Semester 2
 
+## Week 13
+
 ### 9 Jan 2023
 * *4 hours* Read through chapter 10 of the deep learning book: "Sequence Modeling: Recurrent and Recursive Nets".
 
@@ -215,6 +217,8 @@
 
 ### 13 Jan 2023
 * *2 hours* Went through lab from 10 Jan again. Tried the additional exercise of making my own RNN. This doesn't work how as I expected as with the new dataset the predictions compared to true values are very far off. I will fix this.
+
+## Week 14
 
 ### 16 Jan 2023
 * *1 hour* Worked on lab from 13 Jan seeing if I can tweak anything to improve the predictive model. Stopped and will wait to go over this with Kevin.
@@ -234,3 +238,8 @@
 * *1 hour* Prepared a powerpoint for easy discussion during my meeting.
 * *0.5 hours* Meeting with Kevin. Discussed progress on the project.
 * *0.5 hours* Wrote up minutes after meeting.
+
+## Week 15
+
+### 23 Jan 2023
+* *3.5 hours* Added random shuffling of Disprot dataset before allocating sequences to train/validation/test datasets. Implemented functionality to evaluate the Matthews correlation coefficient (MCC) during the training and validation loop, and over the entire test dataset.
