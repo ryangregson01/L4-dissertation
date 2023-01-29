@@ -243,3 +243,17 @@
 
 ### 23 Jan 2023
 * *3.5 hours* Added random shuffling of Disprot dataset before allocating sequences to train/validation/test datasets. Implemented functionality to evaluate the Matthews correlation coefficient (MCC) during the training and validation loop, and over the entire test dataset.
+
+### 24 Jan 2023
+* *2 hours* Bullet pointing ideas for structure of introduction and background sections in dissertation.
+
+### 25 Jan 2023
+* *2 hours* Implemented an RNN to predict protein disorder. Currently performs quite poorly.
+
+### 26 Jan 2023
+* *1 hour* Continued bullet pointing ideas for the structure of the sections from 24 Jan.
+* *1 hour* Experimented with RNN implementation, but made no progressing changes.
+
+### 27 Jan 2023
+* *1 hour* Meeting with Kevin. Discussed RNN, BCELoss, PSSM matrix from literature and encodings.
+* *1 hour* Wrote up minutes after meeting.
