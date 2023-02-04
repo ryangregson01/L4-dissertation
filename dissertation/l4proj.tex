@@ -11,9 +11,9 @@
 
 %==============================================================================
 %% METADATA
-\title{Level 4 Project Report Template}
-\author{John H. Williamson}
-\date{September 14, 2018}
+\title{Level 4 Individual Project}
+\author{Ryan Gregson}
+\date{February, 2023}
 
 \maketitle
 
@@ -80,75 +80,23 @@
 % reset page numbering. Don't remove this!
 \pagenumbering{arabic} 
 
+\section{Motivation}
 
-Why should the reader care about what are you doing and what are you actually doing?
-\section{Guidance}
+Disordered proteins cause neurodegenerative diseases such as Alzheimer’s, Parkinson’s and Huntington’s. These intrinsically disordered proteins do not have a fixed or ordered three-dimensional structure and there are significant differences between the amino acid sequences of intrinsically disordered proteins (IDPs) / intrinsically disordered regions (IDRs) compared to structured globular (functional) proteins \cite{disordered_proteins_diseases_paper}. The structural order of these sequences can be manually labelled from experiments with x-ray crystallographic analysis \cite{idp_wiki}. These experiments can be difficult and the number of newly occurring proteins submitted to the Protein Data Bank (PDB) \cite{pdb} each year makes it difficult to manually experiment with each one, meaning many proteins’ disorder structure have not been assessed. We can use bioinformatic tools to label the disordered regions in these protein sequences by allowing the tool to learn the differences between ordered and disordered amino acid sequences. With more labelled sequences, doctors and researchers can understand more about disordered protein sequences. A better understanding of these regions helps research into the development of drugs to counteract diseases and contributes to keeping a well-maintained knowledge database of proteins.  
 
-\textbf{Motivate} first, then state the general problem clearly. 
+Deep learning approaches have become incredibly popular recently, and these approaches currently dominate classification tasks. Deep learning architectures are prevalent in classifying the IDRs in protein sequences, where state of the art predictors such as SPOT-Disorder \cite{spot_disorder_2} have online protein disorder prediction servers for others to use their deep learning model.
 
-\section{Writing guidance}
-\subsection{Who is the reader?}
+\section{General problem and aim}
 
-This is the key question for any writing. Your reader:
+Protein sequences are a string of amino acid characters. The problem we are attempting to solve is to see if we can use these sequences to predict whether each amino acid is ordered or disordered. We will produce deep neural networks which will take in protein sequences and predict the disordered regions within them. 
 
+The aim of this project is to explore how different deep learning approaches and architectures perform at predicting protein disorder. To assess these deep learning methods, we will: 
 \begin{itemize}
-    \item
-    is a trained computer scientist: \emph{don't explain basics}.
-    \item
-    has limited time: \emph{keep on topic}.
-    \item
-    has no idea why anyone would want to do this: \emph{motivate clearly}
-    \item
-    might not know \emph{anything} about your project in particular:
-    \emph{explain your project}.
-    \item
-    but might know precise details and check them: \emph{be precise and
-    strive for accuracy.}
-    \item
-    doesn't know or care about you: \emph{personal discussions are
-    irrelevant}.
+    \item Discuss current solutions to protein disorder prediction.
+    \item Design and implement different deep neural networks, such as a convolutional neural network (CNN) and recurrent neural network (RNN). 
+    \item Evaluate our implemented neural networks using standard metrics and the CASP dataset \cite{casp}, which is used for evaluating protein disorder prediction models. 
 \end{itemize}
-
-Remember, you will be marked by your supervisor and one or more members
-of staff. You might also have your project read by a prize-awarding
-committee or possibly a future employer. Bear that in mind.
-
-\subsection{References and style guides}
-There are many style guides on good English writing. You don't need to
-read these, but they will improve how you write.
-
-\begin{itemize}
-    \item
-    \emph{How to write a great research paper} \cite{Pey17} (\textbf{recommended}, even though you aren't writing a research paper)
-    \item
-    \emph{How to Write with Style} \cite{Von80}. Short and easy to read. Available online.
-    \item
-    \emph{Style: The Basics of Clarity and Grace} \cite{Wil09} A very popular modern English style guide.
-    \item
-    \emph{Politics and the English Language} \cite{Orw68}  A famous essay on effective, clear writing in English.
-    \item
-    \emph{The Elements of Style} \cite{StrWhi07} Outdated, and American, but a classic.
-    \item
-    \emph{The Sense of Style} \cite{Pin15} Excellent, though quite in-depth.
-\end{itemize}
-
-\subsubsection{Citation styles}
-
-\begin{itemize}
-\item If you are referring to a reference as a noun, then cite it as: ``\citet{Orw68} discusses the role of language in political thought.''
-\item If you are referring implicitly to references, use: ``There are many good books on writing \citep{Orw68, Wil09, Pin15}.''
-\end{itemize}
-
-There is a complete guide on good citation practice by Peter Coxhead available here: \url{http://www.cs.bham.ac.uk/~pxc/refs/index.html}. 
-If you are unsure about how to cite online sources, please see this guide: \url{https://student.unsw.edu.au/how-do-i-cite-electronic-sources}.
-
-\subsection{Plagiarism warning}
-
-\begin{highlight_title}{WARNING}
-    
-    If you include material from other sources without full and correct attribution, you are commiting plagiarism. The penalties for plagiarism are severe.
-    Quote any included text and cite it correctly. Cite all images, figures, etc. clearly in the caption of the figure.
-\end{highlight_title}
+An aim alongside comparing the deep neural networks is to create a server, where a user can input a protein sequence via a webpage form and see the predicted disordered labels. This will result in individuals being able to interact with my developed solution easily.
 
 
 %==================================================================================================================================

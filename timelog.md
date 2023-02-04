@@ -257,3 +257,23 @@
 ### 27 Jan 2023
 * *1 hour* Meeting with Kevin. Discussed RNN, BCELoss, PSSM matrix from literature and encodings.
 * *1 hour* Wrote up minutes after meeting.
+
+### 29 Jan 2023
+* *2 hours* Vectorised MCC computations.
+* *1 hour* Tried to implement class weighting with loss function, but was unsuccessful.
+
+### 30 Jan 2023
+* *3 hours* Went back to the Notebook using 2D Convolutionals to see if the workflow I have learnt from the other Notebooks can be used with this model.
+
+### 1 Feb 2023
+* *2.5 hours* Wrote up introduction section of dissertation.
+
+### 2 Feb 2023
+* *2 hours* Created files with my training sequences so I can generate position-specific weight matrices (PSSMs) for input to my network.
+* *2 hours* Got weighted loss function working. This required a 1x1 tensor due to the binary classification and changed loss function from BCELoss to BCEWithLogitsLoss. 
+
+### 3 Feb 2023
+* *0.5 hours* Identified test datasets papers I have reviewed are using. Namely CASP9 and CASP10 were aimed for IDR prediction. Recent papers also use Disprot and Mobi withheld test datasets.
+* *1 hour* Meeting with Kevin. Discussed progress on the project.
+* *1 hour* Wrote up minutes after meeting.
+* *3 hours* Updated Notebooks. Removed unnecessary output of contents of datasets, starting models and their training loops.
