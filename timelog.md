@@ -262,6 +262,8 @@
 * *2 hours* Vectorised MCC computations.
 * *1 hour* Tried to implement class weighting with loss function, but was unsuccessful.
 
+## Week 16
+
 ### 30 Jan 2023
 * *3 hours* Went back to the Notebook using 2D Convolutionals to see if the workflow I have learnt from the other Notebooks can be used with this model.
 
@@ -277,3 +279,24 @@
 * *1 hour* Meeting with Kevin. Discussed progress on the project.
 * *1 hour* Wrote up minutes after meeting.
 * *3 hours* Updated Notebooks. Removed unnecessary output of contents of datasets, starting models and their training loops.
+
+### 4 Feb 2023
+* *2.5 hours* Reread DISOPRED paper and reannotated the paper as I had a better understanding of it now. Wrote a L3 summary (from RMT) to help me review the paper in my background section.
+
+### 5 Feb 2023
+* *3.5 hours* Reread DISOPRED3 paper and reannotated the paper. Wrote a L3 summary about this paper.
+* *1.5 hours* Created Dataset_preprocessing, which separates the downloading and cleaning of data from Disprot and Uniprot. Included an easier way to get an updated version of the Disprot dataset. Removed these initial preprocessing sections from my other Notebooks.
+
+## Week 17
+
+### 6 Feb 2023
+* *2.5 hours* Wrote up background sections about CNNs and proteins.
+* *0.5 hours* Updated Dataset_preprocessing to use json instead of pickle for saving files.
+* *2 hours* Set up [Ray Tune](https://docs.ray.io/en/latest/tune/index.html) with FCN training loop for hyperparameter tuning. Only carried out a short experiment with the learning rate.
+* *0.5 hours* Figured out how to generate a PSSM using NCBI's online resource: https://blast.ncbi.nlm.nih.gov/Blast.cgi.
+
+### 7 Feb 2023
+* *1 hour* Wrote up the background section about IDPs.
+* *2.5 hours* Revised and added written background sections to the dissertation file and updated the bibliography.
+* *0.5 hours* Removed testing of the model to check if it would work in the Django server, from the FCN 1D notebook. Created a separate notebook for this test.
+* *1 hour* Updated RNN notebook and experimented using more epochs during training as it did not overfit with just 100 epochs.

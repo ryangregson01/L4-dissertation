@@ -101,6 +101,36 @@ An aim alongside comparing the deep neural networks is to create a server, where
 
 %==================================================================================================================================
 \chapter{Background}
+
+\section{Biology overview}
+
+\subsection{What is a protein?}
+
+Proteins are a linear sequence of amino acids \cite{prot_struct_lib}. An example of this sequence is the protein, Transmembrane protein 218, with a linear sequence of 115 amino acids \textbf{figureA2RU14Sequence} \cite{prot_A2RU14}. There are twenty possible amino acids \cite{aa_wiki} protein sequences can be built from, and each of these amino acids have a unique side chain which have different structural properties. Different proteins have different sequences of amino acids. The amino acids in the sequence will ‘interact with each other to form a well-defined, folded protein’ \cite{protein_folding}. The folded protein with have a three-dimensional structure, and this three-dimensional structure determines the protein's function \cite{bbc_bitesize}. Function can be from supporting frameworks inside cells, catalysing biological reactions, communication between different parts of the body and used for function inside the immune system \cite{bbc_bitesize}. Therefore, it is important that the folding of proteins is done correctly as misfolded proteins will lose their structure and function, which can lead to diseases. 
+
+\subsection{Intrinsically disordered proteins (IDPs)}
+
+IDPs are different to structured proteins. These unstructured, disordered proteins are suggested to cause a number of diseases. Their amino acid sequences differ and contain a “low content of bulky hydrophobic amino acids and a high proportion of polar and charged amino acids” \cite{idp_wiki}. In comparison to structured proteins that fold correctly these sequences cannot fold into stable globular proteins, meaning that the protein lacks an ordered three-dimensional structure. The root cause of this lack of structure, causing disorder, is the proteins’ primary structure: the amino acid sequence. When disordered amino acids are grouped, this is labelled as an intrinsically disordered region (IDR) and is where the misfolding occurs. Therefore, making predictions about the probability that an amino acid residue is ordered or disordered within a protein sequence will help determine where this incorrect folding will occur. This means by focusing on the amino acids’ structure we can determine the outcome of the protein functioning correctly. 
+
+A current problem is the lack of labelled data about the structure of protein sequences as determining these via experiments such as nuclear magnetic resonance (NMR) and small-angle X-ray scattering (SAXS) is very costly and time-consuming \cite{disordered_prot_genus_camelus}. To tackle this challenge, bioinformatic tools have been created for protein sequence structure labelling. These tools are often accessible via a web server, such as the DISOPRED server \cite{disopred3_paper}, which uses machine learning methods to make predictions. This project will produce a similar tool for the prediction of protein disorder after experimentation with different deep learning architectures and approaches. 
+
+\section{Deep learning overview}
+
+\subsection{Deep Neural Networks}
+
+Deep neural networks are made up of stacked neural network layers. As these layers are stacked, the output of one layer will be used as input to the next layer in the network. Each of these layers performs feature extraction on their input. Each layer consists of an arbitrary number of neurons, each with their own parameter weight which is learnt during training. During training, inputs are classified by the model during a forward pass through the model. These predictions are compared to the true value using a loss function. Through the process of backpropagation \cite{Goodfellow-et-al-2016}, the outcome of the loss function is used and the parameter weights for each neuron within the network are changed in an aim to improve the models' predictions. To complete this training step, an optimisation method will update each layer of the network, changing the weights of the model as proposed by backpropagation. This training procedure is done with each item in the training set and for multiple iterations of the entire training set, to solve the optimisation problem by minimising the loss and finding optimum weights for each neuron. The machine learning framework, PyTorch \cite{pytorch}, provides the functionality to build neural network layers that extract features, use a loss function with calculations for backpropagation and create an optimiser to update the model/classifier during training. PyTorch also provides efficient tensor computations and can utilise GPUs while training. 
+
+\subsection{Convolutional Neural Networks (CNNs)}
+
+A CNN is a type of neural network that uses convolution kernels to extract features from an input. Convolution kernels can be 1D kernels of size 1xK primarily used for sequence or series data, or 2D kernels of size NxM primarily used for classifying images. These kernels move across a grid shaped input to check if a feature is present. These kernels will be able to slide over a window of amino acids, which is like the sliding window-based approach that DISOPRED \ref{disopred} uses. With our protein sequences, it is intuitive to see that a kernel of 1xK will be able to slide along a [1, sequence length] grid, where we can treat each amino acid as a different channel to use 1D convolution kernels. We can also treat protein sequences as images, where the amino acids are the height of the image, and the sequence length is the width of the image. These are discussed further in our design \ref{chap:design}. 
+
+In classification tasks convolution kernels are translation-invariant and require few parameters. These are beneficial as this means it does not matter where the location of the disordered region exists in the sequence. Less parameters means it can be trained with smaller training sets, which is good as the labelled disorder datasets from Disprot \cite{disprot} is small in comparison to other deep learning tasks. However, papers such as DISOPRED3 state further annotated training labels will be beneficial to prediction models \cite{disopred3_paper}.
+
+During most classification tasks, input of the same shape is passed to the CNN. However, with our protein sequence data the lengths of our sequences range from 19 \cite{prot_P0C8E0} to 34350 \cite{prot_Q8WZ42}, therefore we would need to unnecessarily pad many sequences with lots of redundant blank values. Therefore, we have taken an approach to use a fully convolutional network (FCN). Modern classification networks have been adapted to fully convolutional networks by Shelhamer and Long \cite{fcn_seg}, demonstrating that classification can be done using inputs of arbitrary size. Therefore, for these varying sequence length proteins, an FCN will be suited to handling these inputs. 
+
+
+
+\newpage
 What did other people do, and how is it relevant to what you want to do?
 \section{Guidance}
 \begin{itemize}    
