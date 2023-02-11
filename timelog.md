@@ -300,3 +300,15 @@
 * *2.5 hours* Revised and added written background sections to the dissertation file and updated the bibliography.
 * *0.5 hours* Removed testing of the model to check if it would work in the Django server, from the FCN 1D notebook. Created a separate notebook for this test.
 * *1 hour* Updated RNN notebook and experimented using more epochs during training as it did not overfit with just 100 epochs.
+
+### 8 Feb 2023
+* *1.5 hours* Tried to bulk generate my PSSMs for input data. Was unsuccessful.
+
+### 9 Feb 2023
+* *1 hour* Reading about previous approaches to my problem for the Background section.
+* *1 hour* Conducted an experiment between BCELoss (sigmoid included in model) and BCEWithLogitsLoss (sigmoid excluded from model), and saw no important differences in training and testing of model.
+* *1 hour* Set up RayTune with LSTM Notebook for hyperparameter tuning but have not evaluated this yet.
+
+## 10 Feb 2023
+* *0.5 hours* Meeting with Kevin.
+* *0.5 hours* Wrote up minutes after meeting.
