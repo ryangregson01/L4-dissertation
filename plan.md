@@ -74,11 +74,12 @@
 * **Week 17**
   - Write-up results and draw conclusions from analysis.
 * **Week 19**
-  - Write results/evaluation section of dissertation.
-  - Add styling to Django servers webpage.
+  - Write analysis and methods section of dissertation.
+  - Look at database for PSSM lookup for Django server.
+  - Evaluate model with PSSMs if they are all generated.
 * **Week 20**
-  - Add styling to webpage.
-  - Look at scheduling to refresh the trained model when new data is uploaded by DisProt.
+  - Take results of models performance using different approaches.
+  - Write up results and evaluation.
 * **Week 21**
   - Completed first draft of dissertation.
 * **Week 22**
