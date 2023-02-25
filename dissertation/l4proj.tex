@@ -96,11 +96,12 @@ The aim of this project is to explore how different deep learning approaches and
     \item Design and implement different deep neural networks, such as a convolutional neural network (CNN) and recurrent neural network (RNN). 
     \item Evaluate our implemented neural networks using standard metrics and the CASP dataset \cite{casp}, which is used for evaluating protein disorder prediction models. 
 \end{itemize}
-An aim alongside comparing the deep neural networks is to create a server, where a user can input a protein sequence via a webpage form and see the predicted disordered labels. This will result in individuals being able to interact with my developed solution easily.
+An aim alongside comparing the deep neural networks is to create a server, where a user can input a protein sequence via a webpage form and see the predicted disordered labels. This will result in individuals being able to interact with my developed solution easily. 
 
 
 %==================================================================================================================================
 \chapter{Background}
+\label{chap:background}
 
 \section{Biology overview}
 
@@ -109,6 +110,7 @@ An aim alongside comparing the deep neural networks is to create a server, where
 Proteins are a linear sequence of amino acids \cite{prot_struct_lib}. An example of this sequence is the protein, Transmembrane protein 218, with a linear sequence of 115 amino acids \textbf{figureA2RU14Sequence} \cite{prot_A2RU14}. There are twenty possible amino acids \cite{aa_wiki} protein sequences can be built from, and each of these amino acids have a unique side chain which have different structural properties. Different proteins have different sequences of amino acids. The amino acids in the sequence will ‘interact with each other to form a well-defined, folded protein’ \cite{protein_folding}. The folded protein with have a three-dimensional structure, and this three-dimensional structure determines the protein's function \cite{bbc_bitesize}. Function can be from supporting frameworks inside cells, catalysing biological reactions, communication between different parts of the body and used for function inside the immune system \cite{bbc_bitesize}. Therefore, it is important that the folding of proteins is done correctly as misfolded proteins will lose their structure and function, which can lead to diseases. 
 
 \subsection{Intrinsically disordered proteins (IDPs)}
+\label{chap:background sec:IDPs}
 
 IDPs are different to structured proteins. These unstructured, disordered proteins are suggested to cause a number of diseases. Their amino acid sequences differ and contain a “low content of bulky hydrophobic amino acids and a high proportion of polar and charged amino acids” \cite{idp_wiki}. In comparison to structured proteins that fold correctly these sequences cannot fold into stable globular proteins, meaning that the protein lacks an ordered three-dimensional structure. The root cause of this lack of structure, causing disorder, is the proteins’ primary structure: the amino acid sequence. When disordered amino acids are grouped, this is labelled as an intrinsically disordered region (IDR) and is where the misfolding occurs. Therefore, making predictions about the probability that an amino acid residue is ordered or disordered within a protein sequence will help determine where this incorrect folding will occur. This means by focusing on the amino acids’ structure we can determine the outcome of the protein functioning correctly. 
 
@@ -118,7 +120,7 @@ A current problem is the lack of labelled data about the structure of protein se
 
 \subsection{Deep Neural Networks}
 
-Deep neural networks are made up of stacked neural network layers. As these layers are stacked, the output of one layer will be used as input to the next layer in the network. Each of these layers performs feature extraction on their input. Each layer consists of an arbitrary number of neurons, each with their own parameter weight which is learnt during training. During training, inputs are classified by the model during a forward pass through the model. These predictions are compared to the true value using a loss function. Through the process of backpropagation \cite{Goodfellow-et-al-2016}, the outcome of the loss function is used and the parameter weights for each neuron within the network are changed in an aim to improve the models' predictions. To complete this training step, an optimisation method will update each layer of the network, changing the weights of the model as proposed by backpropagation. This training procedure is done with each item in the training set and for multiple iterations of the entire training set, to solve the optimisation problem by minimising the loss and finding optimum weights for each neuron. The machine learning framework, PyTorch \cite{pytorch}, provides the functionality to build neural network layers that extract features, use a loss function with calculations for backpropagation and create an optimiser to update the model/classifier during training. PyTorch also provides efficient tensor computations and can utilise GPUs while training. 
+Deep neural networks are made up of stacked neural network layers. As these layers are stacked, the output of one layer will be used as input to the next layer in the network. Each of these layers performs feature extraction on their input. Each layer consists of an arbitrary number of neurons, each with their own parameter weight which is learnt during training. During training, inputs are classified by the model during a forward pass through the model. These predictions are compared to the true value using a loss function. Through the process of backpropagation \cite{Goodfellow-et-al-2016}, the outcome of the loss function is used and the parameter weights for each neuron within the network are changed in an aim to improve the models' predictions. To complete this training step, an optimisation method will update each layer of the network, changing the weights of the model as proposed by backpropagation. This training procedure is done with each item in the training set and for multiple iterations of the entire training set, to solve the optimisation problem by minimising the loss and finding optimum weights for each neuron. The machine learning framework, PyTorch \cite{pytorch}, provides the functionality to build neural network layers that extract features, use a loss function with an implemented backpropagation method and create an optimiser to update the model/classifier during training. PyTorch also provides efficient tensor computations and can utilise GPUs while training. 
 
 \subsection{Convolutional Neural Networks (CNNs)}
 
@@ -148,12 +150,82 @@ What did other people do, and how is it relevant to what you want to do?
 
 %==================================================================================================================================
 \chapter{Analysis/Requirements}
+
+\section{General deep learning problem}
+
+In our discussion of intrinsically disordered proteins \ref{chap:background sec:IDPs}, we demonstrate that the sequences of these proteins are different compared to ordered protein sequences. If we evaluate which amino acids appear within specific regions and where they appear, we can draw conclusions about where these disordered regions are. Therefore, we will use a supervised learning approach with our deep neural network, like current approaches \ref{sec:current approaches}, by using these amino acid sequences alongside their labelled disordered regions.  
+
+\section{Our dataset}
+
+As the identification of these disordered regions requires complex experimentation \ref{chap:background}, we must use a curated database of disordered proteins. The Disprot database \cite{disprot} has been used for a variety of machine learning tasks \cite{disopred3_paper} \cite{Xue:10} \cite{Mizianty:13} \cite{Hanson:16} involving disordered proteins. This database is regarded as the “major repository of manually curated data for intrinsically disordered proteins” \cite{Quaglia:22} and is widely used by researchers studying disordered proteins. Disprot stores information about the positions of IDRs in sequences and uses a UniProtKB accession number to identify the protein. This identifier will allow us to retrieve the full protein sequence from the UniProt database \cite{uniprot:22}, another manually curated database for proteins, to help us train our network. 
+
+\section{Labelled data}
+
+Compared to other problems solved by deep neural networks \cite{Jumper:21} \cite{Xie:17} \cite{Devlin:18}, the size of our manually labelled dataset is much smaller. Disprot only contains around 2500 protein sequences. However, we are not classifying an entire sequence as either ordered or disordered, we are classifying a single amino acid within the sequence as ordered or disordered \textbf{figure{AAgroundtruthlabel}}. This is because we know the region of the protein can be disordered due to the characteristics of the grouped amino acids. This gives us sufficient labelled data. Using these labelled sequences as our ground truth, we can utilise our deep neural networks to recognise patterns and relationships about the amino acid sequence that causes intrinsic disorder in proteins through our supervised learning approach. 
+
+\section{Approaches}
+
+Machine learning algorithms cannot operate on our protein sequences directly. Therefore, to ensure our model is equipped to handle the various amino acids, we will consider them as distinct categories of data and employ feature encoding techniques to generate a suitable numerical input \cite{Kumar:20}.
+
+\subsection{One-hot}
+
+Our first feature encoding approach is one-hot encoding \cite{One-hot:wiki} \cite{Fawcett:21}. We can treat each amino acid as a vector by using the one-hot encoding technique. Our vectors will have a size of 20 because of the twenty possible amino acids, therefore as these feature vectors are not excessively large, this one-hot approach is suitable. This has let us transform a raw amino acid sequence into a feature matrix, of shape [20, sequence length], which now represents the sequence.
+
+\subsection{Position-Specific Scoring Matrix (PSSM)}
+
+Our other feature encoding approach is to generate a position-specific scoring matrix (PSSM) \cite{PSSM:wiki}. This technique is used in many protein structure problems, such as \cite{McGuffin:00} \cite{Wang:17} and used within current approaches previously discussed \ref{sec: current approaches}. A PSSM is a “matrix that involves information about the probability of amino acids or nucleotides occurrence in each position, which is derived from a multiple sequence alignment” \cite{Mohammadi:22}. These PSSMs provide an informative representation about the amino acids at positions within the protein sequences which will be helpful for our network to identify patterns and relationships within protein sequences. Furthermore, as PSSMs are also of shape [20, sequence length], the neural network models will be able to take both one-hot encoded vectors and PSSMs as input without any changes, allowing us to compare these different feature encoding methods.
+
+\section{Architectures}
+
+\section{Evaluation metrics}
+With our trained deep neural network, we will evaluate its predictions using similar approaches by the literature. As this is a binary classification task classifying amino acids as either ordered or disordered we can define our outcomes as: 
+
+\begin{itemize}    
+    \item True positive (TP): When the model correctly predicts that a disordered residue is disordered.
+    \item True negative (TN): When the model correctly predicts that an ordered residue is ordered.
+    \item False positive (FP): When the model incorrectly predicts that an ordered residue is disordered.
+    \item False negative (FN): When the model incorrectly predicts that a disordered residue is ordered. \cite{google_TP}
+\end{itemize}
+
+By computing these outcomes, we can evaluate the accuracy, precision, recall (sensitivity) and specificity of our model. These metrics are widely used in various machine learning tasks as standard performance measures \cite{BC:wiki}. We can also calculate the F1-score which is the harmonic mean of the precision and recall and is another useful measure of how accurate our model is. Furthermore, as our dataset has a bias of ordered labels, we will consider the Matthews correlation coefficient (MCC), which is a more reliable measure when dealing with an imbalanced or disproportionate dataset \cite{Chicco:20}.
+
+With these evaluation metrics we will be able to compare our approaches and architectures against each other. We can also compare our models to known current approaches [ref current approaches], using the CASP datasets which are used for benchmarking protein disorder prediction models \cite{casp}.
+
+\section{Django server}
+
+In addition to evaluating deep learning models, it is necessary to create a Django-based server that enables users to submit a protein sequence and obtain a comprehensible representation of the disordered regions of the protein. From the literature, papers proposing protein disorder prediction tools also often set up an online server so their tool can be used \cite{DISOPRED:server} \cite{Metapredict:server}. These protein prediction servers are important as they allow researchers to easily access these tools, allowing them to understand the structure and function of proteins which is useful for protein engineering \cite{prot_engineering:wiki} \cite{Engvist:19}. 
+
+A brief analysis of the server’s requirements follows following the MoSCoW prioritisation method \cite{moscow}: 
+\subsection{Functional requirements}
+
+\begin{itemize}    
+    \item Must have: The server will have a web interface, so it is easily accessible for use by researchers.
+    \item Must have: Users can submit a single protein sequence via a form.
+    \item Must have: The server can make a prediction on a protein sequence using a deep neural network. This model will be chosen from our evaluation.
+    \item Should have: The web interface will have a clear visualisation displaying the sequence to the user with clearly identified IDRs.
+    \item Could have: The web interface will have a graphical representation of the identified IDRs.
+    \item Will not have this time: The visualisation of the disordered sequence cannot be saved.
+    \item Will not have this time: The server will not allow multiple sequences to be inputted in a single form entry.
+\end{itemize}
+
+\subsection{Non-functional requirements of our server}
+
+\begin{itemize}    
+    \item Must have: The web interface will be intuitive and easy to use. Both when entering information in via the form and interpreting the outputted sequence with highlighted disordered regions.
+    \item Should have: The web application should be containerised to follow best practices and be easily portable.
+    \item Could have: The Django server could interact with an external database for efficient lookup of previously entered sequences and their representations.
+    \item Will not have this time: The web page will not be hosted and accessible via a searchable domain by the conclusion of the project.
+\end{itemize}
+
+
+\newpage
 What is the problem that you want to solve, and how did you arrive at it?
 \section{Guidance}
 Make it clear how you derived the constrained form of your problem via a clear and logical process. 
 
 %==================================================================================================================================
 \chapter{Design}
+\label{chap:design}
 How is this problem to be approached, without reference to specific implementation details? 
 \section{Guidance}
 Design should cover the abstract design in such a way that someone else might be able to do what you did, but with a different language or library or tool.
