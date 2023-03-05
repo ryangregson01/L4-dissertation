@@ -376,3 +376,19 @@
 
 ### 2 Mar 2023
 * *2 hours* Read through all of the dissertation so far, making corrections if necessary. Sent these first sections to Kevin.
+* *1 hour* Wrote a very rough bullet point list of what I want to include in my design and implementation sections of the dissertation.
+
+### 3 Mar 2023
+* *0.5 hours* Meeting with Kevin.
+* *0.5 hours* Wrote up minutes after meeting.
+* *1.5 hours* Wrote further detail for design section.
+* *2 hours* Moved PSSM translation to a 2D matrix and data leakage prevention from MMSeqs2 clustering results to my data processing Notebook. This will make easier to maintain code that all of the different neural network architectures will use.
+
+### 4 Mar 2023
+* *2 hours* Finished adding further detail to bullet points for design section (still bullet format).
+* *1 hour* Moved one-hot encoding of the sequences to the data processing Notebook. I think this will improve maintenance between Notebooks.
+* *1 hour* Updated 1D CNN Notebook dataset class. This makes use of pre-processed one-hot encoded vectors so that we do not need separate classes for one-hot representations and PSSM representations as the get item function was different using already created PSSMs.
+* *1 hour* Expanded on bullet points for implementation section.
+
+### 5 Mar 2023
+* *3 hours* Wrote up design sections for data pre-processing and training the neural networks.

@@ -81,7 +81,7 @@
   - Take results of models performance using different approaches.
   - Write up results and evaluation.
 * **Week 21**
-  - Completed first draft of dissertation.
+  - Completed first draft of dissertation (up to the end of implementation).
 * **Week 22**
   - Presentation preparation.
   - Redrafting dissertation.
