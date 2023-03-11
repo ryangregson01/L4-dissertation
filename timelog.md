@@ -392,3 +392,31 @@
 
 ### 5 Mar 2023
 * *3 hours* Wrote up design sections for data pre-processing and training the neural networks.
+* *0.5 hours* Combined PSSMs into one large file.
+
+## Week 21
+
+### 6 Mar 2023
+* *2 hours* Wrote up design sections for the evaluation, the web server and tools and technologies. Some parts still need refined.
+* *1 hour* Expanded on more bullet points for implementation section.
+
+### 7 Mar 2023
+* *1 hour* Finished bullet point expansions for implementation section.
+
+### 8 Mar 2023
+* *3.5 hours* Put together first full draft of design section.
+
+### 9 Mar 2023
+* *2 hours* Editing yesterdays first draft: sentence structure and filling in blanks.
+* *1.5 hours* Identifying which blanks I cannot fill in. Noting these as questions for tomorrows meeting.
+* *2.5 hours* Got all of the links for citations in design section. Built figures in dissertation design section.
+
+### 10 Mar 2023
+* *1 hour* Meeting with Kevin. Discussed design section of dissertation.
+* *1 hour* Wrote up minutes after meeting.
+* *0.5 hours* Filled in the blanks in the design section.
+* *4 hours* Moved dataset splitting to pre-processing notebook. This makes the notebooks with the models simpler. Edited the data class for these notebooks (only updated 1D FCN so far) to make it easier to get information about protein sequences in our separate datasets after they have been sorted post homology detection and sorting in dataset preprocessing. Also experimented with loss function, but reached no real result.
+* *2.5 hours* Filled the design section out in LaTeX and updated the BibTeX file.
+
+### 11 Mar 2023
+* *1.5 hours* Redrawed web server wireframes using Figma, so they could be included in the dissertation.

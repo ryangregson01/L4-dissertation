@@ -497,7 +497,7 @@
     title={MoSCoW Prioritisation},
     year={14},
     month={1},
-    url={https://www.agilebusiness.org/page/ProjectFramework_10_MoSCoWPrioritisation},
+    url={https://www.agilebusiness.org/page/ProjectFramework_10_MoSCoWPrioritisation}
 }
 
 @online{prot_Q8HYY9,
@@ -507,6 +507,243 @@
 }
 
 
+
+% Design %
+@online{Cook:22,
+  title={Data Leakage},
+  author={Cook, A.},
+  year={2022},
+  url={https://www.kaggle.com/code/alexisbcook/data-leakage}
+}
+
+@article{Zhang:2021,
+    title={Dive into Deep Learning},
+    author={Zhang, Aston and Lipton, Zachary C. and Li, Mu and Smola, Alexander J.},
+    journal={arXiv preprint arXiv:2106.11342},
+    year={2021},
+    url={https://github.com/d2l-ai/d2l-en}
+}
+
+@online{Keerthi:22,
+  title={Fantastic activation functions and when to use them},
+  author={Keerthi, Adiamaan},
+  year={2022},
+  url={https://towardsdatascience.com/fantastic-activation-functions-and-when-to-use-them-481fe2bb2bde}
+}
+
+@online{BerenLuthien:16,
+  title={What are the advantages of ReLU over sigmoid function in deep neural networks?},
+  author={BerenLuthien, Ancalagon.},
+  year={2016},
+  url={https://stats.stackexchange.com/questions/126238/what-are-the-advantages-of-relu-over-sigmoid-function-in-deep-neural-networks}
+}
+
+@online{Godoy:18,
+  title={Understanding binary cross-entropy / log loss: a visual explanation},
+  author={Godoy, Daniel.},
+  year={2018},
+  url={https://towardsdatascience.com/understanding-binary-cross-entropy-log-loss-a-visual-explanation-a3ac6025181a}
+}
+
+@article{Zhou:20,
+  author    = {Pan Zhou and
+               Jiashi Feng and
+               Chao Ma and
+               Caiming Xiong and
+               Steven C. H. Hoi and
+               Weinan E},
+  title     = {Towards Theoretically Understanding Why {SGD} Generalizes Better Than
+               {ADAM} in Deep Learning},
+  journal   = {CoRR},
+  volume    = {abs/2010.05627},
+  year      = {2020},
+  url       = {https://arxiv.org/abs/2010.05627},
+  eprinttype = {arXiv},
+  eprint    = {2010.05627},
+  timestamp = {Thu, 26 Nov 2020 16:35:26 +0100},
+  biburl    = {https://dblp.org/rec/journals/corr/abs-2010-05627.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+@online{Brownlee:19,
+  title={How to use Learning Curves to Diagnose Machine Learning Model Performance},
+  author={Brownlee, Jason.},
+  year={2019},
+  url={https://machinelearningmastery.com/learning-curves-for-diagnosing-machine-learning-model-performance/}
+}
+
+@online{Brownlee:17,
+  title={How to Train a Final Machine Learning Model},
+  author={Brownlee, Jason.},
+  year={2017},
+  url={https://machinelearningmastery.com/train-final-machine-learning-model/}
+}
+
+@article{Moult:14,
+    author = {Moult, John and Fidelis, Krzysztof and Kryshtafovych, Andriy and Schwede, Torsten and Tramontano, Anna},
+    title = {Critical assessment of methods of protein structure prediction (CASP) — round x},
+    journal = {Proteins: Structure, Function, and Bioinformatics},
+    volume = {82},
+    number = {S2},
+    pages = {1-6},
+    keywords = {CASP, community wide experiment, protein structure prediction},
+    doi = {https://doi.org/10.1002/prot.24452},
+    url = {https://onlinelibrary.wiley.com/doi/abs/10.1002/prot.24452},
+    eprint = {https://onlinelibrary.wiley.com/doi/pdf/10.1002/prot.24452},
+    abstract = {ABSTRACT This article is an introduction to the special issue of the journal PROTEINS, dedicated to the tenth Critical Assessment of Structure Prediction (CASP) experiment to assess the state of the art in protein structure modeling. The article describes the conduct of the experiment, the categories of prediction included, and outlines the evaluation and assessment procedures. The 10 CASP experiments span almost 20 years of progress in the field of protein structure modeling, and there have been enormous advances in methods and model accuracy in that period. Notable in this round is the first sustained improvement of models with refinement methods, using molecular dynamics. For the first time, we tested the ability of modeling methods to make use of sparse experimental three-dimensional contact information, such as may be obtained from new experimental techniques, with encouraging results. On the other hand, new contact prediction methods, though holding considerable promise, have yet to make an impact in CASP testing. The nature of CASP targets has been changing in recent CASPs, reflecting shifts in experimental structural biology, with more irregular structures, more multi-domain and multi-subunit structures, and less standard versions of known folds. When allowance is made for these factors, we continue to see steady progress in the overall accuracy of models, particularly resulting from improvement of non-template regions. Proteins 2014; 82(Suppl 2):1–6. © 2013 Wiley Periodicals, Inc.},
+    year = {2014}
+}
+
+@article{Walsh:11,
+    author = {Walsh, Ian and Martin, Alberto J. M. and Di Domenico, Tomàs and Tosatto, Silvio C. E.},
+    title = "{ESpritz: accurate and fast prediction of protein disorder}",
+    journal = {Bioinformatics},
+    volume = {28},
+    number = {4},
+    pages = {503-509},
+    year = {2011},
+    month = {12},
+    abstract = "{Motivation: Intrinsically disordered regions are key for the function of numerous proteins, and the scant available experimental annotations suggest the existence of different disorder flavors. While efficient predictions are required to annotate entire genomes, most existing methods require sequence profiles for disorder prediction, making them cumbersome for high-throughput applications.Results: In this work, we present an ensemble of protein disorder predictors called ESpritz. These are based on bidirectional recursive neural networks and trained on three different flavors of disorder, including a novel NMR flexibility predictor. ESpritz can produce fast and accurate sequence-only predictions, annotating entire genomes in the order of hours on a single processor core. Alternatively, a slower but slightly more accurate ESpritz variant using sequence profiles can be used for applications requiring maximum performance. Two levels of prediction confidence allow either to maximize reasonable disorder detection or to limit expected false positives to 5\%. ESpritz performs consistently well on the recent CASP9 data, reaching a Sw measure of 54.82 and area under the receiver operator curve of 0.856. The fast predictor is four orders of magnitude faster and remains better than most publicly available CASP9 methods, making it ideal for genomic scale predictions.Conclusions: ESpritz predicts three flavors of disorder at two distinct false positive rates, either with a fast or slower and slightly more accurate approach. Given its state-of-the-art performance, it can be especially useful for high-throughput applications.Availability: Both a web server for high-throughput analysis and a Linux executable version of ESpritz are available from: http://protein.bio.unipd.it/espritz/Contact:  silvio.tosatto@unipd.itSupplementary information:  Supplementary data are available at Bioinformatics online.}",
+    issn = {1367-4803},
+    doi = {10.1093/bioinformatics/btr682},
+    url = {https://doi.org/10.1093/bioinformatics/btr682},
+    eprint = {https://academic.oup.com/bioinformatics/article-pdf/28/4/503/48874766/bioinformatics\_28\_4\_503.pdf},
+}
+
+@Inbook{Bisong:19,
+author="Bisong, Ekaba",
+title="Google Colaboratory",
+bookTitle="Building Machine Learning and Deep Learning Models on Google Cloud Platform: A Comprehensive Guide for Beginners",
+year="2019",
+publisher="Apress",
+address="Berkeley, CA",
+pages="59--64",
+abstract="Google Colaboratory more commonly referred to as ``Google Colab'' or just simply ``Colab'' is a research project for prototyping machine learning models on powerful hardware options such as GPUs and TPUs. It provides a serverless Jupyter notebook environment for interactive development. Google Colab is free to use like other G Suite products.",
+isbn="978-1-4842-4470-8",
+doi="10.1007/978-1-4842-4470-8_7",
+url="https://doi.org/10.1007/978-1-4842-4470-8_7"
+}
+
+@article{Steinegger:17,
+	author = {Steinegger, Martin and S{\"o}ding, Johannes},
+	da = {2017/11/01},
+	doi = {10.1038/nbt.3988},
+	id = {Steinegger2017},
+	isbn = {1546-1696},
+	journal = {Nature Biotechnology},
+	number = {11},
+	pages = {1026--1028},
+	title = {MMseqs2 enables sensitive protein sequence searching for the analysis of massive data sets},
+	ty = {JOUR},
+	url = {https://doi.org/10.1038/nbt.3988},
+	volume = {35},
+	year = {2017},
+	Bdsk-Url-1 = {https://doi.org/10.1038/nbt.3988}
+ }
+
+@ARTICLE{Altschul:97,
+  title     = "Gapped {BLAST} and {PSI-BLAST}: a new generation of protein
+               database search programs",
+  author    = "Altschul, S F and Madden, T L and Sch{\"a}ffer, A A and Zhang, J
+               and Zhang, Z and Miller, W and Lipman, D J",
+  abstract  = "The BLAST programs are widely used tools for searching protein
+               and DNA databases for sequence similarities. For protein
+               comparisons, a variety of definitional, algorithmic and
+               statistical refinements described here permits the execution
+               time of the BLAST programs to be decreased substantially while
+               enhancing their sensitivity to weak similarities. A new
+               criterion for triggering the extension of word hits, combined
+               with a new heuristic for generating gapped alignments, yields a
+               gapped BLAST program that runs at approximately three times the
+               speed of the original. In addition, a method is introduced for
+               automatically combining statistically significant alignments
+               produced by BLAST into a position-specific score matrix, and
+               searching the database using this matrix. The resulting
+               Position-Specific Iterated BLAST (PSI-BLAST) program runs at
+               approximately the same speed per iteration as gapped BLAST, but
+               in many cases is much more sensitive to weak but biologically
+               relevant sequence similarities. PSI-BLAST is used to uncover
+               several new and interesting members of the BRCT superfamily.",
+  journal   = "Nucleic Acids Res.",
+  publisher = "Oxford University Press (OUP)",
+  volume    =  25,
+  number    =  17,
+  pages     = "3389--3402",
+  month     =  sep,
+  year      =  1997,
+  language  = "en"
+}
+
+
+@article{Remmert:12,
+	abstract = {HHblits is a protein sequence search tool that works by iterative pairwise comparison of profile hidden Markov models. It outperforms existing tools in terms of speed, sensitivity and alignment quality.},
+	author = {Remmert, Michael and Biegert, Andreas and Hauser, Andreas and S{\"o}ding, Johannes},
+	da = {2012/02/01},
+	date-added = {2023-03-10 21:04:49 +0000},
+	date-modified = {2023-03-10 21:05:10 +0000},
+	doi = {10.1038/nmeth.1818},
+	id = {Remmert2012},
+	isbn = {1548-7105},
+	journal = {Nature Methods},
+	number = {2},
+	pages = {173--175},
+	title = {HHblits: lightning-fast iterative protein sequence searching by HMM-HMM alignment},
+	ty = {JOUR},
+	url = {https://doi.org/10.1038/nmeth.1818},
+	volume = {9},
+	year = {2012},
+	Bdsk-Url-1 = {https://doi.org/10.1038/nmeth.1818}
+ }
+
+@article{Klausen:19,
+author = {Klausen, Michael Schantz and Jespersen, Martin Closter and Nielsen, Henrik and Jensen, Kamilla Kjærgaard and Jurtz, Vanessa Isabell and Sønderby, Casper Kaae and Sommer, Morten Otto Alexander and Winther, Ole and Nielsen, Morten and Petersen, Bent and Marcatili, Paolo},
+title = {NetSurfP-2.0: Improved prediction of protein structural features by integrated deep learning},
+journal = {Proteins: Structure, Function, and Bioinformatics},
+volume = {87},
+number = {6},
+pages = {520-527},
+keywords = {deep learning, disorder, local structure prediction, secondary structure, solvent accessibility},
+doi = {https://doi.org/10.1002/prot.25674},
+url = {https://onlinelibrary.wiley.com/doi/abs/10.1002/prot.25674},
+eprint = {https://onlinelibrary.wiley.com/doi/pdf/10.1002/prot.25674},
+abstract = {Abstract The ability to predict local structural features of a protein from the primary sequence is of paramount importance for unraveling its function in absence of experimental structural information. Two main factors affect the utility of potential prediction tools: their accuracy must enable extraction of reliable structural information on the proteins of interest, and their runtime must be low to keep pace with sequencing data being generated at a constantly increasing speed. Here, we present NetSurfP-2.0, a novel tool that can predict the most important local structural features with unprecedented accuracy and runtime. NetSurfP-2.0 is sequence-based and uses an architecture composed of convolutional and long short-term memory neural networks trained on solved protein structures. Using a single integrated model, NetSurfP-2.0 predicts solvent accessibility, secondary structure, structural disorder, and backbone dihedral angles for each residue of the input sequences. We assessed the accuracy of NetSurfP-2.0 on several independent test datasets and found it to consistently produce state-of-the-art predictions for each of its output features. We observe a correlation of 80\% between predictions and experimental data for solvent accessibility, and a precision of 85\% on secondary structure 3-class predictions. In addition to improved accuracy, the processing time has been optimized to allow predicting more than 1000 proteins in less than 2 hours, and complete proteomes in less than 1 day.},
+year = {2019}
+}
+
+@online{Django:05,
+  title={Django Project},
+  author={Django},
+  year={2005},
+  publisher={Django Software Foundation},
+  url={https://www.djangoproject.com/}
+}
+
+@article{Docker:14,
+  title={Docker: lightweight linux containers for consistent development and deployment},
+  author={Merkel, Dirk},
+  journal={Linux journal},
+  volume={2014},
+  number={239},
+  pages={2},
+  year={2014}
+}
+
+@article{Nginx:08,
+  title={Docker: lightweight linux containers for consistent development and deployment},
+  author={Reese, Will},
+  journal={Linux journal},
+  volume={2008},
+  number={173},
+  year={2008}
+}
+
+@online{gunicorn:wiki,
+  title={Gunicorn},
+  author={Wikipedia},
+  year={23},
+  month={1},
+  url={https://en.wikipedia.org/wiki/Gunicorn}
+}
 
 
 

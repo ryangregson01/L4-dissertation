@@ -11,7 +11,7 @@
 
 %==============================================================================
 %% METADATA
-\title{Level 4 Individual Project}
+\title{Creating a server for protein disorder prediction based on deep neural networks}
 \author{Ryan Gregson}
 \date{March, 2023}
 
@@ -171,7 +171,7 @@ The findings of these current approaches demonstrate that intrinsic disorder pre
 
 
 %==================================================================================================================================
-\chapter{Analysis/Requirements}
+\chapter{Analysis}
 
 \section{General deep learning problem}
 
@@ -209,6 +209,7 @@ Our other feature encoding approach is to generate a position-specific scoring m
 \section{Architectures}
 
 \section{Evaluation metrics}
+\label{chap:analysis sec:evaluation}
 With our trained deep neural network, we will evaluate its predictions using similar approaches to the literature. As this is a binary classification task classifying amino acids as either ordered or disordered we can define our outcomes as: 
 
 \begin{itemize}    
@@ -257,9 +258,221 @@ Make it clear how you derived the constrained form of your problem via a clear a
 %==================================================================================================================================
 \chapter{Design}
 \label{chap:design}
-How is this problem to be approached, without reference to specific implementation details? 
-\section{Guidance}
-Design should cover the abstract design in such a way that someone else might be able to do what you did, but with a different language or library or tool.
+
+\section{Data processing}
+
+We will need to build a data processing pipeline where we will gather specific information about each unique protein from the DisProt dataset, such as their full sequence and the location of all the disordered regions, so we can create our ground truth label. This ground truth label is vital for our supervised learning task. Given our DisProt dataset, we identify unique proteins using a UniProt accession identifier. Therefore, we should use this accession identifier as a key in hash map data structures. This will let us easily lookup the feature encoded sequence for our DNN's input and a sequence’s true disordered regions which let us create our label for evaluating our prediction. We build the label by creating a vector the size of the sequence, and from our looked up disordered regions of a given protein we will set the amino acids where intrinsic disorder occurs to 1 (as disorder is our positive class) and ordered amino acid positions will be set to 0. This vector will be used in our loss function which is discussed later \ref{sec:loss design}. 
+
+Processing is also required to encode these sequences before they are looked up. We have two different vectorised representations of these sequences: a one-hot encoded matrix and a PSSM. The one-hot encoded matrix is a dense matrix and is made using standard one-hot feature encoding. An example of the beginning of a one-hot encoded sequence is shown in Figure \ref{fig:feature encoding}. The PSSM can be generated with a bit more involved work using an alignment search tool first. This tool alongside a protein database can generate our PSSMs. This processing gives us information about the conservation of amino acids between similar sequences which conveys more information about the sequence than a one-hot representation. An example of a PSSM is shown in Figure \ref{fig:feature encoding}, and each PSSM can be parsed into a 2D data structure which creates the appropriate matrix format our deep neural network can use. A limitation of using PSSMs is that they can be much more computationally expensive to create than our one-hot encoding approach as they perform sequence alignment using a very large protein database such as UniProt \citep{uniprot:22}. For this reason, we have also implemented a one-hot encoding approach to see if generating PSSMs is worth the computational expense. 
+
+\subsection{Training, validation and testing data}
+
+Our final key processing step is to divide our dataset into a training, validation and test set before any learning takes place. We follow the common approach of using 20\% withheld data for the test set, and the rest will be used for training and validating the model. We will further separate this training and validation set by 75\% and 25\% respectively so that the overall split of training, validation and testing data is 60\%, 20\% and 20\% respectively. Random sampling (with a seed to ensure reproducible splitting) will be done to separate these sequences. However, as protein sequences can have a similar ancestor, this means they can be homologous and there may be data leakage between datasets. This means information from the test dataset can accidentally appear in our training dataset \citep{Cook:22}. To detect this data leakage, we will look for homologous sequences by employing a homology clustering search. We will avoid any data leakage by moving sequences between datasets if they are homologous, such that all datasets will not have homologous sequences between them. Despite movement of sequences, we still aim to have a division of approximately 60\%, 20\%, 20\% between our three datasets and will verify this before we perform further evaluation. 
+
+\begin{figure}
+    \centering
+    \begin{subfigure}[h]{0.45\textwidth}
+        \centering
+        \caption{One-hot encoding}
+        \label{fig:feat1}
+        \begin{tabular}{|c|cccccc|}
+        \hline
+          & M & A & S & R & E & ...\\ \hline
+        A & 0 & 1 & 0 & 0 & 0 & \\ 
+        C & 0 & 0 & 0 & 0 & 0 & \\ 
+        D & 0 & 0 & 0 & 0 & 0 & \\ 
+        E & 0 & 0 & 0 & 0 & 1 & \\ 
+        F & 0 & 0 & 0 & 0 & 0 & \\ 
+        G & 0 & 0 & 0 & 0 & 0 & \\ 
+        H & 0 & 0 & 0 & 0 & 0 & \\ 
+        I & 0 & 0 & 0 & 0 & 0 & \\ 
+        K & 0 & 0 & 0 & 0 & 0 & \\ 
+        L & 0 & 0 & 0 & 0 & 0 & ...\\ 
+        M & 1 & 0 & 0 & 0 & 0 & \\ 
+        N & 0 & 0 & 0 & 0 & 0 & \\ 
+        P & 0 & 0 & 0 & 0 & 0 & \\ 
+        Q & 0 & 0 & 0 & 0 & 0 & \\ 
+        R & 0 & 0 & 0 & 1 & 0 & \\ 
+        S & 0 & 0 & 1 & 0 & 0 & \\ 
+        T & 0 & 0 & 0 & 0 & 0 & \\ 
+        V & 0 & 0 & 0 & 0 & 0 & \\ 
+        W & 0 & 0 & 0 & 0 & 0 & \\ 
+        Y & 0 & 0 & 0 & 0 & 0 & \\ \hline
+        \end{tabular}
+    \end{subfigure}
+    \begin{subfigure}[h]{0.45\textwidth}
+        \centering
+        \caption{Position-specific scoring matrix}
+        \label{fig:feat2}
+        \begin{tabular}{|c|cccccc|}
+        \hline
+        & M & A & S & R & E & ...\\ \hline
+        A & $-2$ & $\phantom{-}4$ & $\phantom{-}0$ & $-2$ & $-1$ & \\
+        C & $\phantom{-}0$ & $\phantom{-}0$ & $\phantom{-}0$ & $-2$ & $-2$ & \\
+        D & $-3$ & $-2$ & $\phantom{-}0$ & $-1$ & $\phantom{-}0$ & \\
+        E & $-4$ & $-3$ & $-2$ & $-1$ & $\phantom{-}4$ & \\
+        F & $\phantom{-}1$ & $-1$ & $-1$ & $-2$ & $-2$ & \\
+        G & $-3$ & $\phantom{-}0$ & $-1$ & $-2$ & $-2$ & \\
+        H & $-2$ & $-2$ & $-2$ & $-1$ & $-1$ & \\
+        I & $\phantom{-}2$ & $\phantom{-}0$ & $-1$ & $-2$ & $-2$ & \\
+        K & $-2$ & $-2$ & $-1$ & $\phantom{-}0$ & $\phantom{-}0$ & \\
+        L & $\phantom{-}3$ & $\phantom{-}0$ & $-1$ & $-1$ & $-2$ & ... \\
+        M & $\phantom{-}7$ & $-1$ & $-1$ & $-1$ & $-2$ & \\
+        N & $-3$ & $-2$ & $\phantom{-}0$ & $-1$ & $-1$ & \\
+        P & $-3$ & $-1$ & $-1$ & $-2$ & $-2$ & \\
+        Q & $-2$ & $-2$ & $-2$ & $\phantom{-}2$ & $\phantom{-}0$ & \\
+        R & $-3$ & $-4$ & $-3$ & $\phantom{-}3$ & $-2$ & \\
+        S & $-3$ & $\phantom{-}0$ & $\phantom{-}4$ & $-2$ & $\phantom{-}0$ & \\
+        T & $-1$ & $-1$ & $\phantom{-}0$ & $-2$ & $-1$ & \\
+        V & $\phantom{-}1$ & $\phantom{-}0$ & $-1$ & $-2$ & $-1$ & \\
+        W & $\phantom{-}0$ & $-1$ & $-1$ & $-1$ & $-2$ & \\
+        Y & $\phantom{-}0$ & $-1$ & $-1$ & $-1$ & $-1$ & \\ \hline
+        \end{tabular}
+    \end{subfigure}
+    \caption{Two possible ways of encoding our protein sequences. \subref{fig:feat1} shows a one-hot encoding approach, where 1.0 identifies the amino acid at each sequence position. \subref{fig:feat2} shows the PSSM, where larger positive values are given to amino acids that are expected to appear at each position of the sequence. This protein is Human adenovirus C serotype 5 (HAdV-5) (Human adenovirus 5), the first protein sequence in the DisProt dataset, and we show the first five amino acids from this sequence.
+    }\label{fig:feature encoding}
+\end{figure}
+
+\section{Our neural networks and how we train them}
+
+\subsection{Model input}
+
+Our first the step in training a DNN is giving the model input. The input to our models will be our feature encoded sequence (either a one-hot or position-specific scoring matrix), which will have shape $20\times sequence length$. We will only give a model one protein sequence to evaluate at each forward pass as we know that sequence lengths differ between proteins; therefore, we cannot batch multiple sequences together. Batching multiple sequences would create an unexpected, irregular shape, which neural network layers cannot handle. Thus, we use a batch size of one as input to our DNN models.
+
+\subsection{CNNs}
+
+Our CNNs must actually be fully convolutional neural networks (FCNs) because our protein sequences have different lengths, therefore we cannot use a fully connected layer as it expects a fixed size tensor \citep{fcn_seg}. So, we will only use convolution layers which create feature maps for our model to identify information about the protein sequence and used for the disorder classification task. These layers must also reshape our input to a $1\times sequence length$ length tensor for our loss function.
+
+There are two different convolutional neural networks we can design: one that treats our protein sequence as a black and white image and uses 2D convolutions, or one that treats each row in the encoded matrix (different amino acids) as a different feature representation of the input sequence and uses 1D convolutions over these separate feature input channels. 
+
+Usually, a 2D convolutional neural network is applied to images, therefore given our $20\times sequence length$, the height of the proposed image is the number of possible amino acids, and the width of the image is determined by the sequence. Our input to a 2D convolutional neural network must follow the [batch size, height, width, channels] constraint, therefore our input will be a tensor of shape [1, 20, sequence length, 1] due to batching of size 1 and treating the colour channel as black and white. 
+
+As discussed earlier, we want our convolution kernel to behave like a sliding window, therefore it must overlay the entire height of the image to take in a full context window of amino acid information. Capturing the entire height involves using a kernel of size 20, however we cannot appropriately pad the width of the sequence with this kernel shape such that the same width is returned after convolving with a kernel of this shape. The width cannot be changed as it is necessary to compare each amino acid disorder classification against its true label. Therefore, we will use a non-square convolution kernel so that the width of our kernel is an odd value and appropriate padding can be included. 
+
+After the first convolution layer, layers after this will be dependent on the feature map created by this first layer and further layers. The number of feature channels produced by this first convolution layer can be experimented with and we have chosen to use ten hidden channels. After further convolution layers we want our final feature map output to take shape $1\times sequence length$ so our predictions can be compared against the true label. 
+
+Our other fully convolutional network uses 1D convolutions. Usually, a 1D convolutional neural network is applied to sequences and accepts an input of $1\times sequence length$ shape. For our neural network, we will treat each amino acid feature representation as a separate input channel, giving us 20 channels, each with shape $1\times sequence length$. The input to the model must follow the [batch size, width, input channels] constraint, therefore our input will be a tensor of shape [1, sequence length, 20]. This 1D convolution kernel also behaves like a sliding window, and a kernel will produce one output feature map which represents all the amino acid input channels. This ensures all amino acid information is captured for a context window at each position along the sequence. Furthermore, an odd numbered kernel must be chosen so that appropriate padding can be included to the width of our sequence similarly to the 2D CNN. Like the 2D CNN, all further convolution layers can be changed within the network as long as the final layer produces a $1\times sequence length$ feature map as its output for comparison with our ground truth labels.
+
+\subsection{RNN}
+
+Our RNNs will use the long short-term memory (LSTM) architecture. These LSTMs combat the vanilla RNN’s vanishing gradient problem, and they can identify long-term dependencies which we know is useful from our literature analysis. Usually, LSTMs are applied to sequential data, and they expect a batch size, a series of timesteps and a number of feature channels. These features are represented the in same way as our 1D CNN initial feature channels; where each amino acid row from our vectorised protein sequence is used to represent the sequence as a separate feature vector. We can also treat each amino acid in the sequence as a timestep. Lastly, as using batching requires our sequences to be the same length, which we do not have, we will continue to batch with a single sequence in each batch instead of padding our sequences. Therefore, our input to the LSTM model will be a tensor of shape [1, sequence length, 20]. 
+
+We also need to initialise our hidden state for our LSTMs. These will be initialised with all zeros every forward pass, so they are reset each sequence. It is common practice to set the hidden state to an all zero tensor with a shape considering the batch size and the number of hidden dimensions we want. In our model we will choose to have 10 hidden dimensions. 
+
+Finally, our LSTM will be a bidirectional LSTM (BLSTM). This performs better than a traditional LSTM and can capture long-term dependencies about the IDPs using information from the start and end of these sequences. With information flowing in both directions, we can capture more contextual information about each amino acid. Furthermore, a protein sequence does not have a flow of information like a time series, and the start (N-terminus) and end (C-terminus) of a sequence is chosen arbitrarily, meaning this protein could be written in the opposite direction. Thus, it is useful to assess each sequence from both directions. A limitation of implementing a bidirectional network is that it will be much slower to compute because forward propagation requires both forward and backward recursions, which creates a long dependency chain and affects our gradient calculation using backpropagation \citep{Zhang:2021}.  
+
+Like our other networks, our LSTM will use a final linear layer to reduce our feature map down to a single feature (the disorder classification), so that a $1\times sequence length$ output is returned for the rest of our training loop to handle.
+
+\subsection{Activation functions}
+
+Between each layer in our neural networks, we use the rectified linear unit activation function (ReLU) as it is “the most widely used and a goto activation function for most types of problem,” \citep{Keerthi:22}. This is because ReLU can be more computationally efficient than other activation functions, and using ReLU in networks tends to give a better convergence performance \citep{BerenLuthien:16}. After our final layer, we employ the sigmoid activation function because this gives us a value in the range [0, 1]. We can treat this value as a probability as it shows how likely that this position in the sequence is a disordered amino acid. This value alongside a threshold of 0.5 will be used to identify the predicted IDRs.
+
+\section{Discussion about loss function and optimisation}
+\label{sec:loss design}
+To allow our deep neural network to learn and update its neurons weights we must use an optimisation method and an appropriate cost function. We know our problem is a binary classification task from our analysis of the problem; therefore, we can use binary cross-entropy (also known as log loss) as our loss function \ref{fig:bceloss} \citep{Godoy:18}.  
+
+With these two possible outcomes we are treating a disordered amino acid as the positive class and an ordered amino acid as the negative class. From analysing our DisProt dataset, we see that our two classes are imbalanced: there are a lot more ordered amino acids within these intrinsically disordered proteins, specifically there are approximately five ordered amino acids for every disordered amino acid. One way of handling this imbalanced dataset is using a weighted loss function. For this, we calculate the number of ordered and disordered amino acids in our training dataset. Then, we can calculate a weight multiplier to be used to give the disordered amino acids loss more weighting. By scaling the loss of predictions about the amino acids we will emphasise predictions that should take a disordered label which will help the model better identify this disproportionate class because the model will be penalized more heavily for misclassifying disorder. 
+
+This binary cross-entropy loss function is useful for gradient-based optimisation algorithms because it is easy to compute and is sensitive to small changes in the predicted probabilities. We plan to use stochastic gradient descent (SGD), which is a popular machine learning optimisation algorithm. We will also experiment using the Adam optimiser, however as this optimisation method usually works well with large datasets and SGD is known to generalise better than Adam \citep{Zhou:20}, I believe SGD will be a better optimisation method and produce a better model. 
+
+\begin{figure}[h]
+    \centering
+    \begin{equation}
+    \ell(y, \hat{y}) = -\frac{1}{N} \sum_{i=1}^{N} w_i [ y_i \log(\hat{y}_i) + (1-y_i)\log(1-\hat{y}_i)]
+    \end{equation}
+    \caption{Binary Cross-Entropy (Log Loss) Function. This equation represents the loss function used in binary classification tasks. For our task, $y$ is the true label of order or disorder, $\hat{y}$ is the predicted probability (i.e., the output of the sigmoid function), and $N$ is the number of amino acids in the sequence. The function measures the difference between the predicted and true labels. The weight vector $w$, is used to penalise the model more when it is more certain about incorrect predictions of the disordered class. Having an all ones vector for $w$ is default when no weights are specified.}
+    \label{fig:bceloss}
+\end{figure}
+
+\section{The design of our evaluation experiments}
+
+During the training of our model, we will evaluate the performance of the optimisation task. We can use the total loss of our training set and validation set predictions to ensure our model is learning at a sufficient rate and is generalisable on withheld data. Using the validation dataset as our first withheld dataset, we can optimise hyperparameters, such as the learning rate and regularisation weights to make sure our validation loss decreases along with our training loss. Furthermore, we will plot loss curves to make it visually clear our model is generalisable to our validation dataset \citep{Brownlee:19}. With a generalisable model we are more likely to achieve correct classifications on future unseen data. 
+
+After tuning the important hyperparameters for our different model configurations we will retrain our model using the 80\% of the DisProt dataset allocated to training data (this includes our training and validation datasets). Using the other 20\% of the DisProt dataset withheld for testing, we will evaluate our models using the evaluation metrics discussed in our analysis \ref{chap:analysis sec:evaluation}. Discussion about these metrics and the equations for these standard machine learning evaluation measures are given below. 
+
+\begin{equation*}
+Accuracy = \frac{TP + TN}{TP + TN + FP + FN} ,
+\end{equation*}
+where TP (true positives) is the number of correctly classified disordered amino acid instances, TN (true negatives) is the number of correctly classified ordered amino acids instances, FP (false positives) is the number of incorrectly classified disordered amino acids instances, and FN (false negatives) is the number of incorrectly classified ordered amino acids instances.
+
+\begin{equation*}
+Precision = \frac{TP}{TP + FP} ,
+\end{equation*}
+Precision measures the proportion of true positive predictions among all positive predictions.
+
+\begin{equation*}
+Recall = \frac{TP}{TP + FN} ,
+\end{equation*}
+Recall measures the proportion of true positive predictions among all actual positive instances.
+
+\begin{equation*}
+Specificity = \frac{TN}{TN + FP} ,
+\end{equation*}
+Specificity measures the proportion of true negative predictions among all actual negative instances.
+
+\begin{equation*}
+F1\ score = \frac{2 \times Precision \times Recall}{Precision + Recall} ,
+\end{equation*}
+F1 score is the harmonic mean of precision and recall and provides a balanced measure of both metrics.
+
+\begin{equation*}
+MCC = \frac{TP \times TN - FP \times FN}{\sqrt{(TP + FP)(TP + FN)(TN + FP)(TN + FN)}}
+\end{equation*}
+MCC measures the correlation between predicted and actual binary classifications, taking into account all four confusion matrix elements. It ranges from -1 to 1, with 1 indicating a perfect correlation, 0 indicating no correlation, and -1 indicating a perfect negative correlation.
+
+\subsection{Evaluating on different datasets}
+After our full evaluation is complete, we will finally train our model using all (100\%) of our data from the DisProt database as the separate datasets have served their purpose in helping us find the best model. Training with this extra data means that our model should have at least the performance accuracies as it did in our evaluation, and this is a best practice before deploying a machine learning model \citep{Brownlee:17}. After this step, our trained model is ready to be deployed on our web server and can be assessed using other unseen datasets. 
+
+Furthermore, we will use the CASP10 dataset to evaluate our model. This dataset contains 94 protein sequences \citep{Moult:14} and has been used to assess many protein disorder classifiers. Details of other protein disorder prediction methods performances can be found in other papers; therefore, we can compare our findings against other approaches and architectures. 
+
+\section{The web server}
+
+\subsection{User interface}
+
+The user interface was designed to be similar to other protein disorder prediction websites. All websites used an input form, stated what input was valid and displayed the output to the user in a timely manner for single sequences. From checking popular protein prediction web servers, I felt the most user-friendly websites included an example of what sequence input was valid, therefore I made this a consideration when building the website. 
+
+We have two pages on our web server: the input form and the displayed disorder prediction.
+
+\subsubsection{The input form web page.}
+
+This page was made to be intuitive, with the main functionality is letting the user input a sequence. The input to this form can only be a valid protein sequence or FASTA file, which is explained on the web page. We have also included links to PDB, UniProt and DisProt to assist users in finding protein sequences. The wireframe for this page is shown in Figure \ref{fig:wireframe1}.
+
+\subsubsection{The disorder prediction web page.}
+
+This page displays the IDR predictions. We have used a sequence-based visualisation, which demonstrates which amino acids are disordered and where the disordered regions are. Other web servers such as ESpritz \citep{Walsh:11} have also used a sequence display, but this website is older and uses a ‘D’ or ‘O’ label next to the amino acid instead of a coloured label. We believe that the coloured approach is more effective at representing the disordered regions and has also been adopted by web servers that have been maintained and updated recently like PSIPRED \citep{DISOPRED:server}. The wireframe of this page is shown in Figure \ref{fig:wireframe2}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{dissertation/images/Index - form input.pdf}
+    
+    \caption{The home page of our web server. This wireframe shows that users can navigate to external protein database websites, and enter their protein sequence in FASTA format to our input form.}
+    
+    \label{fig:wireframe1} 
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{dissertation/images/Index - disorder prediction.pdf}
+    
+    \caption{The disorder prediction web page. This wireframe demonstrates how our deep learning models classification of disordered regions will be displayed after a protein sequence has been submitted.}
+    
+    \label{fig:wireframe2} 
+\end{figure}
+
+\section{Tools and technologies}
+
+The tools and technologies we used for our deep learning models and web server are mostly different, however the trained deep neural network model must be easily accessible on the web server. Using PyTorch for the deep learning and Django for the web server will allow us to integrate our trained PyTorch model into our web application easily using Python for consistency.
+
+\subsection{Deep learning}
+
+To create our different deep neural network architectures, we will use the PyTorch framework \citep{pytorch}. PyTorch lets us construct our models using their neural network library. Using Python also allows us to carry out our pre-processing and evaluation steps with different libraries that help us make efficient computations along with appealing and informative visualisations about the performance of our prediction task. Using Python also lets us utilise Google colab’s notebooks \citep{Bisong:19}, where we can use a GPU for decreased training times and include markdown throughout our notebook, which helps with the understanding of our code.
+
+An external tool is required to generate the encoded features for our model's PSSM input. We have chosen to use MMSeqs2 (Many-against-Many sequence searching) \citep{Steinegger:17}. MMSeqs2 can perform multiple sequence alignment searches much faster than PSI-BLAST \citep{Altschul:97} and HHblits \citep{Remmert:12} which are other software suites used for PSSM generation. Despite HHblits giving slightly more accurate alignments, this task is much more computationally efficient with MMSeqs2, which still generates accurate alignments. Recent papers, such as NetSurfP-2.0 \citep{Klausen:19} have used MMSeqs2 to generate their PSSMs for large sequences due to MMSeqs2 being less resource intensive than HHblits and found little differences in the models' performance trained using PSSMs generated by the different suites.
+
+\subsection{Web server}
+
+To create our web server, we will use the Django web framework \citep{Django:05}. Web pages will be built using standard web technologies (HTML, CSS and JavaScript). In Django’s backend we will have the views which can process requests and manipulate the data as needed. If we save our trained neural network as a static file, then the views can load our model so that the web application can make use of it. Furthermore, this should be straightforward to do as Django is a Python web framework, PyTorch can be easily imported and loaded amongst the web application logic. 
+Finally, we have used Docker \citep{Docker:14} along with Nginx \citep{Nginx:08} and Gunicorn \citep{gunicorn:wiki}, so that our web server can be containerised and is portable which is one of our initial requirements. 
 
 %==================================================================================================================================
 \chapter{Implementation}
