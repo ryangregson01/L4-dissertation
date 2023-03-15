@@ -420,3 +420,20 @@
 
 ### 11 Mar 2023
 * *1.5 hours* Redrawed web server wireframes using Figma, so they could be included in the dissertation.
+* *1.5 hours* Fixed bugs with data files.
+* *2.5 hours* Went through RayTune and set it up to do with my current training functions.
+* *1 hour* Tidied up web server. Updated one hot encoding methods in views helper, and made better data cleaner for Django form.
+
+### 12 Mar 2023
+* *2 hours* Trying to add stronger regularisation to 1D CNN model which was overfitting quickly.
+* *2 hours* Restarting RayTune so that it runs. Getting the best parameters. Saving these.
+
+### 13 Mar 2023
+* *6 hours* Wrote up implementation section in more detail. (Regularly restarting RayTune, letting it run due to computational time/needing to be active so that Colab does not timeout).
+
+### 14 Mar 2023
+* *4.5 hours* Continued to write implementation section. Put it into LaTeX format (citations, refernces). Worked out best method to draw DNN diagrams.
+
+### 15 Mar 2023
+* *2 hours* Drew diagrams and created tables in LaTeX.
+* *2 hours* Finished implementation section / finished running RayTune. RayTune has been run with every model, however, further manual parameters may need to be selected due to losing GPU priviledge and losing access to our runtime with the LSTM model.

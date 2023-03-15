@@ -3,8 +3,8 @@ h1 {
 }
 
 .resizeForm {
-    width: 175px;
-    height: 30px;
+    width: 50%;
+    height: 25%;
 }
 
 /* Overflow class wraps long strings */

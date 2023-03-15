@@ -6,14 +6,16 @@
 {% endblock %}
 
 {% block body_block %}
-<h1>Project Django Server</h1>
+<h1>Protein Disorder Prediction - Individual Project</h1>
 <div id="intro">
-    <p>Server for protein disorder prediction using a deep neural network.</p><br>
+    <br>
+    <p>This server uses deep learning methods to examine the intrinsic disorder in a protein sequences.</p>
+    <p>Protein sequences can be found from the following websites: <a href="https://www.rcsb.org/">Protein Data Bank</a> and <a href="https://www.uniprot.org/">UniProt</a>.</p><br><br>
 </div>
 
 {% if form %}
 <div id="form">
-    <p>Protein sequence: </p>
+    <p>Please enter your protein sequence in FASTA format: </p>
     <form id="seq_form" method="post">
         {% csrf_token %}
         {% for hidden in form.hidden_fields %}
@@ -31,9 +33,10 @@
 
 <div id="returnedSeq">
     {% if input_seq %}
-    <a href="{% url 'index' %}"><p>Return to home page</p></a>
+    <p>To enter another sequence: <a href="{% url 'index' %}">return to home page</a></p>
+    <br>
 
-    <h4>Tabled disorder label: </h4>
+    <h4>Positions in the sequence that have been identified as being disordered are coloured red, ordered residues are green.</h4>
 
     <script>
         labelled_table("{{ input_seq }}", "{{ generated_label }}")

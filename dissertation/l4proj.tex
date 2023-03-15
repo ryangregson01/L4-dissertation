@@ -5,6 +5,7 @@
     
 %
 % put any additional packages here
+\usepackage{multirow}
 %
 
 \begin{document}
@@ -250,10 +251,6 @@ A brief analysis of the server’s requirements follows following the MoSCoW pri
 \end{itemize}
 
 
-\newpage
-What is the problem that you want to solve, and how did you arrive at it?
-\section{Guidance}
-Make it clear how you derived the constrained form of your problem via a clear and logical process. 
 
 %==================================================================================================================================
 \chapter{Design}
@@ -266,10 +263,11 @@ We will need to build a data processing pipeline where we will gather specific i
 Processing is also required to encode these sequences before they are looked up. We have two different vectorised representations of these sequences: a one-hot encoded matrix and a PSSM. The one-hot encoded matrix is a dense matrix and is made using standard one-hot feature encoding. An example of the beginning of a one-hot encoded sequence is shown in Figure \ref{fig:feature encoding}. The PSSM can be generated with a bit more involved work using an alignment search tool first. This tool alongside a protein database can generate our PSSMs. This processing gives us information about the conservation of amino acids between similar sequences which conveys more information about the sequence than a one-hot representation. An example of a PSSM is shown in Figure \ref{fig:feature encoding}, and each PSSM can be parsed into a 2D data structure which creates the appropriate matrix format our deep neural network can use. A limitation of using PSSMs is that they can be much more computationally expensive to create than our one-hot encoding approach as they perform sequence alignment using a very large protein database such as UniProt \citep{uniprot:22}. For this reason, we have also implemented a one-hot encoding approach to see if generating PSSMs is worth the computational expense. 
 
 \subsection{Training, validation and testing data}
+\label{chap:design section:datasets}
 
 Our final key processing step is to divide our dataset into a training, validation and test set before any learning takes place. We follow the common approach of using 20\% withheld data for the test set, and the rest will be used for training and validating the model. We will further separate this training and validation set by 75\% and 25\% respectively so that the overall split of training, validation and testing data is 60\%, 20\% and 20\% respectively. Random sampling (with a seed to ensure reproducible splitting) will be done to separate these sequences. However, as protein sequences can have a similar ancestor, this means they can be homologous and there may be data leakage between datasets. This means information from the test dataset can accidentally appear in our training dataset \citep{Cook:22}. To detect this data leakage, we will look for homologous sequences by employing a homology clustering search. We will avoid any data leakage by moving sequences between datasets if they are homologous, such that all datasets will not have homologous sequences between them. Despite movement of sequences, we still aim to have a division of approximately 60\%, 20\%, 20\% between our three datasets and will verify this before we perform further evaluation. 
 
-\begin{figure}
+\begin{figure}[!ht]
     \centering
     \begin{subfigure}[h]{0.45\textwidth}
         \centering
@@ -340,36 +338,42 @@ Our final key processing step is to divide our dataset into a training, validati
 Our first the step in training a DNN is giving the model input. The input to our models will be our feature encoded sequence (either a one-hot or position-specific scoring matrix), which will have shape $20\times sequence length$. We will only give a model one protein sequence to evaluate at each forward pass as we know that sequence lengths differ between proteins; therefore, we cannot batch multiple sequences together. Batching multiple sequences would create an unexpected, irregular shape, which neural network layers cannot handle. Thus, we use a batch size of one as input to our DNN models.
 
 \subsection{CNNs}
+\label{chap:design section:cnn}
 
 Our CNNs must actually be fully convolutional neural networks (FCNs) because our protein sequences have different lengths, therefore we cannot use a fully connected layer as it expects a fixed size tensor \citep{fcn_seg}. So, we will only use convolution layers which create feature maps for our model to identify information about the protein sequence and used for the disorder classification task. These layers must also reshape our input to a $1\times sequence length$ length tensor for our loss function.
 
 There are two different convolutional neural networks we can design: one that treats our protein sequence as a black and white image and uses 2D convolutions, or one that treats each row in the encoded matrix (different amino acids) as a different feature representation of the input sequence and uses 1D convolutions over these separate feature input channels. 
 
-Usually, a 2D convolutional neural network is applied to images, therefore given our $20\times sequence length$, the height of the proposed image is the number of possible amino acids, and the width of the image is determined by the sequence. Our input to a 2D convolutional neural network must follow the [batch size, height, width, channels] constraint, therefore our input will be a tensor of shape [1, 20, sequence length, 1] due to batching of size 1 and treating the colour channel as black and white. 
+\subsection*{Using 2D Convolutions}
+
+Usually, a 2D convolutional kernel is applied to images, therefore given our $20\times sequence length$, the height of the proposed image is the number of possible amino acids, and the width of the image is determined by the sequence. Our input to a CNN using 2D convolutions must follow the [batch size, height, width, channels] constraint, therefore our input will be a tensor of shape [1, 20, sequence length, 1] due to batching of size 1 and treating the colour channel as black and white. 
 
 As discussed earlier, we want our convolution kernel to behave like a sliding window, therefore it must overlay the entire height of the image to take in a full context window of amino acid information. Capturing the entire height involves using a kernel of size 20, however we cannot appropriately pad the width of the sequence with this kernel shape such that the same width is returned after convolving with a kernel of this shape. The width cannot be changed as it is necessary to compare each amino acid disorder classification against its true label. Therefore, we will use a non-square convolution kernel so that the width of our kernel is an odd value and appropriate padding can be included. 
 
 After the first convolution layer, layers after this will be dependent on the feature map created by this first layer and further layers. The number of feature channels produced by this first convolution layer can be experimented with and we have chosen to use ten hidden channels. After further convolution layers we want our final feature map output to take shape $1\times sequence length$ so our predictions can be compared against the true label. 
 
-Our other fully convolutional network uses 1D convolutions. Usually, a 1D convolutional neural network is applied to sequences and accepts an input of $1\times sequence length$ shape. For our neural network, we will treat each amino acid feature representation as a separate input channel, giving us 20 channels, each with shape $1\times sequence length$. The input to the model must follow the [batch size, width, input channels] constraint, therefore our input will be a tensor of shape [1, sequence length, 20]. This 1D convolution kernel also behaves like a sliding window, and a kernel will produce one output feature map which represents all the amino acid input channels. This ensures all amino acid information is captured for a context window at each position along the sequence. Furthermore, an odd numbered kernel must be chosen so that appropriate padding can be included to the width of our sequence similarly to the 2D CNN. Like the 2D CNN, all further convolution layers can be changed within the network as long as the final layer produces a $1\times sequence length$ feature map as its output for comparison with our ground truth labels.
+\subsection*{Using 1D Convolutions}
+
+Our other fully convolutional network uses 1D convolutions. Usually, a 1D convolution kernel is applied to sequences and accepts an input of $1\times sequence length$ shape. For our neural network, we will treat each amino acid feature representation as a separate input channel, giving us 20 channels, each with shape $1\times sequence length$. The input to the model must follow the [batch size, width, input channels] constraint, therefore our input will be a tensor of shape [1, sequence length, 20]. This 1D convolution kernel also behaves like a sliding window, and a kernel will produce one output feature map which represents all the amino acid input channels. This ensures all amino acid information is captured for a context window at each position along the sequence. Furthermore, an odd numbered kernel must be chosen so that appropriate padding can be included to the width of our sequence similarly to the 2D CNN. Like the 2D CNN, all further convolution layers can be changed within the network as long as the final layer produces a $1\times sequence length$ feature map as its output for comparison with our ground truth labels.
 
 \subsection{RNN}
+\label{chap:design section:rnn}
 
 Our RNNs will use the long short-term memory (LSTM) architecture. These LSTMs combat the vanilla RNN’s vanishing gradient problem, and they can identify long-term dependencies which we know is useful from our literature analysis. Usually, LSTMs are applied to sequential data, and they expect a batch size, a series of timesteps and a number of feature channels. These features are represented the in same way as our 1D CNN initial feature channels; where each amino acid row from our vectorised protein sequence is used to represent the sequence as a separate feature vector. We can also treat each amino acid in the sequence as a timestep. Lastly, as using batching requires our sequences to be the same length, which we do not have, we will continue to batch with a single sequence in each batch instead of padding our sequences. Therefore, our input to the LSTM model will be a tensor of shape [1, sequence length, 20]. 
 
-We also need to initialise our hidden state for our LSTMs. These will be initialised with all zeros every forward pass, so they are reset each sequence. It is common practice to set the hidden state to an all zero tensor with a shape considering the batch size and the number of hidden dimensions we want. In our model we will choose to have 10 hidden dimensions. 
+We also need to initialise our hidden state for our LSTMs. These will be initialised with all zeros every forward pass, so they are reset each sequence. It is common practice to set the hidden state to an all zero tensor with a shape considering the batch size and the number of hidden dimensions we want. In our model we will choose to have 32 hidden dimensions. 
 
 Finally, our LSTM will be a bidirectional LSTM (BLSTM). This performs better than a traditional LSTM and can capture long-term dependencies about the IDPs using information from the start and end of these sequences. With information flowing in both directions, we can capture more contextual information about each amino acid. Furthermore, a protein sequence does not have a flow of information like a time series, and the start (N-terminus) and end (C-terminus) of a sequence is chosen arbitrarily, meaning this protein could be written in the opposite direction. Thus, it is useful to assess each sequence from both directions. A limitation of implementing a bidirectional network is that it will be much slower to compute because forward propagation requires both forward and backward recursions, which creates a long dependency chain and affects our gradient calculation using backpropagation \citep{Zhang:2021}.  
 
 Like our other networks, our LSTM will use a final linear layer to reduce our feature map down to a single feature (the disorder classification), so that a $1\times sequence length$ output is returned for the rest of our training loop to handle.
 
 \subsection{Activation functions}
-
+\label{chap:design section:activations}
 Between each layer in our neural networks, we use the rectified linear unit activation function (ReLU) as it is “the most widely used and a goto activation function for most types of problem,” \citep{Keerthi:22}. This is because ReLU can be more computationally efficient than other activation functions, and using ReLU in networks tends to give a better convergence performance \citep{BerenLuthien:16}. After our final layer, we employ the sigmoid activation function because this gives us a value in the range [0, 1]. We can treat this value as a probability as it shows how likely that this position in the sequence is a disordered amino acid. This value alongside a threshold of 0.5 will be used to identify the predicted IDRs.
 
 \section{Discussion about loss function and optimisation}
 \label{sec:loss design}
-To allow our deep neural network to learn and update its neurons weights we must use an optimisation method and an appropriate cost function. We know our problem is a binary classification task from our analysis of the problem; therefore, we can use binary cross-entropy (also known as log loss) as our loss function \ref{fig:bceloss} \citep{Godoy:18}.  
+To allow our deep neural network to learn and update its neurons weights we must use an optimisation method and an appropriate cost function. We know our problem is a binary classification task from our analysis of the problem; therefore, we can use binary cross-entropy (also known as log loss) as our loss function \citep{Godoy:18}, shown in Figure \ref{fig:bceloss}.  
 
 With these two possible outcomes we are treating a disordered amino acid as the positive class and an ordered amino acid as the negative class. From analysing our DisProt dataset, we see that our two classes are imbalanced: there are a lot more ordered amino acids within these intrinsically disordered proteins, specifically there are approximately five ordered amino acids for every disordered amino acid. One way of handling this imbalanced dataset is using a weighted loss function. For this, we calculate the number of ordered and disordered amino acids in our training dataset. Then, we can calculate a weight multiplier to be used to give the disordered amino acids loss more weighting. By scaling the loss of predictions about the amino acids we will emphasise predictions that should take a disordered label which will help the model better identify this disproportionate class because the model will be penalized more heavily for misclassifying disorder. 
 
@@ -398,27 +402,27 @@ where TP (true positives) is the number of correctly classified disordered amino
 \begin{equation*}
 Precision = \frac{TP}{TP + FP} ,
 \end{equation*}
-Precision measures the proportion of true positive predictions among all positive predictions.
+Precision measures the proportion of amino acids classified as disordered among all disorder predictions.
 
 \begin{equation*}
 Recall = \frac{TP}{TP + FN} ,
 \end{equation*}
-Recall measures the proportion of true positive predictions among all actual positive instances.
+Recall measures how many disordered amino acids are actually detected among all actual disordered amino acids.
 
 \begin{equation*}
 Specificity = \frac{TN}{TN + FP} ,
 \end{equation*}
-Specificity measures the proportion of true negative predictions among all actual negative instances.
+Specificity measures the proportion of amino acids classified as ordered among all order prediction instances.
 
 \begin{equation*}
 F1\ score = \frac{2 \times Precision \times Recall}{Precision + Recall} ,
 \end{equation*}
-F1 score is the harmonic mean of precision and recall and provides a balanced measure of both metrics.
+F1 score is the harmonic mean of precision and recall and this provides a balanced measure of both these metrics.
 
 \begin{equation*}
 MCC = \frac{TP \times TN - FP \times FN}{\sqrt{(TP + FP)(TP + FN)(TN + FP)(TN + FN)}}
 \end{equation*}
-MCC measures the correlation between predicted and actual binary classifications, taking into account all four confusion matrix elements. It ranges from -1 to 1, with 1 indicating a perfect correlation, 0 indicating no correlation, and -1 indicating a perfect negative correlation.
+MCC considers all four confusion matrix elements. It ranges from -1 to 1, with 1 indicating a perfect correlation, 0 indicating no correlation, and -1 indicating a perfect negative correlation.
 
 \subsection{Evaluating on different datasets}
 After our full evaluation is complete, we will finally train our model using all (100\%) of our data from the DisProt database as the separate datasets have served their purpose in helping us find the best model. Training with this extra data means that our model should have at least the performance accuracies as it did in our evaluation, and this is a best practice before deploying a machine learning model \citep{Brownlee:17}. After this step, our trained model is ready to be deployed on our web server and can be assessed using other unseen datasets. 
@@ -437,11 +441,7 @@ We have two pages on our web server: the input form and the displayed disorder p
 
 This page was made to be intuitive, with the main functionality is letting the user input a sequence. The input to this form can only be a valid protein sequence or FASTA file, which is explained on the web page. We have also included links to PDB, UniProt and DisProt to assist users in finding protein sequences. The wireframe for this page is shown in Figure \ref{fig:wireframe1}.
 
-\subsubsection{The disorder prediction web page.}
-
-This page displays the IDR predictions. We have used a sequence-based visualisation, which demonstrates which amino acids are disordered and where the disordered regions are. Other web servers such as ESpritz \citep{Walsh:11} have also used a sequence display, but this website is older and uses a ‘D’ or ‘O’ label next to the amino acid instead of a coloured label. We believe that the coloured approach is more effective at representing the disordered regions and has also been adopted by web servers that have been maintained and updated recently like PSIPRED \citep{DISOPRED:server}. The wireframe of this page is shown in Figure \ref{fig:wireframe2}.
-
-\begin{figure}
+\begin{figure}[!ht]
     \centering
     \includegraphics[width=\linewidth]{dissertation/images/Index - form input.pdf}
     
@@ -450,7 +450,11 @@ This page displays the IDR predictions. We have used a sequence-based visualisat
     \label{fig:wireframe1} 
 \end{figure}
 
-\begin{figure}
+\subsubsection{The disorder prediction web page.}
+
+This page displays the IDR predictions. We have used a sequence-based visualisation, which demonstrates which amino acids are disordered and where the disordered regions are. Other web servers such as ESpritz \citep{Walsh:11} have also used a sequence display, but this website is older and uses a ‘D’ or ‘O’ label next to the amino acid instead of a coloured label. We believe that the coloured approach is more effective at representing the disordered regions and has also been adopted by web servers that have been maintained and updated recently like PSIPRED \citep{DISOPRED:server}. The wireframe of this page is shown in Figure \ref{fig:wireframe2}.
+
+\begin{figure}[!ht]
     \centering
     \includegraphics[width=\linewidth]{dissertation/images/Index - disorder prediction.pdf}
     
@@ -476,196 +480,132 @@ Finally, we have used Docker \citep{Docker:14} along with Nginx \citep{Nginx:08}
 
 %==================================================================================================================================
 \chapter{Implementation}
-What did you do to implement this idea, and what technical achievements did you make?
-\section{Guidance}
-You can't talk about everything. Cover the high level first, then cover important, relevant or impressive details.
+
+\section{Data processing}
+
+\subsection{The IDPs}
+
+Our data processing started with getting annotated disordered proteins and their disordered regions from DisProt \citep{disprot}. We used the DisProt dataset that was released in June 2022 (release 2022\_06) and kept the default settings that gave individual rows for each disordered region in a sequence, included ambiguous sequences and excluded obsolete sequences. We downloaded the TSV format of this file because it works particularly well with pandas \citep{Mckinney:10}, which we used at the start of our data processing stage. We stuck with this dataset throughout the entire project to maintain consistency in our experiments. To download this dataset, DisProt’s RESTful API search feature \citep{disprot} was used. We customised the request to match the terms given for the default settings on the main website and downloaded this file to our data folder. These terms can be modified, so that the most up to date dataset can be downloaded, processed and used to train and evaluate our models in the future.
+
+DisProt only contained information about disordered regions, such as the start and end of these disordered regions, but not the consensus of all disordered regions for a given protein sequence or the full sequence itself. However, DisProt uses the UniProt accession identifier to identify proteins. Therefore, we grouped all disordered regions for a single identifier together, so they could be looked up to build a ground truth label. We also used these unique identifiers to make requests using UniProt’s REST API \citep{uniprot:22}, where we retrieve a sequence in FASTA format. We take the substring of the FASTA file, so that we just have the sequence. During these pre-processing stages we found that some protein sequences have been deprecated from UniProt (as it is updated more regularly than DisProt). To ensure extensibility of this processing stage we remove proteins from our DisProt dataset if the UniProt REST API identifies them as deprecated. This did not have an impact on the size of the dataset; we removed three protein sequences. Furthermore, we also remove sequences that are returned by UniProt with ambiguous amino acids. This is because these amino acids were not recognised in the list of twenty known amino acids and our vectorisation feature encoding cannot handle these unknown characters. This also has no effect to our dataset; we removed a further seven protein sequences.
+
+Overall, this first processing stage of the IDP data from DisProt has produced two important data structures we needed: a map to all of our disordered protein sequences, and a map to all of our disordered regions for each protein. These are both connected via an accession identifier.
 
 
 
-\section{General points}
-
-These points apply to the whole dissertation, not just this chapter.
 
 
+\subsection{Feature encoding}
 
-\subsection{Figures}
-\emph{Always} refer to figures included, like Figure \ref{fig:relu}, in the body of the text. Include full, explanatory captions and make sure the figures look good on the page.
-You may include multiple figures in one float, as in Figure \ref{fig:synthetic}, using \texttt{subcaption}, which is enabled in the template.
+The next data processing step is performing feature encoding steps, so that a deep neural network can use protein sequences as input. With the one-hot encoding approach: for each sequence, if the amino acid at a position is present, then that amino acid row is given a 1 at that position, and all other amino acids are given a 0 at that position. This was done in Python, where we manipulated all zero NumPy arrays, and updated the amino acid at this position with 1 using a look up dictionary that let us access the feature vector representing that amino acid. Finally, all of these feature vectors were combined to create the full one-hot encoded matrix. For our PSSM approach: we first used the MMSeqs2 software suite \citep{Steinegger:17}, then cleaned the generated PSSMs so they are numerical tensors. Using MMSeqs2 required a protein database, so we used the UniProtKB, which is assembled of both UniProtKB/Swiss-Prot and UniProtKB/TrEMBL \citep{uniprot:22}. A FASTA file of all of the protein sequences was required, so we created this using the UniProt REST API. We did not modify our sequence string and wrote the full FASTA to an external file. This ensured PSSMs would only be generated for the sequences we had validated. Finally, we performed the multiple sequence alignments (MSAs) on these sequences with the downloaded database. All of these sequences were in the same FASTA file, meaning MMSeq2’s powerful scalability could be utilised. From the MSAs we can generate our PSSMs using the MMSeq2’s tools. Finally, these are converted to a 2D tensor using Python’s string splitting functionality. For both of our feature encodings, we pair the numerical representation of the sequence with its accession identifier. This lets us quickly access our feature encoded sequences.
+
+\subsection{Separating datasets}
+
+For our training, validation and testing datasets we randomly sampled sequences using a seed so that this experiment can be repeated. As our design discussed our datasets (Section \ref{chap:design section:datasets}), we cannot have sequences homologous to each other in different datasets. To find these homologous sequences we used MMSeqs2 clustering functionality \citep{Steinegger:17}. We already have our training, validation and testing dataset splits; therefore, each sequence was tagged with the dataset it was in. By examining these sequences using similarity clustering between sequences, we can identify which sequences are homologous to each other. We found there was 286 sequences that have homologies with sequences from other datasets, therefore our datasets were not independent. To establish independence and ensure sequences that are related to each other were not overlapping different datasets, we moved these flagged sequences from their dataset to the dataset the similar, homologous sequence is in. An example of this is shown in Table \ref{tab:MMSeqs clustering}. This removed the issue of leaking data. From these separated accession identifiers, three lists were created for the train, validation and test set. Using these lists of accession identifiers, we could get the sequences, ground truth labels and encoded features for any of our datasets as the unique accession identifiers are the key element to looking up all these pre-processed items.
+
+\begin{table}[!ht]
+    \centering
+    \caption{This table shows protein sequences assessed with MMSeqs2 clustering, the sequences detected as homologies, and where the assessed protein sequences were moved to create independent datasets. Sequences have been identified using their UniProt accession identifier and have the dataset they were randomly sampled to prepended to this. For example, Abscisic acid receptor PYL9 (Q84MC7) was in the test dataset, is similar to Abscisic acid receptor PYL1 (Q84MC7) which is in the train dataset, therefore we move these so that they are both in the same train dataset.}
+    \begin{tabular}{|c|c|c|}
+        \hline
+        Sequence & Homology detected from clustering & Moved sequence \\ \hline
+        TEST\_Q84MC7 & TRAIN\_Q8VZS8 & TRAIN\_Q84MC7 \\ \hline
+        VAL\_Q63716 & TRAIN\_O08807 & TRAIN\_Q63716 \\ \hline
+        TEST\_Q13162 & TRAIN\_O08807 & TRAIN\_Q13162 \\ \hline
+        VAL\_Q03692 & TEST\_Q00780 & TEST\_Q03692 \\ \hline
+        TRAIN\_B7T1D9 & TEST\_B7T1D7 & TEST\_B7T1D9 \\ \hline
+    \end{tabular}  
+
+    \label{tab:MMSeqs clustering} 
+\end{table}
 
 
+\section{Deep learning architectures}
+\label{chap:implementation sec:architectures}
 
-% Figures are important. Use them well.
+We have implemented our deep neural networks in PyTorch \citep{pytorch}. The PyTorch neural network library (torch.nn) provides building blocks to add different architecture layers and activation functions.
+
+\subsection{CNNs}
+
+As discussed in our design (Section \ref{chap:design section:cnn}), our CNNs are fully convolutional networks (FCNs), therefore they have no final fully connected layer. One CNN uses multiple 2D convolution kernels and its network architecture is described in Figure \ref{fig:2DCNN}. We have chosen to use a $20\times 21$ shape for our first convolution kernel as we want to reduce the height of our tensor to 1 as discussed in our design about CNNs (Section \ref{chap:design section:cnn}), and we also found 21 as a reasonable width for good performance. The next layers use $1\times 21$ convolution kernels. Furthermore, there is no increase to the channels as this caused the model to not be able to generalise with unseen data. After each convolution kernel the ReLU activation function is employed, until the final layer where the sigmoid activation function is used as discussed in our design of activation functions (Section \ref{chap:design section:activations}). However, we implemented BCEWithLogitsLoss as our loss function instead of BCELoss meaning that we exclude this final sigmoid activation function in the implemented model. This is because this sigmoid layer is computed within the loss function, offering more numerical stability than the sigmoid activation function followed by BCELoss. This numerical stability is because of the log-sum-exp trick \citep{Gundersen:20}. Furthermore, this means that any output from this and other models must have the sigmoid function manually applied, so we can assess our predictions.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.75\linewidth]{images/2DCNNdraw.pdf}    
+
+    \caption{A schematic representation of the first CNN. This neural network applies three convolutions to our vectorised protein sequence. These layers use two-dimensional convolution kernels. The first two layers use the ReLU activation function. Our final feature map is given to a sigmoid activation function to return disorder predictions.}
+
+    \label{fig:2DCNN} 
+\end{figure}
+
+Our other CNN uses multiple 1D convolution kernels and its network architecture is described in Figure \ref{fig:2DCNN}. We used a convolution kernel of size 21, like the width of our 2D convolution kernels. We found using 10 channels as our hidden dimension helped the model to learn and keeping this channel size as 1, like our 2D CNN, did not work. This model uses the same activation functions as our above model and the BCEWithLogitsLoss loss function. Finally, for this model, we employed dropout because it was overfitting and this regularisation that was added during training helped reduce the overfitting.
+
 \begin{figure}
     \centering
-    \includegraphics[width=0.5\linewidth]{images/relu.pdf}    
+    \includegraphics[width=0.95\linewidth]{images/1DCNNdraw.pdf}    
 
-    \caption{In figure captions, explain what the reader is looking at: ``A schematic of the rectifying linear unit, where $a$ is the output amplitude,
-    $d$ is a configurable dead-zone, and $Z_j$ is the input signal'', as well as why the reader is looking at this: 
-    ``It is notable that there is no activation \emph{at all} below 0, which explains our initial results.'' 
-    \textbf{Use vector image formats (.pdf) where possible}. Size figures appropriately, and do not make them over-large or too small to read.
-    }
+    \caption{A schematic representation of the second CNN. This neural network applies five convolutions to our vectorised protein sequence. These layers use one-dimensional convolution kernels. Network layers use the ReLU activation function, until the final layer where sigmoid is applied. Dropout is used at the end of the network to add regularisation to more complex feature maps.}
 
-    % use the notation fig:name to cross reference a figure
-    \label{fig:relu} 
+    \label{fig:2DCNN} 
 \end{figure}
 
 
-\begin{figure}
+\subsection{RNN}
+
+Our long short-term memory recurrent neural network (LSTM) is bidirectional, and its network architecture is described in Figure \ref{fig:RNN}. We have set batch first as true, meaning that the input shape to our LSTM layer would be [batch size, sequence length, input features]. Our data loader used by the other models returns our sequences as [batch size, input features, sequence length], therefore this input is transposed to fit the required input shape. We did this using PyTorch’s einsum functionality. The hidden states are important in the LSTM, and these are initialised to zero as this is the common approach when initialising the LSTM hidden states. From PyTorch documentation on LSTMs, using all zeros is also the default if no hidden state is created \citep{pytorch}. Furthermore, the hidden state is initialised every new forward pass, therefore it is re-initialised every sequence. This means our hidden state is used to capture dependencies of each sequence separately. Finally, our LSTM is bidirectional, therefore it processes the sequence in both directions: from the beginning to the end and from the end to the beginning, as discussed in our design of RNNs (Section \ref{chap:design section:rnn}).
+
+\begin{figure}[!ht]
     \centering
-    \begin{subfigure}[b]{0.45\textwidth}
-        \includegraphics[width=\textwidth]{images/synthetic.png}
-        \caption{Synthetic image, black on white.}
-        \label{fig:syn1}
-    \end{subfigure}
-    ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
-      %(or a blank line to force the subfigure onto a new line)
-    \begin{subfigure}[b]{0.45\textwidth}
-        \includegraphics[width=\textwidth]{images/synthetic_2.png}
-        \caption{Synthetic image, white on black.}
-        \label{fig:syn2}
-    \end{subfigure}
-    ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
-    %(or a blank line to force the subfigure onto a new line)    
-    \caption{Synthetic test images for edge detection algorithms. \subref{fig:syn1} shows various gray levels that require an adaptive algorithm. \subref{fig:syn2}
-    shows more challenging edge detection tests that have crossing lines. Fusing these into full segments typically requires algorithms like the Hough transform.
-    This is an example of using subfigures, with \texttt{subref}s in the caption.
-    }\label{fig:synthetic}
+    \includegraphics[width=0.95\linewidth]{images/RNNdraw.pdf}    
+
+    \caption{A schematic representation of the LSTM. This neural network applies two stacked bidirectional LSTM layers followed by two fully connected layers to our vectorised protein sequence. These LSTM layers use 32 hidden dimensions, meaning that the LSTM maintains 32 hidden states at once. As our LSTM is bidirectional, it will maintain 64 states at once, hence the first fully connected layer takes in 64 input dimensions. Our final feature map is again given to a sigmoid activation function to return disorder predictions.}
+
+    \label{fig:RNN} 
 \end{figure}
 
-\clearpage
+\section{Training the network}
 
-\subsection{Equations}
+All of the models were trained using a training loop, which was run for many epochs. Throughout training, calculations are made more efficient using the CUDA GPU \citep{Nickolls:08}, which can be run on Google Colaboratory and lowered training times. To utilise CUDA within the training loop we first moved our tensors to this GPU device. Then, our PyTorch training loop is as expected: first evaluating the models' predictions through our BCEWithLogitsLoss loss function, setting our current gradient to zero, using backpropagation through time to calculate a gradient, then making a step with our optimiser from the gradient calculation. Furthermore, as we were using a batch size of one, we experimented with gradient accumulation, which imitates having a larger batch size \citep{Bhattacharyya:20}. This feature did not give improvements to our learning task, so we removed it. The optimiser we used for training was SGD and this was seen to work well with a standard momentum of 0.9, low learning rates and low weight decay values as discussed in our hyperparameter tuning section \ref{chap:implementation section:hyperparameters}.
 
-Equations should be typeset correctly and precisely. Make sure you get parenthesis sizing correct, and punctuate equations correctly 
-(the comma is important and goes \textit{inside} the equation block). Explain any symbols used clearly if not defined earlier. 
+\section{Hyperparameter optimisation}
+\label{chap:implementation section:hyperparameters}
+Many options for the depth of these neural networks, the size of neural network layer parameters and optimisers were experimented on; using the validation dataset to find trained models with a good fit to unseen data. From this manual inspection, we found that most models responded well to low learning rates and low weight decay. The architectures resulting final architectures are discussed in Section \ref{chap:implementation sec:architectures}. RayTune \cite{Liaw:18}, the a scalable hyperparameter tuning framework, was used to further tune our hyperparameters, given a sensible range of values for the learning rate and regularisation term. We optimised these parameters for the SGD optimiser. Due to computational costs, we only considered 10 parameter combinations for every model. Table \ref{tab:hyperparameters} demonstrates what parameters RayTune selected as they performed best on the validation dataset and were used to train our final models used in our evaluation (Section \ref{chap:evaluation}).
 
-For example, we might define:
-\begin{equation}
-    \hat{f}(\xi) = \frac{1}{2}\left[ \int_{-\infty}^{\infty} f(x) e^{2\pi i x \xi} \right],
-\end{equation}    
-where $\hat{f}(\xi)$ is the Fourier transform of the time domain signal $f(x)$.
-
-\subsection{Algorithms}
-Algorithms can be set using \texttt{algorithm2e}, as in Algorithm \ref{alg:metropolis}.
-
-% NOTE: line ends are denoted by \; in algorithm2e
-\begin{algorithm}
-    \DontPrintSemicolon
-    \KwData{$f_X(x)$, a probability density function returing the density at $x$.\; $\sigma$ a standard deviation specifying the spread of the proposal distribution.\;
-    $x_0$, an initial starting condition.}
-    \KwResult{$s=[x_1, x_2, \dots, x_n]$, $n$ samples approximately drawn from a distribution with PDF $f_X(x)$.}
-    \Begin{
-        $s \longleftarrow []$\;
-        $p \longleftarrow f_X(x)$\;
-        $i \longleftarrow 0$\;
-        \While{$i < n$}
-        {
-            $x^\prime \longleftarrow \mathcal{N}(x, \sigma^2)$\;
-            $p^\prime \longleftarrow f_X(x^\prime)$\;
-            $a \longleftarrow \frac{p^\prime}{p}$\;
-            $r \longleftarrow U(0,1)$\;
-            \If{$r<a$}
-            {
-                $x \longleftarrow x^\prime$\;
-                $p \longleftarrow f_X(x)$\;
-                $i \longleftarrow i+1$\;
-                append $x$ to $s$\;
-            }
-        }
-    }
+\begin{table}[!ht]
+    \centering
+    \caption{This table shows the optimal learning rate and weight decay parameters to be used with the SGD optimisation method given different models. Low learning rates and a variety of weight decays were chosen as the optimal parameters.}
     
-\caption{The Metropolis-Hastings MCMC algorithm for drawing samples from arbitrary probability distributions, 
-specialised for normal proposal distributions $q(x^\prime|x) = \mathcal{N}(x, \sigma^2)$. The symmetry of the normal distribution means the acceptance rule takes the simplified form.}\label{alg:metropolis}
-\end{algorithm}
-
-\subsection{Tables}
-
-If you need to include tables, like Table \ref{tab:operators}, use a tool like https://www.tablesgenerator.com/ to generate the table as it is
-extremely tedious otherwise. 
-
-\begin{table}[]
-    \caption{The standard table of operators in Python, along with their functional equivalents from the \texttt{operator} package. Note that table
-    captions go above the table, not below. Do not add additional rules/lines to tables. }\label{tab:operators}
-    %\tt 
-    \rowcolors{2}{}{gray!3}
-    \begin{tabular}{@{}lll@{}}
-    %\toprule
-    \textbf{Operation}    & \textbf{Syntax}                & \textbf{Function}                            \\ %\midrule % optional rule for header
-    Addition              & \texttt{a + b}                          & \texttt{add(a, b)}                                    \\
-    Concatenation         & \texttt{seq1 + seq2}                    & \texttt{concat(seq1, seq2)}                           \\
-    Containment Test      & \texttt{obj in seq}                     & \texttt{contains(seq, obj)}                           \\
-    Division              & \texttt{a / b}                          & \texttt{div(a, b) }  \\
-    Division              & \texttt{a / b}                          & \texttt{truediv(a, b) } \\
-    Division              & \texttt{a // b}                         & \texttt{floordiv(a, b)}                               \\
-    Bitwise And           & \texttt{a \& b}                         & \texttt{and\_(a, b)}                                  \\
-    Bitwise Exclusive Or  & \texttt{a \textasciicircum b}           & \texttt{xor(a, b)}                                    \\
-    Bitwise Inversion     & \texttt{$\sim$a}                        & \texttt{invert(a)}                                    \\
-    Bitwise Or            & \texttt{a | b}                          & \texttt{or\_(a, b)}                                   \\
-    Exponentiation        & \texttt{a ** b}                         & \texttt{pow(a, b)}                                    \\
-    Identity              & \texttt{a is b}                         & \texttt{is\_(a, b)}                                   \\
-    Identity              & \texttt{a is not b}                     & \texttt{is\_not(a, b)}                                \\
-    Indexed Assignment    & \texttt{obj{[}k{]} = v}                 & \texttt{setitem(obj, k, v)}                           \\
-    Indexed Deletion      & \texttt{del obj{[}k{]}}                 & \texttt{delitem(obj, k)}                              \\
-    Indexing              & \texttt{obj{[}k{]}}                     & \texttt{getitem(obj, k)}                              \\
-    Left Shift            & \texttt{a \textless{}\textless b}       & \texttt{lshift(a, b)}                                 \\
-    Modulo                & \texttt{a \% b}                         & \texttt{mod(a, b)}                                    \\
-    Multiplication        & \texttt{a * b}                          & \texttt{mul(a, b)}                                    \\
-    Negation (Arithmetic) & \texttt{- a}                            & \texttt{neg(a)}                                       \\
-    Negation (Logical)    & \texttt{not a}                          & \texttt{not\_(a)}                                     \\
-    Positive              & \texttt{+ a}                            & \texttt{pos(a)}                                       \\
-    Right Shift           & \texttt{a \textgreater{}\textgreater b} & \texttt{rshift(a, b)}                                 \\
-    Sequence Repetition   & \texttt{seq * i}                        & \texttt{repeat(seq, i)}                               \\
-    Slice Assignment      & \texttt{seq{[}i:j{]} = values}          & \texttt{setitem(seq, slice(i, j), values)}            \\
-    Slice Deletion        & \texttt{del seq{[}i:j{]}}               & \texttt{delitem(seq, slice(i, j))}                    \\
-    Slicing               & \texttt{seq{[}i:j{]}}                   & \texttt{getitem(seq, slice(i, j))}                    \\
-    String Formatting     & \texttt{s \% obj}                       & \texttt{mod(s, obj)}                                  \\
-    Subtraction           & \texttt{a - b}                          & \texttt{sub(a, b)}                                    \\
-    Truth Test            & \texttt{obj}                            & \texttt{truth(obj)}                                   \\
-    Ordering              & \texttt{a \textless b}                  & \texttt{lt(a, b)}                                     \\
-    Ordering              & \texttt{a \textless{}= b}               & \texttt{le(a, b)}                                     \\
-    % \bottomrule
+    \begin{tabular}{|c|ccc|}
+    \hline
+    Model & \multicolumn{1}{c|}{Feature input} & \multicolumn{1}{c|}{Learning rate} & \multicolumn{1}{c|}{Weight decay (regularisation)} \\ \hline
+    \multirow{2}{*}{CNN (2D)} & One-hot & 0.0005 & 0.01 \\ \cline{2-4} 
+     & PSSM & 0.0005 & 0.005 \\ \hline
+    \multirow{2}{*}{CNN (1D)} & One-hot & 0.0005 & 0.001 \\ \cline{2-4} 
+     & PSSM & 0.001 & 0.005 \\ \hline
+    \multirow{2}{*}{RNN (LSTM)} & One-hot & 0.001 & 0.001 \\ \cline{2-4} 
+     & PSSM & 0.001 & 0.0025 \\ \hline
     \end{tabular}
-    \end{table}
-\subsection{Code}
 
-Avoid putting large blocks of code in the report (more than a page in one block, for example). Use syntax highlighting if possible, as in Listing \ref{lst:callahan}.
+    \label{tab:hyperparameters} 
+\end{table}
 
-\begin{lstlisting}[language=python, float, caption={The algorithm for packing the $3\times 3$ outer-totalistic binary CA successor rule into a 
-    $16\times 16\times 16\times 16$ 4 bit lookup table, running an equivalent, notionally 16-state $2\times 2$ CA.}, label=lst:callahan]
-    def create_callahan_table(rule="b3s23"):
-        """Generate the lookup table for the cells."""        
-        s_table = np.zeros((16, 16, 16, 16), dtype=np.uint8)
-        birth, survive = parse_rule(rule)
 
-        # generate all 16 bit strings
-        for iv in range(65536):
-            bv = [(iv >> z) & 1 for z in range(16)]
-            a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p = bv
+\section{Django server}
+We have also implemented a small web application to make our solution accessible. This web server has two web pages. These visually follow the wireframes, and this user interface aims to be user-friendly. For our first page, we use a Django form which when submitted sends a POST request where the Django views conducts the classification of the disordered regions in the protein sequence. This form validates that the inputted sequence is a FASTA file and that every amino acid code is one of the 20 recognised amino acids. If these constraints are not satisfied, the classification will not continue as our solution cannot handle invalid amino acids. As we used Python throughout our deep learning evaluation, we have used code from our notebooks in a helper file to generate our features and make a prediction using our best performing model.
 
-            # compute next state of the inner 2x2
-            nw = apply_rule(f, a, b, c, e, g, i, j, k)
-            ne = apply_rule(g, b, c, d, f, h, j, k, l)
-            sw = apply_rule(j, e, f, g, i, k, m, n, o)
-            se = apply_rule(k, f, g, h, j, l, n, o, p)
+Our other page is the sequence visualisation indicating the IDRs using colour: where red implies disorder and green implies order. The purpose of these colours is described as well to improve usability. We implemented the visualisation using a JavaScript function that creates a fake table so that the sequence characters are equally spaced, making the visualisation is pleasant. Furthermore, this table has 60 columns, therefore 60 characters long, because this is how many amino acid characters there are before the newline character in a FASTA file. This was done to maintain consistency with how protein sequences are read.
 
-            # compute the index of this 4x4
-            nw_code = a | (b << 1) | (e << 2) | (f << 3)
-            ne_code = c | (d << 1) | (g << 2) | (h << 3)
-            sw_code = i | (j << 1) | (m << 2) | (n << 3)
-            se_code = k | (l << 1) | (o << 2) | (p << 3)
+\subsection{Containerising the web application}
 
-            # compute the state for the 2x2
-            next_code = nw | (ne << 1) | (sw << 2) | (se << 3)
+We containerised this web application by setting up a simple Docker, Nginx and Gunicorn configuration. Using this container provides a consistent environment for the application to run, which can help to avoid compatibility issues and is important for ensuring we have access to a suitable version of packages that work with PyTorch for example. Using containers means that a future external database could have a separate container, which promotes security and scalability. Using Nginx and Gunicorn will help a deployed web application handle multiple requests. Overall, this set-up can be used and further maintained to change scalability, performance and security of the web server.
 
-            # get the 4x4 index, and write into the table
-            s_table[nw_code, ne_code, sw_code, se_code] = next_code
 
-        return s_table
 
-\end{lstlisting}
 
 %==================================================================================================================================
-\chapter{Evaluation} 
+\chapter{Evaluation}
+\label{chap:evaluation}
+
 How good is your solution? How well did you solve the general problem, and what evidence do you have to support that?
 
 \section{Guidance}

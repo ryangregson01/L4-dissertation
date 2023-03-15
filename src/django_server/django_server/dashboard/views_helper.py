@@ -1,4 +1,5 @@
 import pickle
+import json
 import os
 import torch 
 import numpy as np
@@ -6,65 +7,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-def make_empty_image(seq_len):
-  img = np.array([np.zeros(seq_len),
-         np.zeros(seq_len),
-         np.zeros(seq_len),
-         np.zeros(seq_len),
-         np.zeros(seq_len),
-         np.zeros(seq_len),
-         np.zeros(seq_len),
-         np.zeros(seq_len),
-         np.zeros(seq_len),
-         np.zeros(seq_len),
-         np.zeros(seq_len),
-         np.zeros(seq_len),
-         np.zeros(seq_len),
-         np.zeros(seq_len),
-         np.zeros(seq_len),
-         np.zeros(seq_len),
-         np.zeros(seq_len),
-         np.zeros(seq_len),
-         np.zeros(seq_len),
-         np.zeros(seq_len)])
-  return img
-
-def make_image(seq):
-    img_map = {
-      'A' : 0,
-      'C' : 1,
-      'D' : 2,
-      'E' : 3,
-      'F' : 4,
-      'G' : 5,
-      'H' : 6,
-      'I' : 7,
-      'K' : 8,
-      'L' : 9,
-      'M' : 10,
-      'N' : 11,
-      'P' : 12,
-      'Q' : 13,
-      'R' : 14,
-      'S' : 15,
-      'T' : 16,
-      'V' : 17,
-      'W' : 18,
-      'Y' : 19
-    }
-
-    # Makes 20 empty channels
-    channeled_img = make_empty_image(len(seq))
-    for i, char in enumerate(seq):
-        # Updates array
-        main_index = img_map.get(char)
-        channeled_img[main_index][i] = 1.0
-
-    channeled_img = torch.tensor(channeled_img)
-    channeled_img = channeled_img.type(torch.FloatTensor)
-    return channeled_img
-
-def model_class():
+def get_model():
     class FCN_Net(nn.Module):
         def __init__(self):
             super().__init__()
@@ -86,3 +29,42 @@ def model_class():
     loaded_model = FCN_Net()
     loaded_model.load_state_dict(torch.load(model_path))
     return loaded_model
+
+def make_empty_channels(seq):
+  seq_channels = {
+    'A' : np.zeros(len(seq)),
+    'C' : np.zeros(len(seq)),
+    'D' : np.zeros(len(seq)),
+    'E' : np.zeros(len(seq)),
+    'F' : np.zeros(len(seq)),
+    'G' : np.zeros(len(seq)),
+    'H' : np.zeros(len(seq)),
+    'I' : np.zeros(len(seq)),
+    'K' : np.zeros(len(seq)),
+    'L' : np.zeros(len(seq)),
+    'M' : np.zeros(len(seq)),
+    'N' : np.zeros(len(seq)),
+    'P' : np.zeros(len(seq)),
+    'Q' : np.zeros(len(seq)),
+    'R' : np.zeros(len(seq)),
+    'S' : np.zeros(len(seq)),
+    'T' : np.zeros(len(seq)),
+    'V' : np.zeros(len(seq)),
+    'W' : np.zeros(len(seq)),
+    'Y' : np.zeros(len(seq))
+  }
+  return seq_channels
+
+def make_channels(seq):
+  channeled_seq = make_empty_channels(seq)
+  for i, char in enumerate(seq):
+    channeled_seq.get(char)[i] = 1
+
+  return channeled_seq
+
+def get_vector(seq):
+    channeled_seq = make_channels(seq)
+    seq_vector = np.array(list(channeled_seq.values()))
+    seq_vector = torch.tensor(seq_vector)
+    seq_vector = seq_vector.type(torch.FloatTensor)
+    return seq_vector

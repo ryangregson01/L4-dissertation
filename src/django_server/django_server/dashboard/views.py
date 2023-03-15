@@ -14,9 +14,9 @@ def index(request):
             context_dict['input_seq'] = str(user_seq)
             
             # user_seq is a string, so convert it to Tensor
-            full_seq = make_image(str(user_seq))
+            full_seq = get_vector(str(user_seq))
 
-            loaded_model = model_class()
+            loaded_model = get_model()
             with torch.no_grad():
                 predicted_label = loaded_model(full_seq)
             predicted_label = torch.squeeze(predicted_label)
