@@ -437,3 +437,12 @@
 ### 15 Mar 2023
 * *2 hours* Drew diagrams and created tables in LaTeX.
 * *2 hours* Finished implementation section / finished running RayTune. RayTune has been run with every model, however, further manual parameters may need to be selected due to losing GPU priviledge and losing access to our runtime with the LSTM model.
+
+### 16 Mar 2023
+* *6 hours* Conducting evaluation, working with CASP10 data, making notes about evaluation, improving layout of Notebook.
+
+### 17 Mar 2023
+* *1 hour* Meeting with Kevin.
+* *0.5 hours* Wrote up the minutes after the meeting.
+* *4 hours* Continued with evaluation.
+* *0.5 hours* Downloaded all files from google drive.
