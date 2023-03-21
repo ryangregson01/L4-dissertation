@@ -428,6 +428,8 @@
 * *2 hours* Trying to add stronger regularisation to 1D CNN model which was overfitting quickly.
 * *2 hours* Restarting RayTune so that it runs. Getting the best parameters. Saving these.
 
+## Week 22
+
 ### 13 Mar 2023
 * *6 hours* Wrote up implementation section in more detail. (Regularly restarting RayTune, letting it run due to computational time/needing to be active so that Colab does not timeout).
 
@@ -446,3 +448,19 @@
 * *0.5 hours* Wrote up the minutes after the meeting.
 * *4 hours* Continued with evaluation.
 * *0.5 hours* Downloaded all files from google drive.
+
+### 18 Mar 2023
+* *6 hours* Evaluation. Editing Notebook to make visualisations clearer, creating ROC curves, trying to implement statistical tests. Also inputting information to LaTex document: filling out tables and placing images appropriately in evaluation. Wrote analysis of ROC curves and thresholding.
+
+### 19 Mar 2023
+* *4 hours* Evaluation Notebook. Changed visualisations so they fit better in the dissertation. Expanded on parts of evaluation.
+* *1.5 hours* Filled and edited the written parts of the evaluation in the overleaf file.
+
+## Week 23
+
+### 20 Mar 2023
+* *5.5 hours* Made corrections to dissertation (intro-analysis sections) and fixed poor labelling. Mostly changing/adding biology discussion and looking over Kevin's feedback. Also looked over Turnitin feedback on moodle plagiarism checker.
+* *1.5 hours* Wrote missing background section: RNNs.
+
+### 21 Mar 2023
+* *3.5 hours* Working on LaTeX file. There were errors, fixed some of these. Filling in missing citations/references of new content. Generating all of the figures for evaluation as I had been using one confusion matrix multiple times until I was happy with its layout.
