@@ -10,8 +10,13 @@ def index(request):
     if request.method == 'POST':
         form = seqForm(request.POST)
         if form.is_valid():
+            # Returns an instance of the Protein model
             user_seq = form.save(commit=False)
-            context_dict['input_seq'] = str(user_seq)
+
+            str_user_seq = user_seq.sequence
+            str_user_seq_id = user_seq.sequence_id
+            context_dict['input_seq'] = str(str_user_seq)
+            context_dict['input_seq_id'] = str(str_user_seq_id)
             
             # user_seq is a string, so convert it to Tensor
             full_seq = get_vector(str(user_seq))
@@ -20,7 +25,9 @@ def index(request):
             with torch.no_grad():
                 predicted_label = loaded_model(full_seq)
             predicted_label = torch.squeeze(predicted_label)
-            pred_lab_list = ['1' if (float(val) > 0.5) else '0' for val in predicted_label]
+            predicted_label[predicted_label>=0.5] = 1
+            predicted_label[predicted_label<0.5] = 0
+            pred_lab_list = ['1' if (float(val) == 1) else '0' for val in predicted_label]
             pred_lab_list = ''.join(pred_lab_list)
             context_dict['generated_label'] = pred_lab_list
 
