@@ -464,3 +464,18 @@
 
 ### 21 Mar 2023
 * *3.5 hours* Working on LaTeX file. There were errors, fixed some of these. Filling in missing citations/references of new content. Generating all of the figures for evaluation as I had been using one confusion matrix multiple times until I was happy with its layout.
+* *2 hours* Writing dissertation. Filling in missing sections of background.
+
+### 22 Mar 2023
+* *3 hours* Writing dissertation (filling in missing analysis) and updating LaTeX file.
+* *1.5 hours* Working on web server feedback. Keeping ID with output. Tried to get the download table button working.
+* *2.5 hours* Set up validation for statistical tests. Implemented Wilcoxon test given MCC values comparing features and architectures.
+
+### 23 Mar 2023
+* *2.5 hours* On evaluation notebook, created every test I will run (MCC and AUC), automated the output.
+* *2 hours* Wrote up the statistical test methods for dissertation.
+* *3.5 hours* Added test tables to dissertation. Discussed these when relevant.
+* *2.5 hours* Aimed to evaluate CASP10 dataset against other external models. Found relevant paper. Numbers didn't add up, so modified data processing notebook. CASP10 labels correct. Got new results for CASP10 evaluation.
+
+### 24 Mar 2023
+* *5 hours* Dissertation evaluation. Recorded all new CASP10 results, updated everything in dissertation as required. Read through the evaluation section tidying parts up. Wrote comparison of external models.

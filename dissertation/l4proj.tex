@@ -6,8 +6,9 @@
 %
 % put any additional packages here
 \usepackage{multirow}
-
 \usepackage{booktabs}
+
+\usepackage{svg}
 %
 
 \begin{document}
@@ -663,7 +664,7 @@ Our goal is to evaluate how well different deep neural network architectures and
 
 We will use metrics from Section \ref{chap:design sec:eval}, as these are often used in deep learning. The MCC is especially useful to ensure all our classes have been accurately classified as we have an imbalanced dataset. This MCC will prevent a model that predicts the majority class (ordered amino acids) from being more accurate due to simply predicting the most popular class and not learning meaningful features.
 
-With the metrics, we evaluate the overall performance of each model given unseen protein sequences. As we are assessing multiple sequences, each of which has multiple labels, we will first calculate the micro-average of these metrics for each sequence, meaning that we count the total number of true positives, true negatives, false positives and false negatives for the predictions made for a single sequence and calculate our metrics. We then take an average of these calculated metric scores over all the sequences to report our final scores. This was done because this evaluation should be thought of as the model's performance given a new sequence, therefore it is appropriate to take the average score over these sequences. Furthermore, this approach is used in the literature as protein sequences length and disorder content can vary greatly, meaning it would be difficult to compare metrics directly across different sequences. For example, the metrics could be skewed from an extremely large sequence that is predicted well.
+With the metrics, we evaluate the overall performance of each model given unseen protein sequences. As we are assessing multiple sequences, each of which has multiple labels, we will first calculate the micro-average of these metrics for each sequence, meaning that we count the total number of true positives, true negatives, false positives and false negatives for the predictions made for a single sequence, and calculate our metrics. We then take an average of these calculated metric scores over all the sequences to report our final scores. This was done because this evaluation should be thought of as the model's performance given a new sequence, therefore it is appropriate to take the average score over these sequences. Furthermore, this approach is used in the literature as protein sequences length and disorder content can vary greatly, meaning it would be difficult to compare metrics directly across different sequences. For example, the metrics could be skewed from an extremely large sequence that is predicted well.
 
 It can be noted that we did calculate these metrics using the sum of the true positives, true negatives, false positives and false negatives over all of the sequences, instead of calculating it for each sequence, but similar conclusions were made about what architectures and approaches performed better. Calculating metrics in this fashion was valuable as with the total true positive, true negative, false positive and false negative values we constructed confusion matrices to see how often models predicted ordered or disordered labels correctly.
 
@@ -680,7 +681,13 @@ We also used the same statistical tests and followed the same method as above wh
 \section{Classification of DisProt data}
 \label{chap:eval sec:test}
 
-\begin{table}[!ht]
+The withheld testing dataset we created from DisProt \citep{disprot} was used to evaluate our different model performances first. Table \ref{tab:testDataset} presents the evaluation metrics of these different models with this test set. From the table, we can see that the performance of the models does vary depending on the architecture and feature input used. Between the CNN models, the CNN using 1D convolutions within its architecture outperforms the 2D architecture for both types of feature inputs. The LSTM architecture also performs competitively given our models; giving similar results to the better CNN (1D).
+
+In terms of feature input, we observe that PSSMs outperform one-hot encoding for every model. This suggests that the PSSM feature input may be more informative at expressing features about disordered regions within protein sequences. Furthermore, Table \ref{tab:testwilcinput} evidences that the MCC of models using PSSM input is significantly statistically better; therefore, we conclude that PSSM feature input has helped to improve protein disorder predictions for this dataset.
+
+Overall, the highest performing models are the CNN (1D) and LSTM architectures with PSSM feature input. This CNN has an accuracy of 0.6939, the highest accuracy for this test dataset and an MCC of 0.2422. This LSTM has an accuracy of 0.6934 and an MCC of 0.2490 which is the highest MCC score on this test dataset. The LSTM architecture also has the highest F1-score (0.4101). However, Table \ref{tab:testwilcarchitecture} shows that the improvement of MCC between the LSTM and CNN (1D) architecture is not statistically significant, therefore we accept the null hypothesis that there is no difference between these architectures. Furthermore, we do have strong statistical evidence to reject the null hypothesis when comparing these two architectures to our other CNN (2D): Table \ref{tab:testwilcarchitecture} demonstrates there is a significant difference between the quality of predictions made.
+
+\begin{table}[]
     \centering
     \caption{This table shows different models and their performance predicting protein disorder using different evaluation metrics. It is clear PSSM feature input produces better predictions than one-hot encoding. Furthermore, the model architectures of CNN (1D) and the LSTM are competitive against each other, whereas CNN (2D) does not perform as well with this test dataset.}
     \begin{tabular}{@{}cccccccc@{}}
@@ -696,12 +703,6 @@ We also used the same statistical tests and followed the same method as above wh
     
     \label{tab:testDataset}
 \end{table}
-
-The withheld testing dataset we created from DisProt \citep{disprot} was used to evaluate our different model performances first. Table \ref{tab:testDataset} presents the evaluation metrics of these different models with this test set. From the table, we can see that the performance of the models does vary depending on the architecture and feature input used. Between the CNN models, the CNN using 1D convolutions within its architecture outperforms the 2D architecture for both types of feature inputs. The LSTM architecture also performs competitively given our models; giving similar results to the better CNN (1D).
-
-In terms of feature input, we observe that PSSMs outperform one-hot encoding for every model. This suggests that the PSSM feature input may be more informative at expressing features about disordered regions within protein sequences. Furthermore, Table \ref{tab:testwilcinput} evidences that the MCC of models using PSSM input is significantly statistically better; therefore, we conclude that PSSM feature input has helped to improve protein disorder predictions for this dataset.
-
-Overall, the highest performing models are the CNN (1D) and LSTM architectures with PSSM feature input. This CNN has an accuracy of 0.6939, the highest accuracy for this test dataset and an MCC of 0.2422. This LSTM has an accuracy of 0.6934 and an MCC of 0.2490 which is the highest MCC score on this test dataset. The LSTM architecture also has the highest F1-score (0.4101). However, Table \ref{tab:testwilcarchitecture} shows that the improvement of MCC between the LSTM and CNN (1D) architecture is not statistically significant, therefore we accept the null hypothesis that there is no difference between these architectures. Furthermore, we do have strong statistical evidence to reject the null hypothesis when comparing these two architectures to our other CNN (2D); with Table \ref{tab:testwilcarchitecture} demonstrating there is a significant difference between the quality of predictions made.
 
 \begin{table}[!ht]
     \centering
@@ -741,7 +742,7 @@ We can look at each model with more granularity by evaluating the classification
 \subsubsection{CNNs \newline}
 For our CNNs using the 2D convolutions within its architecture, our confusion matrices (Figure \ref{fig:cf2d1hot} and Figure \ref{fig:cf2dpssm}) show that this model is often classifying many ordered residues as disordered. Using the PSSM features lowers this misclassification, but there is still mostly disordered amino acids being predicted despite the dataset containing a majority of ordered amino acids. This classification distribution helps us understand why the recall for this model is so high (Table \ref{tab:testDataset}), as it is much less likely to misclassify a disordered amino acid because it attempts to classify more amino acids as disordered.
 
-For our CNNs using the 1D convolutions within its architecture, our confusion matrices (Figure \ref{fig:cf1d1hot} and Figure \ref{fig:cf1dpssm}) show there are better classifications being made than the previous CNN architecture. We can see a better balance between the two classes, with a lot more ordered amino acids being classified correctly than incorrectly. We can also see a slight improvement to the predictions made when we use the PSSMs as our feature input. This agrees with our analysis of the test set (Section \ref{chap:eval sec:test}), demonstrating using PSSM features improves the CNN models predictions. From analysing all the confusion matrices, we see that this CNN architecture has the lowest false negatives, which can also be seen in Table \ref{tab:testDataset}, as this model architecture has the greatest specificity.
+For our CNNs using the 1D convolutions within its architecture, our confusion matrices (Figure \ref{fig:cf1d1hot} and Figure \ref{fig:cf1dpssm}) show there are better classifications being made than the previous CNN architecture. We can see a better balance between the two classes, with a lot more ordered amino acids being classified correctly than incorrectly. We can also see a slight improvement to the predictions made when we use the PSSMs as our feature input. This agrees with our analysis of the test set (Section \ref{chap:eval sec:test}), demonstrating using PSSM features improves the CNN models predictions.
 
 \begin{figure}[!htb] 
     \centering
@@ -773,7 +774,7 @@ For our CNNs using the 1D convolutions within its architecture, our confusion ma
         \caption{PSSM confusion matrix.}
         \label{fig:cf1dpssm}
     \end{subfigure}
-    \caption{Confusion matrices for CNN with 1D convolution kernels within its architecture. \subref{fig:cf2d1hot} shows the confusion matrix for the model using one-hot encoding feature input. \subref{fig:cf2dpssm} shows the confusion matrix for the model using PSSM feature input. We see this models architecture has a sensible precision and recall. Furthermore, using PSSM features reduces misclassification, however this is not significant.}
+    \caption{Confusion matrices for CNN with 1D convolution kernels within its architecture. \subref{fig:cf2d1hot} shows the confusion matrix for the model using one-hot encoding feature input. \subref{fig:cf2dpssm} shows the confusion matrix for the model using PSSM feature input. We see this models architecture has a sensible precision and recall. Furthermore, using PSSM features reduces misclassification, however only marginally. Despite this, the model using PSSMs is significantly better (Table \ref{tab:auctestwilcinput}).}
     \label{fig:cf1d}
 \end{figure}
 
@@ -798,6 +799,7 @@ Finally, our RNNs, using the LSTM architecture can be regarded as the best model
 \end{figure}
 
 \subsection{Analysis of probability-based predictions}
+\label{chap:evaluation sec:testROC}
 
 \begin{figure}[!htb]
     \centering
@@ -825,7 +827,7 @@ Using the DisProt test dataset, Figure \ref{fig:roctest} demonstrates that our L
 
 From conducting a Wilcoxon signed-rank test with these model's AUC scores (Table \ref{tab:auctestwilcinput} and Table \ref{tab:auctestwilcarchitecture}), we reach a number of conclusions. We cannot conclude there is a significant difference between the one-hot encoding and PSSM input for the LSTM architecture, but for the CNN (1D) model there is a significant difference when using different feature inputs, with PSSM showing a greater improvement. Furthermore, different architectures have difference performances dependent on the feature input using this metric, for example the LSTM and CNN (2D) having no significant difference when using one-hot encodings, but a clear statistical difference when using these architectures with PSSM input. Therefore, we will not make a conclusion about the best performing architectures with the AUC metric.
 
-Finally, all of these classifiers perform better than a dummy baseline. This can be seen in Figure \ref{fig:roctest} because at a TPR of 0.5 there is a FPR less than 0.5; with the worst classifier only recording approximately a 0.2 FPR at a 0.5 TPR.
+Finally, all of these classifiers perform better than a dummy baseline. This can be seen in Figure \ref{fig:roctest} since all the ROC curves are above the dummy baseline.
 
 \begin{table}[!htb]
     \centering
@@ -867,42 +869,76 @@ Finally, all of these classifiers perform better than a dummy baseline. This can
     \begin{tabular}{@{}cccccccc@{}}
     \toprule
     Model architecture & Feature input & Accuracy & Precision & Recall & Specificity & F1-score & MCC \\ \midrule
-    \multirow{2}{*}{CNN (2D)} & One-hot & 0.6351 & 0.1766 & 0.5551 & 0.6466 & 0.2256 & 0.1195 \\
-     & PSSM & 0.4461 & 0.156 & 0.7758 & 0.3967 & 0.2318 & 0.0982 \\
-    \multirow{2}{*}{CNN (1D)} & One-hot & \textbf{0.7401} & 0.2148 & 0.4367 & \textbf{0.7647} & 0.2458 & 0.1587 \\
-     & PSSM & 0.7045 & 0.2279 & 0.5819 & 0.7096 & 0.2895 & \textbf{0.1909} \\
-    \multirow{2}{*}{RNN (LSTM)} & One-hot & 0.5414 & 0.1959 & \textbf{0.7891} & 0.4869 & 0.2775 & 0.1636 \\
-     & PSSM & 0.6596 & \textbf{0.2337} & 0.6108 & 0.6479 & \textbf{0.2896} & 0.1809 \\ \cmidrule(l){1-8} 
+    \multirow{2}{*}{CNN (2D)} & One-hot & 0.6440 & 0.1403 & 0.4980 & 0.6466 & 0.1862 & 0.1296 \\
+     & PSSM & 0.4309 & 0.1108 & 0.6715 & 0.3967 & 0.1691 & 0.0977 \\
+    \multirow{2}{*}{CNN (1D)} & One-hot & \textbf{0.7503} & 0.1362 & 0.3489 & \textbf{0.7647} & 0.1714 & 0.1098 \\
+     & PSSM & 0.7148 & \textbf{0.1771} & 0.5255 & 0.7096 & \textbf{0.2376} & \textbf{0.1828} \\
+    \multirow{2}{*}{RNN (LSTM)} & One-hot & 0.5296 & 0.1265 & 0.6450 & 0.4869 & 0.1936 & 0.1191 \\
+     & PSSM & 0.6590 & 0.1707 & \textbf{0.5640} & 0.6479 & 0.2260 & 0.1688 \\ \cmidrule(l){1-8}
     \end{tabular}
     
     \label{tab:caspDataset}
 \end{table}
 
-The CASP10 dataset has been used to assess many protein disorder prediction tools. There are 94 targets (protein sequences) in this dataset that were used for analysis as some other sequences proposed in this dataset were removed by the organisers before or during the competition \citep{Moult:14}. For this dataset, we generate one-hot encoded and PSSM features similarly to our DisProt dataset. Furthermore, no sequences in this dataset were invalid for our vectorisation process and model input; therefore, no sequences had to be removed.
+The CASP10 dataset has been used to assess many protein disorder prediction tools. There are 94 targets (protein sequences) in this dataset that were used for analysis, as some other sequences proposed in this dataset were removed by the organisers before or during the competition \citep{Moult:14}. For this dataset, we generate one-hot encoded and PSSM features similarly to our DisProt dataset. Furthermore, no sequences in this dataset were invalid for our vectorisation process and model input; therefore, no sequences had to be removed.
 
-We performed a similar analysis on the CASP dataset as we have done using the DisProt withheld test dataset. We used the same model architectures and features as above but trained out models using our entire DisProt dataset before making predictions on the CASP dataset. Table \ref{tab:caspDataset} presents the evaluation metrics of our different models' performances on the CASP10 dataset. From this table, we see a similar performance difference between the architectures and feature inputs as the previous unseen test dataset. Again, the CNN using 2D convolutions within its architecture has the worst performance. For the CNN using 1D convolutions and the LSTM it is clear again that using the PSSMs as our feature input does improve the prediction quality of protein disorder. Both of these models are once again comparably competitive, with the CNN model achieving the highest MCC of 0.1909 and the LSTM has the highest F1-score of 0.2896. It is also interesting to note that the with better CNN architecture, a model using one-hot encoding has the highest accuracy and specificity measure. Overall, we claim the CNN (1D) using PSSM features has the leading performance as it has the strongest distribution of metrics. However, we can see that both the CNN (1D) and LSTM perform similarly with the CASP10 dataset, making it more difficult to justify a best architecture. This has demonstrated the capability of different network architectures at the task of disorder prediction.
+We performed a similar analysis on the CASP dataset as we have done using the DisProt withheld test dataset. We used the same model architectures and features as above but trained our models using our entire DisProt dataset before making predictions on the CASP dataset. Table \ref{tab:caspDataset} presents the evaluation metrics of our different models' performances on the CASP10 dataset. From this table, we see a similar performance difference between the architectures and feature inputs as the previous unseen test dataset. Again, the CNN using 2D convolutions within its architecture has the worst performance. This may be due to it having the simplest architecture. For the CNN using 1D convolutions and the LSTM it is clear again that using the PSSMs as feature input does improve the prediction quality of protein disorder; however this improvement is not statistically different to one-hot encoding features as shown in Table \ref{tab:caspwilcinput}.
 
-\subsection{Model confusion}
+The LSTM and CNN (1D) models are once again comparably competitive, with the CNN model achieving the highest MCC of 0.1828 and the highest F1-score of 0.2376. It is also interesting to note that the better CNN architecture, a model using one-hot encoding has the highest accuracy and specificity measure. Overall, we claim the CNN (1D) using PSSM features has the leading performance as it has the strongest distribution of metrics. However, we can see that both the CNN (1D) and LSTM perform similarly with the CASP10 dataset, and Table \ref{tab:caspwilcarchitecture} shows there is no significant difference between them. This makes it more difficult to justify a best architecture and has demonstrated the capability of different network architectures at the task of disorder prediction.
+
+\begin{table}[!ht]
+    \centering
+    \caption{Results of the Wilcoxon signed-rank test on CASP10 sequence MCC values for evaluating the significance of input features. A one-tailed test was used to see if the PSSM feature input had greater scores than one-hot feature input. We cannot reject the null hypotheses as all p-values are greater than alpha (0.05).}
+    \begin{tabular}{@{}cccc@{}}
+    \toprule
+    Model architecture & Feature comparison & Wilcoxon Statistic & P-value \\ \midrule
+    CNN (2D) & PSSM, One-hot & 2158.0 & $6.1062\cdot{10^{-01}}$ \\
+    CNN (1D) & PSSM, One-hot & 2464.0 & $1.0284\cdot{10^{-01}}$ \\
+    RNN (LSTM) & PSSM, One-hot & 2182.0 & $5.0535\cdot{10^{-01}}$ \\ \bottomrule
+    \end{tabular}
+    
+    \label{tab:caspwilcinput}
+\end{table}
+
+\begin{table}[!ht]
+    \centering
+    \caption{Results of the Wilcoxon signed-rank test on CASP10 sequence MCC values for evaluating different model architectures. A two-tailed test was used to see if models were statistically different. We reject the null hypothesis stating the CNN (1D) and CNN (2D) with PSSM features have no difference, as this p-value is less than alpha (0.05).}
+    \begin{tabular}{@{}cccc@{}}
+    \toprule
+    Feature input & Architecture comparison & Wilcoxon Statistic & P-value \\ \midrule
+    \multirow{3}{*}{\begin{tabular}[c]{@{}c@{}}One-hot\\ encodings\end{tabular}} & CNN (1D), CNN (2D) & 2120.0 & $6.7140\cdot{10^{-01}}$ \\
+     & LSTM, CNN (2D) & 1990.0 & $5.6179\cdot{10^{-01}}$ \\
+     & LSTM, CNN (1D) & 1893.0 & $5.3417\cdot{10^{-01}}$ \\ \cmidrule(l){2-4} 
+    \multirow{3}{*}{PSSM} & CNN (1D), CNN (2D) & 1598.0 & $1.6727\cdot{10^{-02}}$ \\
+     & LSTM, CNN (2D) & 1720.0 & $1.0278\cdot{10^{-01}}$ \\
+     & LSTM, CNN (1D) & 2033.0 & $6.7979\cdot{10^{-01}}$ \\ \bottomrule
+    \end{tabular}
+    
+    \label{tab:caspwilcarchitecture}
+\end{table}
+
+
+\subsection{Model confusion (CASP10 data)}
 
 Using our different model architectures and feature inputs to make predictions on the CASP dataset, we have seen similarities and differences to the confusion shown about predictions on our test dataset (Section \ref{chap:eval sec:testconfusion}). \\
 
 \subsubsection{CNNs \newline}
 
-For the CNN architecture with 2D convolution kernels, the two models that use different feature inputs have very different confusion matrices. With one-hot encoding features, our model classifies half of the disordered amino acids correctly (Figure \ref{fig:caspcf2d1hot}), whereas the model using PSSM features classifies three-quarters of these disordered amino acids correctly at the expense of classifying more than half of the ordered amino acids incorrectly (Figure \ref{fig:caspcf2dpssm}). This is similar to this architecture’s performance on the DisProt test dataset (Section \ref{chap:eval sec:testconfusion}), where we saw that it often over-predicted disordered amino acids. This means this model has likely been unable to capture the unique intricate features that represent IDRs.
+For the CNN architecture with 2D convolution kernels, the two models that use different feature inputs have very different confusion matrices. With one-hot encoding features, our model classifies 57\% of the disordered amino acids correctly (Figure \ref{fig:caspcf2d1hot}), whereas the model using PSSM features classifies 80\% of these disordered amino acids correctly at the expense of classifying more than half of the ordered amino acids incorrectly (Figure \ref{fig:caspcf2dpssm}). This is similar to this architecture’s performance on the DisProt test dataset (Section \ref{chap:eval sec:testconfusion}), where we saw that it often over-predicted disordered amino acids. This means this model has likely been unable to capture the unique intricate features that represent IDRs.
 
-The CNN architecture with 1D convolution kernels classifies only approximately half of the disordered amino acids correctly for both feature inputs, which can be seen by Figure \ref{fig:caspcf1d1hot} and Figure \ref{fig:caspcf1dpssm}. We can see the CNN with one-hot encoding features, which is our most accurate model (Table \ref{tab:caspDataset}), performs worse at classifying disordered amino acids, and the CNN with PSSM features performs worse at classifying ordered amino acids. However, this difference is not significant enough to determine the least confused model. \\
+The CNN architecture with 1D convolution kernels classifies only approximately half of the disordered amino acids correctly for both feature inputs, which can be seen by Figure \ref{fig:caspcf1d1hot} and Figure \ref{fig:caspcf1dpssm}. We can see the CNN with one-hot encoding features, which is our most accurate model (Table \ref{tab:caspDataset}), performs worse at classifying disordered amino acids, and the CNN with PSSM features performs worse at classifying ordered amino acids. Table \ref{tab:caspwilcinput} demonstrates this difference is not significant enough to determine the least confused model. \\
 
 \begin{figure}[!htb] 
     \centering
     \begin{subfigure}[b]{0.48\textwidth}
         \includegraphics[width=\textwidth]{images/confmats/CASP10CNN2D1hot-cf.pdf}
-        \caption{One-hot encoding confusion matrix.}
+        \caption{One-hot encoding confusion matrix (CASP10).}
         \label{fig:caspcf2d1hot}
     \end{subfigure}
     ~
     \begin{subfigure}[b]{0.48\textwidth}
         \includegraphics[width=\textwidth]{images/confmats/CASP10CNN2Dpssm-cf.pdf}
-        \caption{PSSM confusion matrix.}
+        \caption{PSSM confusion matrix. (CASP10)}
         \label{fig:caspcf2dpssm}
     \end{subfigure}
     \caption{Confusion matrices for CNN with 2D convolution kernels within its architecture. \subref{fig:cf2d1hot} shows the confusion matrix for the model using one-hot encoding feature input. \subref{fig:cf2dpssm} shows the confusion matrix for the model using PSSM feature input. We see this models architecture performs reasonably well with one-hot encoded features, but misclassifies many ordered amino acids when using PSSMs.}
@@ -913,47 +949,47 @@ The CNN architecture with 1D convolution kernels classifies only approximately h
     \centering
     \begin{subfigure}[b]{0.48\textwidth}
         \includegraphics[width=\textwidth]{images/confmats/CASP10CNN1D1hot-cf.pdf}
-        \caption{One-hot encoding confusion matrix.}
+        \caption{One-hot encoding confusion matrix (CASP10).}
         \label{fig:caspcf1d1hot}
     \end{subfigure}
     ~
     \begin{subfigure}[b]{0.48\textwidth}
         \includegraphics[width=\textwidth]{images/confmats/CASP10CNN1Dpssm-cf.pdf}
-        \caption{PSSM confusion matrix.}
+        \caption{PSSM confusion matrix (CASP10).}
         \label{fig:caspcf1dpssm}
     \end{subfigure}
-    \caption{Confusion matrices for CNN with 1D convolution kernels within its architecture. \subref{fig:cf2d1hot} shows the confusion matrix for the model using one-hot encoding feature input. \subref{fig:cf2dpssm} shows the confusion matrix for the model using PSSM feature input. We see this models architecture correctly identifies only half of the disordered amino acids. There is a minimal difference between the confusion regarding different inputs, and both of these models have a similar overall confusion as the CNN with 2D convolutions and one-hot encoding input (Figure \ref{fig:caspcf2d1hot}).}
+    \caption{Confusion matrices for CNN with 1D convolution kernels within its architecture. \subref{fig:cf2d1hot} shows the confusion matrix for the model using one-hot encoding feature input. \subref{fig:cf2dpssm} shows the confusion matrix for the model using PSSM feature input. Using the PSSM feature input has decreased overall confusion, however we cannot conclude the difference between these two models is statistically significant (Table \ref{tab:caspwilcinput}).}
     \label{fig:caspcf1d}
 \end{figure}
 
 \subsubsection{RNNs \newline}
 
-Our RNN models have less confusion. For the LSTM when one-hot encoding is used, we can see slight overestimations of disorder again. This model also produces the lowest false negative value (when a disordered label is predicted as ordered). However, despite overestimating disordered labels, this model is often a lot less confused about ordered amino acids (Figure \ref{fig:caspcfrnn1hot}) when we compare this model to our other model that overestimates disorder (the 2D CNN). From our confusion matrix of the LSTM with PSSM features (Figure \ref {fig:caspcfrnnpssm}) we can see that it can correctly predict more than half of the disordered amino acids, which is better than the competitive CNN (1D) model. However, the proportion of correctly predicted disordered amino acids is still lower than our DisProt dataset for this model. Overall, the LSTM does get more confused when classifying ordered amino acids when we compare it to our CNN (1D) models; however, in general we can see the LSTM architecture can correctly predict more disordered amino acids while still reasonably predicting ordered amino acids correctly. This is important in our prediction task, and we assert the LSTM architecture exhibits the lowest level of confusion in the CASP10 dataset task.
+Our RNN models have less confusion. For the LSTM when one-hot encoding is used, we can see slight overestimations of disorder again. However, despite overestimating disordered labels, this model is often a lot less confused about ordered amino acids (Figure \ref{fig:caspcfrnn1hot}) when we compare this model to our other model that overestimates disorder (the 2D CNN). From our confusion matrix of the LSTM with PSSM features (Figure \ref {fig:caspcfrnnpssm}) we can see that it can correctly predict 63\% of the disordered amino acids, which is better than the competitive CNN (1D) model (with 61\%). However, the proportion of correctly predicted disordered amino acids is still lower than our DisProt dataset for this model. Overall, the LSTM does get more confused when classifying ordered amino acids when we compare it to our CNN (1D) models; however, in general we can see the LSTM architecture can correctly predict more disordered amino acids while still reasonably predicting ordered amino acids correctly. This is important in our prediction task, and this is useful to see the LSTM architecture exhibits the lowest level of confusion in the CASP10 dataset task.
 
 \begin{figure}[!htb] 
     \centering
     \begin{subfigure}[b]{0.48\textwidth}
         \includegraphics[width=\textwidth]{images/confmats/CASP10RNN1hot-cf.pdf}
-        \caption{One-hot encoding confusion matrix.}
+        \caption{One-hot encoding confusion matrix (CASP10).}
         \label{fig:caspcfrnn1hot}
     \end{subfigure}
     ~
     \begin{subfigure}[b]{0.48\textwidth}
         \includegraphics[width=\textwidth]{images/confmats/CASP10RNNpssm-cf.pdf}
-        \caption{PSSM confusion matrix.}
+        \caption{PSSM confusion matrix (CASP10).}
         \label{fig:caspcfrnnpssm}
     \end{subfigure}
-    \caption{Confusion matrices for RNN using an LSTM architecture. \subref{fig:cf2d1hot} shows the confusion matrix for the model using one-hot encoding feature input. \subref{fig:cf2dpssm} shows the confusion matrix for the model using PSSM feature input. We see this models architecture experiencing the least confusion again.}
+    \caption{Confusion matrices for RNN using an LSTM architecture. \subref{fig:cf2d1hot} shows the confusion matrix for the model using one-hot encoding feature input. \subref{fig:cf2dpssm} shows the confusion matrix for the model using PSSM feature input. We see this models architecture experiencing the least overall confusion again.}
     \label{fig:caspcfrnn}
 \end{figure}
 
-\subsection{Analysis of probability-based predictions}
+\subsection{Analysis of probability-based predictions (CASP10 data)}
 
 \begin{figure}[!htb]
     \centering
-    \includegraphics[width=0.95\linewidth]{images/CASPROC.pdf}    
+    \includegraphics[width=0.95\linewidth]{images/CASPROCSVG.pdf}    
 
-    \caption{ROC curves of probability-based IDR predictions for our 6 models on the CASP10 dataset. The CNN (1D) and LSTM models using one-hot encoding have the best performance given a TPR and FPR trade off. Both CNN (2D) models perform the poorest. Furthermore, every model does perform above the dummy baseline.}
+    \caption{ROC curves of probability-based IDR predictions for our 6 models on the CASP10 dataset. The LSTM model using one-hot encoding has the best performance given a TPR and FPR trade off. Both CNN (2D) models perform the poorest. Furthermore, every model does perform above the dummy baseline.}
 
     \label{fig:roccasp} 
 \end{figure}
@@ -965,16 +1001,35 @@ Our RNN models have less confusion. For the LSTM when one-hot encoding is used, 
     \toprule
     Model architecture & \multicolumn{2}{c}{CNN (2D)} & \multicolumn{2}{c}{CNN (1D)} & \multicolumn{2}{c}{RNN (LSTM)} \\ \cmidrule{0-0}
     Feature input & One-hot & PSSM & One-hot & PSSM & One-hot & PSSM \\ \midrule
-    AUC & 0.5958 & 0.6196 & \textbf{0.7511} & 0.7115 & 0.7477 & 0.7021 \\ \bottomrule
+    AUC & 0.6707 & 0.6636 & 0.7458 & 0.7518 & \textbf{0.7701} & 0.7232 \\ \bottomrule
     \end{tabular}
     
     \label{tab:auccasp}
 \end{table}
 
-When analysing ROC curves with our CASP10 dataset, we see that the CNN (1D) and LSTM using one-hot encoding features achieve the best AUC (Table \ref{tab:auccasp}). This is interesting because it is a different conclusion compared to the other results. We notice when considering the CNN (1D) and LSTM architectures that the one-hot encoding ROC curves are similar and the PSSM ROC curves are similar. This implies that different feature encodings may represent protein sequences in a fashion that different architectures can easily pickup similar feature patterns, regardless of the underlying architecture. We again conclude that the CNN with 2D convolutions in its architecture has the worst performance on this dataset. Furthermore, we can conclude that all of these models again perform better than the dummy baseline from inspection of that ROC curve graph (Figure \ref{fig:roccasp}), demonstrates at a 0.5 TPR, the FPR is below 0.5 for all models.
+When analysing ROC curves with our CASP10 dataset, we see the LSTM using one-hot encoding features achieve the best AUC (Table \ref{tab:auccasp}). This is interesting because it is a different conclusion compared to the other results showing PSSMs improve predictions, but also agrees with the AUC analysis of our DisProt test dataset (Section \ref{chap:evaluation sec:testROC}). From inspection of the ROC curve graph (Figure \ref{fig:roccasp}), we see that the CNN with 2D convolutions in its architecture has the worst performance on this dataset. Using our Wilcoxon signed-rank test, we could not reject our null hypotheses that feature input or model architecture resulted in significantly different AUC scores, and the table of these test results are included in the appendix (Appendix \ref{chap:appendix sec:casp10auc}).
+
+Finally, we can conclude that all of these models again perform better than the dummy baseline from inspection of the ROC curve graph (Figure \ref{fig:roccasp}), where each models ROC curve is above the dummy baseline.
 
 \subsection{Comparison of other solutions}
-[Table comparison]
+\cite{Monastyrskyy:14} released an assessment of protein disorder region predictions in CASP10, highlighting the performance of state-of the art solutions. Table \ref{tab:casp10comp} shows our top performing models, LSTM and CNN (1D) with PSSM features, against top performing models that use different architectures. We see from this table that our models grossly overpredict disorder, which can be seen by a much larger false positive value. This has had an effect on other metrics such as the precision and MCC scores. These state-of-the-art models have a common use of SVMs, and some use ensemble approaches alongside other machine learning methods. These outperform our deep learning strategies. However, from this comparison it is clear that we could increase regularisation to prevent our models likelihood of predicting disorder. Furthermore, our upweighted loss function could be trailled with different weights instead of the ratio difference of labels to assess if this could lower overprediction of disorder when given unseen test data.
+
+\begin{table}[!htb]
+    \centering
+    \caption{This table is adapted from Table 2 in \cite{Monastyrskyy:14} assessment of model performance on the CASP10 dataset. It compares our top two models (CNN (1D) PSSM and RNN (LSTM) PSSM) with some of the top entries in the CASP10 competition.}
+    \begin{tabular}{lcccccccc}
+    \toprule
+    Name & TP & FP & TN & FN & Precision & Accuracy & MCC & \begin{tabular}[c]{@{}l@{}}AUC\\ (ROC)\end{tabular} \\ \midrule
+    Prdos-CNF & 657 & 287 & 22401 & 845 & 0.696 & 0.712 & 0.529 & 0.907 \\
+    DISOPRED3 & 607 & 201 & 22487 & 895 & 0.751 & 0.698 & 0.531 & 0.897 \\
+    biomine\_dr\_mixed & 628 & 368 & 22320 & 874 & 0.631 & 0.701 & 0.488 & 0.890 \\
+    POODLE & 980 & 2064 & 20624 & 522 & 0.322 & 0.781 & 0.409 & 0.875 \\ 
+    CNN (1D) PSSM & 919 & 5362 & 17326 & 583 & 0.177 & 0.715 & 0.183 & 0.752 \\
+    RNN (LSTM) PSSM & 944 & 6765 & 15923 & 6765 & 0.171 & 0.660 & 0.169 & 0.723 \\ \bottomrule
+    \end{tabular}
+    
+    \label{tab:casp10comp}
+\end{table}
 
 \section{Evaluation of the web server}
 [Screenshot of prediction made by this web server and a different web server. Similarities/differences.]
@@ -1055,6 +1110,44 @@ Summarise the whole project for a lazy reader who didn't read the rest (e.g. a p
 
 \chapter{Appendices}
 
+\section{Evaluation Tables}
+
+\subsection{Wilcoxon-signed rank test for CASP10 AUC values}
+\label{chap:appendix sec:casp10auc}
+
+\begin{table}[!htb]
+    \centering
+    \caption{Results of the Wilcoxon signed-rank test on CASP10 sequence AUC values for evaluating the significance of input features. A one-tailed test was used to see if the PSSM feature input had greater scores than one-hot feature input. We reject the null hypothesis for the CNN (1D) model architecture as this p-value is lower than alpha (0.05).}
+    \begin{tabular}{@{}cccc@{}}
+    \toprule
+    Model architecture & Feature comparison & Wilcoxon Statistic & P-value \\ \midrule
+    CNN (2D) & PSSM, One-hot & 32404.0 & $1.0000\cdot{10^{+00}}$ \\
+    CNN (1D) & PSSM, One-hot & 54441.0 & $1.1425\cdot{10^{-03}}$ \\
+    RNN (LSTM) & PSSM, One-hot & 50071.0 & $1.5568\cdot{10^{-01}}$ \\ \bottomrule
+    \end{tabular}
+    
+    \label{tab:auccaspwilcinput}
+\end{table}
+
+\begin{table}[!htb]
+    \centering
+    \caption{Results of the Wilcoxon signed-rank test on sequence AUC values for evaluating different model architectures. A two-tailed test was used to see if models were statistically different. We could not reject the null hypothesis stating the LSTM and CNN (1D) have no difference when PSSM input is used, or the hypothesis stating the LSTM and CNN (2D) have no difference when one-hot encoding input is used, as these p-values are not less than alpha (0.05).}
+    \begin{tabular}{@{}cccc@{}}
+    \toprule
+    Feature input & Architecture comparison & Wilcoxon Statistic & P-value \\ \midrule
+    \multirow{3}{*}{\begin{tabular}[c]{@{}c@{}}One-hot\\ encodings\end{tabular}} & CNN (1D), CNN (2D) & 35839.0 & $3.4921\cdot{10^{-05}}$ \\
+     & LSTM, CNN (2D) & 43252.0 & $1.3128\cdot{10^{-01}}$ \\
+     & LSTM, CNN (1D) & 37561.0 & $3.9353\cdot{10^{-04}}$ \\ \cmidrule(l){2-4}
+    \multirow{3}{*}{PSSM} & CNN (1D), CNN (2D) & 33839.0 & $1.6086\cdot{10^{-07}}$ \\
+     & LSTM, CNN (2D) & 31908.0 & $2.3268\cdot{10^{-09}}$ \\
+     & LSTM, CNN (1D) & 44209.0 & $2.8746\cdot{10^{-01}}$ \\ \bottomrule
+    \end{tabular}
+    
+    \label{tab:auccaspwilcarchitecture}
+\end{table}
+
+
+\newpage
 Typical inclusions in the appendices are:
 
 \begin{itemize}
