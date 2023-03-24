@@ -6,6 +6,8 @@
 %
 % put any additional packages here
 \usepackage{multirow}
+
+\usepackage{booktabs}
 %
 
 \begin{document}
@@ -103,10 +105,10 @@ Protein sequences are made up of amino acids. The problem we are attempting to s
 
 The aim of this project is to explore how different deep learning approaches and architectures perform at predicting protein disorder. To assess these deep learning methods, we will: 
 \begin{itemize}
-    \item Discuss current solutions to protein disorder prediction.
-    \item Discuss our approach for creating a protein disorder classifier.
-    \item Design and implement different deep neural networks, such as a convolutional neural network (CNN) and recurrent neural network (RNN). 
-    \item Evaluate our implemented neural networks using standard metrics and the test datasets proposed by CASP \citep{casp}, which have been used for evaluating protein disorder prediction models. 
+    \item Discuss current solutions to protein disorder prediction (Section \ref{sec:current approaches}).
+    \item Discuss our approach for creating a protein disorder classifier (Section \ref{chap:analysis}).
+    \item Design and implement different deep neural networks, such as a convolutional neural network (CNN) and recurrent neural network (RNN) (Section \ref{chap:design} and Section \ref{chap:implementation}). 
+    \item Evaluate our implemented neural networks using standard metrics and the test datasets proposed by CASP \citep{casp}, which have been used for evaluating protein disorder prediction models (Section \ref{chap:evaluation}). 
 \end{itemize}
 An aim alongside comparing the deep neural networks is to create a web server, where a user can input a protein sequence via a web page form and see the predictions of disordered regions. This will make my models accessible, which will result in bioscience researchers being able to interact with my developed solution easily.
 
@@ -146,17 +148,19 @@ A current problem is the lack of labelled data about the structure of protein se
 Deep neural networks are made up of stacked neural network layers. As these layers are stacked, the output of one layer will be used as input to the next layer in the network. Each of these layers performs feature extraction on their input. Each neural network layer consists of an arbitrary number of neurons with associated weights and bias parameters that are updated throughout training. During training, inputs are classified by the model during a forward pass through the model. These predictions are compared to the true value using a loss function. Through the process of backpropagation \citep{Goodfellow-et-al-2016}, the outcome of the loss function is used and the parameter weights within the network are changed in an aim to improve the models' predictions. To complete this training step, an optimisation method will update each layer of the network, changing the weights of the model as proposed by backpropagation. This training procedure is done with each item in the training set and for multiple iterations of the entire training set, to solve the optimisation problem by minimising the loss and finding optimum weights for the neural network. The machine learning framework, PyTorch \citep{pytorch}, provides the functionality to build neural network layers that extract features; use a loss function with an implemented backpropagation method, and create an optimiser to update a deep neural network model during training. PyTorch also provides efficient tensor computations and can utilise GPUs while training. This software will be useful for creating our deep neural networks due to its efficiency and comprehensive components.
 
 \subsection{Convolutional Neural Networks (CNNs)}
+\label{chap:background sec:CNN}
 
-A CNN is a type of neural network that uses convolution kernels to extract features from an input. Convolution kernels can be 1D kernels of size $1\times K$ primarily used for sequence or series data, or 2D kernels of size $N\times M$ primarily used for classifying images. These kernels move across a grid shaped input, checking if a feature is present. With our protein sequences, we can use a kernel of $1\times K$ to slide along a $1\times sequence length$ grid, treating each amino acid as a different input channel and capturing unique features. We can also represent protein sequences as images by creating a $20\times sequence length$ length grid, where each amino acid is a $20\times 1$ vector and this lets us use a different 2D convolution kernel over the protein sequence. These are discussed further in our design (Section \ref{chap:design section:cnn}).
+A CNN is a type of neural network that uses convolution kernels to extract features from an input. Convolution kernels can be 1D kernels of size $1\times K$ primarily used for sequence or series data, or 2D kernels of size $N\times M$ primarily used for classifying images. These kernels move across a grid shaped input, checking if a feature is present. With our protein sequences, we can use a kernel of $1\times K$ to slide along a $1\times sequence length$ grid, treating each amino acid as a different input channel and capturing unique features. We can also represent protein sequences as images by creating a $20\times sequence length$ length grid, where each amino acid is a $20\times 1$ vector and this lets us use a different 2D convolution kernel over the protein sequence. These ideas are discussed further in our design (Section \ref{chap:design section:cnn}).
 
-In classification tasks convolution kernels are translation-invariant and require few parameters. These are beneficial as this means it does not matter where the location of the disordered region exists in the sequence. Less parameters means the model can be trained well with smaller training sets. This is good as the labelled datasets from manually curated databases for disordered proteins, such as Disprot \citep{disprot}, are small in comparison to the data provided for other deep learning tasks. \cite{disopred3_paper} have stated further annotated training labels will be beneficial to train protein disorder prediction tools; therefore, using a model architecture that can cope with smaller datasets should be effective. \\
+In classification tasks convolution kernels are translation-invariant and require few parameters. These are beneficial as this means it does not matter where the location of the disordered region exists in the sequence. Less parameters means the model can be trained well with smaller training sets. This is good as the labelled datasets of manually annotated disordered proteins, such as the curated database Disprot \citep{disprot}, are small in comparison to the data provided for other deep learning tasks. \cite{disopred3_paper} have stated further annotated training labels will be beneficial to train protein disorder prediction tools; therefore, using a model architecture that can cope with smaller datasets should be effective. \\
 
 \subsubsection{Fully Convolutional Networks \newline}
 \label{chap:background sec:FCN}
 
-During most classification tasks, input of the same shape is passed to the CNN. However, with our protein sequence data the lengths of our sequences range from 19 residues (the protein Conantokin-Pr1 \citep{uniprot:22}) to 34350 residues (the muscle protein Titin \citep{uniprot:22}), so we would need to unnecessarily pad many sequences with lots of redundant blank values. Therefore, we have taken an approach to use a fully convolutional network (FCN). Modern classification networks have been adapted to fully convolutional networks by Shelhamer and Long \citep{fcn_seg}, demonstrating that classification can be done using inputs of arbitrary size. Thus, for these protein sequences of varying length, an FCN will be suitable at handling these inputs. 
+During most classification tasks, input of the same shape is passed to the CNN. However, with our protein sequence data the lengths of our sequences range from 19 residues (the protein Conantokin-Pr1 \citep{uniprot:22}) to 34350 residues (the muscle protein Titin \citep{uniprot:22}), so we would need to unnecessarily pad many sequences with lots of redundant blank values. Therefore, we have taken an approach to use a fully convolutional network (FCN). Modern classification networks have been adapted to fully convolutional networks by \cite{fcn_seg}, demonstrating that classification can be done using inputs of arbitrary size. Thus, for these protein sequences of varying length, an FCN will be suitable at handling these inputs. 
 
 \subsection{Recurrent Neural Networks (RNNs)}
+\label{chap:background sec:RNN}
 
 A RNN is a type of neural network that is well-suited for processing sequential data. Most sequential data that is processed by RNNs are time series or natural language; however, many RNNs handle biological sequences \citep{Hawkins:05}. RNNs can capture sequential dependencies of an input sequence by using hidden states, which help to make predictions about later elements in the sequence. The hidden states are updated at each item of the sequence; using both the current input and the previous hidden state. This allows a RNN to share knowledge about previous information in the sequence, meaning that the hidden state used to make the prediction about a given element of the input sequence has a greater understanding of the context of the sequence.
 
@@ -176,9 +180,10 @@ As well as performing well for intrinsic disorder prediction, deep learning meth
 \subsection{Convolutional neural networks}
 \label{chap:background sec:litrevCNN}
 
-A model using a convolutional neural network architecture will process the amino acid sequence in a sliding window fashion using a convolution kernel. Older competitive machine learning based methods such as DISOPRED, FoldIndex and IUPred use a sliding window within their algorithm, which justifies the feasibility of a convolution kernel. There are not many prominent models which solely use convolutional layers for protein disorder classification. However, two studies propose using a CNN for similar tasks: predicting DNA-protein binding \citep{Zeng:16}, and protein secondary structure prediction \citep{Ema:22}. The first study concludes that experimentation of different CNN architecture design demonstrated improvements to a state-of-the-art solution and this work “will be important for sequence-based tasks in genomics,” \citep{Zeng:16}. This suggests experimentation using a CNN will be useful for classification of disordered regions as we will be using a sequence-based approach with our protein sequences. The second study successfully implements a (2D) CNN with a hybrid machine learning layer and using protein sequence data for protein secondary structure prediction, which is a similar task to our protein disorder prediction problem. Although CNNs are very good at capturing local relationships, they are more limited in identifying medium and long-range sequence information. \cite{Wang:15} proposes DeepCNF-D, which uses a deep convolutional neural fields architecture (comprising of a deep convolutional neural network and conditional random field) to reach state-of-the-art performance on the CASP benchmark datasets. The result of using a CNF architecture demonstrates the benefit of capturing complex dependencies from the amino acid sequences.
+A model using a convolutional neural network architecture will process the amino acid sequence in a sliding window fashion using a convolution kernel. Older competitive machine learning based methods such as DISOPRED, FoldIndex and IUPred use a sliding window within their algorithm, which justifies the feasibility of a convolution kernel. There are not many prominent models which solely use convolutional layers for protein disorder classification. However, two studies propose using a CNN for similar tasks: predicting DNA-protein binding \citep{Zeng:16}, and protein secondary structure prediction \citep{Ema:22}. The first study concludes that experimentation of different CNN architecture design demonstrated improvements to a state-of-the-art solution and this work “will be important for sequence-based tasks in genomics,” \citep{Zeng:16}. This suggests experimentation using a CNN will be useful for classification of disordered regions as we will be using a sequence-based approach with our protein sequences. The second study successfully implements a (2D) CNN with a hybrid machine learning layer and uses protein sequence data for protein secondary structure prediction, which is a similar task to our protein disorder prediction problem. Although CNNs are very good at capturing local relationships, they are more limited in identifying medium and long-range sequence information. \cite{Wang:15} proposes DeepCNF-D, which uses a deep convolutional neural fields architecture (comprising of a deep convolutional neural network and conditional random field) to reach state-of-the-art performance on the CASP benchmark datasets. The result of using a CNF architecture demonstrates the benefit of capturing complex dependencies from the amino acid sequences.
 
 \subsection{Recurrent neural networks}
+\label{chap:background sec:litrevRNN}
 
 Neural networks that can capture the long-range and complex sequence dependencies that are encoded in IDPs have demonstrated an improved performance at prediciting protein disorder. Recurrent neural networks can use their ability to maintain a hidden state to capture long-term dependencies, which is shown by the Long Short-Term Memory (LSTM) deep recurrent neural network SPOT-DISORDER \citep{Hanson:16}. This study achieved the best performance or matched best performing protein disorder prediction methods for all independent test sets and demonstrated “the capability of the LSTM technique to pick up long-range, non-local interactions” \citep{Hanson:16}. This approach also used a bidirectional recurrent neural network architecture, which is known to capture long-term dependencies and perform better than a traditional LSTM \citep{Graves:05}. Therefore, these bidirectional LSTM architectures are more likely to enhance protein disorder classification methods and should be considered with our approach.
 
@@ -197,6 +202,7 @@ The findings of these current approaches demonstrate that intrinsic disorder pre
 
 %==================================================================================================================================
 \chapter{Analysis}
+\label{chap:analysis}
 
 \section{General deep learning problem}
 
@@ -232,6 +238,20 @@ Our first feature encoding approach is one-hot encoding \citep{One-hot:wiki} \ci
 Our other feature encoding approach is to generate a position-specific scoring matrix (PSSM) \citep{PSSM:wiki}. This technique is used in many protein structure problems, such as predicting protein secondary structure \citep{McGuffin:00}, identifying sequence-contact relationships \citep{Wang:17} and used within current approaches previously discussed in our review of the literature. A PSSM is a “matrix that involves information about the probability of amino acids or nucleotides occurrence in each position, which is derived from a multiple sequence alignment” \citep{Mohammadi:22}. These PSSMs provide an informative representation about the amino acids at positions within the protein sequences. Specifically, PSSMs capture information about the evolution of the protein in terms of which amino acids can occur at different positions in the sequence and this is used to determine whether a specific residue position will be a small amino acid, a bulky amino acid, a negatively charged amino acid, or have any other specific amino acid property. This information will be helpful for our network to identify patterns and relationships within protein sequences. Furthermore, as PSSMs are also of shape $20 \times sequence length$, the neural network models will be able to take both one-hot encoded sequence matrices and PSSMs as input without any changes, allowing us to compare these different feature encoding methods.
 
 \section{Architectures}
+
+Many problems in deep learning can be tackled using different neural network architectures. These networks can vary in terms of depth, complexity, and computational efficiency, among other factors. As shown by our literature review (Section \ref{sec:current approaches}), different convolutional and recurrent neural networks have been successfully applied to protein disorder prediction. Therefore, to build upon this knowledge, we will implement different models using these architectures. With these models, we will compare their predictions of protein disorder and consider the effect that different architectures have to the performance of the task.
+
+\subsection*{CNNs}
+
+The first neural network architecture we consider is a CNN. We know CNNs can capture local patterns throughout the sequence and consider dependencies between amino acids (Section \ref{chap:background sec:CNN}). We aim to experiment with different CNN architectures; using both one-dimensional and two-dimensional convolution kernels for different models as there is a varied use of these within the literature.
+
+A CNN using 2D convolution kernels will capture spatial information about the arrangement of the amino acids within a protein sequence very well. As our feature encoded sequences have two dimensions, height and width, we can apply these 2D convolution kernels over an entire window of vectorised amino acids to capture local patterns and dependencies between neighbouring amino acids and their structural features. This method can identify patterns and features that appear in the different disordered regions.
+
+A CNN using 1D convolution kernels will also recognise patterns and dependencies between amino acids in a protein sequence. Using CNNs with 1D convolutional kernels are more commonly used for analysing and classifying sequential data. Therefore, we can also evaluate if the CNN architecture that has a more natural application to sequences will perform better at predicting protein disorder within our protein sequences. The structure and complexity of the CNNs we built are discussed later in our design (Section \ref{chap:design section:cnn}). 
+
+\subsection*{RNNs}
+
+A different neural network architecture we consider is the RNN. This architecture processes sequential data and can maintain the sequential context about surrounding amino acids (Section \ref{chap:background sec:RNN}). Protein sequences have many amino acids, and amino acids along the sequence can affect the folding of other amino acid residues further along the sequence, resulting in a disordered region. Furthermore, we know that RNNs face the vanishing gradient problem, and protein sequences have many long-term dependencies; therefore, the LSTM architecture has been considered. The LSTM architecture has been used in recent state-of-the-art models (Section \ref{chap:background sec:litrevRNN}); therefore, we will create models using this architecture to evaluate and compare our LSTM with different feature inputs and our CNN models. Details about the design of the LSTM are discussed later in (Section \ref{chap:design section:rnn}).
 
 \section{Evaluation metrics}
 \label{chap:analysis sec:evaluation}
@@ -509,6 +529,7 @@ To create our web server, we will use the Django web framework \citep{Django:05}
 
 %==================================================================================================================================
 \chapter{Implementation}
+\label{chap:implementation}
 
 \section{Data processing}
 
@@ -536,19 +557,18 @@ For our training, validation and testing datasets we randomly sampled sequences 
 \begin{table}[!ht]
     \centering
     \caption{This table shows protein sequences assessed with MMSeqs2 clustering, the sequences detected as homologies, and where the assessed protein sequences were moved to create independent datasets. Sequences have been identified using their UniProt accession identifier and have the dataset they were randomly sampled to prepended to this. For example, Abscisic acid receptor PYL9 (Q84MC7) was in the test dataset, is similar to Abscisic acid receptor PYL1 (Q84MC7) which is in the train dataset, therefore we move these so that they are both in the same train dataset.}
-    \begin{tabular}{|c|c|c|}
-        \hline
-        Sequence & Homology detected from clustering & Moved sequence \\ \hline
-        TEST\_Q84MC7 & TRAIN\_Q8VZS8 & TRAIN\_Q84MC7 \\ \hline
-        VAL\_Q63716 & TRAIN\_O08807 & TRAIN\_Q63716 \\ \hline
-        TEST\_Q13162 & TRAIN\_O08807 & TRAIN\_Q13162 \\ \hline
-        VAL\_Q03692 & TEST\_Q00780 & TEST\_Q03692 \\ \hline
-        TRAIN\_B7T1D9 & TEST\_B7T1D7 & TEST\_B7T1D9 \\ \hline
-    \end{tabular}  
-
+    \begin{tabular}{@{}lll@{}}
+    \toprule
+    \multicolumn{1}{c}{Sequence} & \begin{tabular}[c]{@{}c@{}}Homology detected \\ via clustering\end{tabular} & \multicolumn{1}{c}{Moved sequence} \\ \midrule
+    TEST\_Q84MC7 & TRAIN\_Q8VZS8 & TRAIN\_Q84MC7 \\
+    VAL\_Q63716 & TRAIN\_O08807 & TRAIN\_Q63716 \\
+    TEST\_Q13162 & TRAIN\_O08807 & TRAIN\_Q13162 \\
+    VAL\_Q03692 & TEST\_Q00780 & TEST\_Q03692 \\
+    TRAIN\_B7T1D9 & TEST\_B7T1D7 & TEST\_B7T1D9 \\ \bottomrule
+    \end{tabular}
+    
     \label{tab:MMSeqs clustering} 
 \end{table}
-
 
 \section{Deep learning architectures}
 \label{chap:implementation sec:architectures}
@@ -605,20 +625,19 @@ Many options for the depth of these neural networks, the size of neural network 
     \centering
     \caption{This table shows the optimal learning rate and weight decay parameters to be used with the SGD optimisation method given different models. Low learning rates and a variety of weight decays were chosen as the optimal parameters.}
     
-    \begin{tabular}{|c|ccc|}
-    \hline
-    Model & \multicolumn{1}{c|}{Feature input} & \multicolumn{1}{c|}{Learning rate} & \multicolumn{1}{c|}{Weight decay (regularisation)} \\ \hline
-    \multirow{2}{*}{CNN (2D)} & One-hot & 0.0005 & 0.01 \\ \cline{2-4} 
-     & PSSM & 0.0005 & 0.005 \\ \hline
-    \multirow{2}{*}{CNN (1D)} & One-hot & 0.0005 & 0.001 \\ \cline{2-4} 
-     & PSSM & 0.001 & 0.005 \\ \hline
-    \multirow{2}{*}{RNN (LSTM)} & One-hot & 0.001 & 0.001 \\ \cline{2-4} 
-     & PSSM & 0.001 & 0.0025 \\ \hline
+    \begin{tabular}{@{}cccc@{}}
+    \toprule
+    Model & Feature input & Learning rate & Weight decay (regularisation) \\ \midrule
+    \multirow{2}{*}{CNN (2D)} & One-hot & 0.0005 & 0.01 \\
+     & PSSM & 0.0005 & 0.005 \\
+    \multirow{2}{*}{CNN (1D)} & One-hot & 0.0005 & 0.001 \\
+     & PSSM & 0.001 & 0.005 \\
+    \multirow{2}{*}{RNN (LSTM)} & One-hot & 0.001 & 0.001 \\
+     & PSSM & 0.001 & 0.0025 \\ \cmidrule(l){1-4} 
     \end{tabular}
 
     \label{tab:hyperparameters} 
 \end{table}
-
 
 \section{Django server}
 We have also implemented a small web application to make our solution accessible. This web server has two web pages. These visually follow the wireframes, and this user interface aims to be user-friendly. For our first page, we use a Django form which when submitted sends a POST request where the Django views conducts the classification of the disordered regions in the protein sequence. This form validates that the inputted sequence is a FASTA file and that every amino acid code is one of the 20 recognised amino acids. If these constraints are not satisfied, the classification will not continue as our solution cannot handle invalid amino acids. As we used Python throughout our deep learning evaluation, we have used code from our notebooks in a helper file to generate our features and make a prediction using our best performing model.
@@ -638,7 +657,7 @@ We containerised this web application by setting up a simple Docker, Nginx and G
 
 \section{Evaluation goal}
 
-Our goal is to evaluate how well different deep neural network architectures and approaches used in deep learning perform against each other when predicting where IDRs are within protein sequences. We have trained six final models. The models are built using three different types of architectures: CNN (2D), CNN (1D), and RNN (LSTM) (Section \ref{chap:implementation sec:architectures}). Each architecture is trained using two types of feature inputs: one-hot encoding and position-specific scoring matrix (PSSM) (Section \ref{chap:implementation sec:features}). We now discuss these model’s performance at protein disorder prediction with questions considering the \textit{“effect of architecture on performance”}, the \textit{“effect of input features on performance”} and how this overall has an effect to the classification of disorder.
+Our goal is to evaluate how well different deep neural network architectures and approaches used in deep learning perform against each other when predicting where IDRs are within protein sequences. We have produced and trained six different models. The models are built using three different types of architectures: CNN (2D), CNN (1D), and RNN (LSTM) (Section \ref{chap:implementation sec:architectures}). Each architecture is trained using two types of feature inputs: one-hot encoding and position-specific scoring matrix (PSSM) (Section \ref{chap:implementation sec:features}). We now discuss these model’s performance at protein disorder prediction with questions considering the \textit{“effect of architecture on performance”}, the \textit{“effect of input features on performance”} and how this overall has an effect to the classification of disorder.
 
 \section{How we will assess our deep neural networks}
 
@@ -646,9 +665,17 @@ We will use metrics from Section \ref{chap:design sec:eval}, as these are often 
 
 With the metrics, we evaluate the overall performance of each model given unseen protein sequences. As we are assessing multiple sequences, each of which has multiple labels, we will first calculate the micro-average of these metrics for each sequence, meaning that we count the total number of true positives, true negatives, false positives and false negatives for the predictions made for a single sequence and calculate our metrics. We then take an average of these calculated metric scores over all the sequences to report our final scores. This was done because this evaluation should be thought of as the model's performance given a new sequence, therefore it is appropriate to take the average score over these sequences. Furthermore, this approach is used in the literature as protein sequences length and disorder content can vary greatly, meaning it would be difficult to compare metrics directly across different sequences. For example, the metrics could be skewed from an extremely large sequence that is predicted well.
 
-It can be noted that we did calculate these metrics using the sum of the true positives, true negatives, false positives and false negatives over all of the sequences, instead of calculating it for each sequence, but similar conclusions were made about what architectures and approaches performed better. However, calculating metrics in this fashion was valuable as with the total true positive, true negative, false positive and false negative values we constructed confusion matrices to see how often models predicted ordered or disordered labels correctly.
+It can be noted that we did calculate these metrics using the sum of the true positives, true negatives, false positives and false negatives over all of the sequences, instead of calculating it for each sequence, but similar conclusions were made about what architectures and approaches performed better. Calculating metrics in this fashion was valuable as with the total true positive, true negative, false positive and false negative values we constructed confusion matrices to see how often models predicted ordered or disordered labels correctly.
 
-Finally, we will evaluate our model performance using the probability-based classifications discussed in our design (Section \ref{chap:design sec:evalThresh}). With our probability values, we can plot receiver operating characteristic (ROC) curves and calculate the area under the ROC Curve (AUC). This was done so we can evaluate how different thresholds will perform at classifying disorder and how this will affect the true positive rate (TPR) and false positive rate (FPR). This gives us further understanding about our models’ performances.
+Finally, we will evaluate our model performance using the probability-based classifications discussed in our design (Section \ref{chap:design sec:evalThresh}). With our probability values, we can plot receiver operating characteristic (ROC) curves and calculate the area under the ROC Curve (AUC). This was done so we can evaluate how different thresholds will perform at classifying disorder and how this will affect the true positive rate (TPR) and false positive rate (FPR). This gives us a further understanding about the models’ performances and how we can modify the disorder constraint value to predict a disordered amino acid without creating unwanted behaviour where a high false positive rate occurs.
+
+\subsection{Statistical significance}
+
+To identify statistical significance between models, we conduct hypothesis tests, where we can state that there is a significant difference between two model’s performances if our statistical test returns a p-value less than alpha. We set alpha to 0.05 as this is a standard cut-off. For our first hypothesis test, we will consider using the MCC values of each sequence in our test dataset, so we must use a statistical test for paired data. We focus on the significance of the MCC value as it is a strong metric for demonstrating the performance of classification on an imbalanced dataset, and this metric has been used for hypothesis testing in the relevant literature \citep{Zhao:22}. An appropriate statistical test we can use is the paired t-test. We first validated the assumptions before conducting the paired t-test, using the Shapiro-Wilk test to test normality \citep{Shapiro:wiki}. If the data’s underlying distribution is not normal, we conduct the non-parametric Wilcoxon signed-rank test \citep{Wilcoxon:wiki}. After all of our evaluations were conducted, we found that we could not satisfy this normality requirement, therefore we used the Wilcoxon signed-rank test. We can validate the assumptions for this test by ensuring the median of the differences is around zero, satisfying the requirement that the distribution must be symmetric. Furthermore, we plotted these distributions for visual inspection of this as well. These datasets also satisfy the assumption of independence as each sequence in a test dataset is unseen during training and unique.
+
+With the Wilcoxon signed-rank test, we evaluate the statistical difference between feature inputs and neural network architectures. We will first keep the architecture as the independent variable and use the feature input as the dependent variable. Then, we will use feature inputs as independent variables and compare different architectures. From this, we get many p-values that demonstrate the significance of different feature inputs and neural network architectures.
+
+We also used the same statistical tests and followed the same method as above when evaluating the AUC value for each sequence. This will allow us to draw conclusions about the significance of the differences between models, using the probability-based predictions.
 
 \section{Classification of DisProt data}
 \label{chap:eval sec:test}
@@ -656,15 +683,15 @@ Finally, we will evaluate our model performance using the probability-based clas
 \begin{table}[!ht]
     \centering
     \caption{This table shows different models and their performance predicting protein disorder using different evaluation metrics. It is clear PSSM feature input produces better predictions than one-hot encoding. Furthermore, the model architectures of CNN (1D) and the LSTM are competitive against each other, whereas CNN (2D) does not perform as well with this test dataset.}
-    \begin{tabular}{|c|c|c|c|c|c|c|c|}
-    \hline
-    Model architecture & Feature input & Accuracy & Precision & Recall & Specificity & F1-score & MCC \\ \hline
-    \multirow{2}{*}{CNN (2D)} & One-hot & 0.4277 & 0.2737 & \textbf{0.9281} & 0.2493 & 0.3603 & 0.1380 \\ \cline{2-8} 
-     & PSSM & 0.4953 & 0.2814 & 0.8360 & 0.3595 & 0.3582 & 0.1433 \\ \hline
-    \multirow{2}{*}{CNN (1D)} & One-hot & 0.6831 & 0.3541 & 0.6109 & 0.6369 & 0.3748 & 0.2061 \\ \cline{2-8} 
-     & PSSM & \textbf{0.6939} & 0.3669 & 0.6514 & \textbf{0.6436} & 0.3980 & 0.2422 \\ \hline
-    \multirow{2}{*}{RNN (LSTM)} & One-hot & 0.6258 & 0.3328 & 0.7648 & 0.4977 & 0.4033 & 0.2041 \\ \cline{2-8} 
-     & PSSM & 0.6934 & \textbf{0.3734} & 0.6759 & 0.6285 & \textbf{0.4101} & \textbf{0.2490} \\ \hline
+    \begin{tabular}{@{}cccccccc@{}}
+    \toprule
+    Model architecture & Feature input & Accuracy & Precision & Recall & Specificity & F1-score & MCC \\ \midrule
+    \multirow{2}{*}{CNN (2D)} & One-hot & 0.4277 & 0.2737 & \textbf{0.9281} & 0.2493 & 0.3603 & 0.1380 \\
+     & PSSM & 0.4953 & 0.2814 & 0.8360 & 0.3595 & 0.3582 & 0.1433 \\
+    \multirow{2}{*}{CNN (1D)} & One-hot & 0.6831 & 0.3541 & 0.6109 & 0.6369 & 0.3748 & 0.2061 \\
+     & PSSM & \textbf{0.6939} & 0.3669 & 0.6514 & \textbf{0.6436} & 0.3980 & 0.2422 \\
+    \multirow{2}{*}{RNN (LSTM)} & One-hot & 0.6258 & 0.3328 & 0.7648 & 0.4977 & 0.4033 & 0.2041 \\
+     & PSSM & 0.6934 & \textbf{0.3734} & 0.6759 & 0.6285 & \textbf{0.4101} & \textbf{0.2490} \\ \cmidrule(l){1-8} 
     \end{tabular}
     
     \label{tab:testDataset}
@@ -672,16 +699,47 @@ Finally, we will evaluate our model performance using the probability-based clas
 
 The withheld testing dataset we created from DisProt \citep{disprot} was used to evaluate our different model performances first. Table \ref{tab:testDataset} presents the evaluation metrics of these different models with this test set. From the table, we can see that the performance of the models does vary depending on the architecture and feature input used. Between the CNN models, the CNN using 1D convolutions within its architecture outperforms the 2D architecture for both types of feature inputs. The LSTM architecture also performs competitively given our models; giving similar results to the better CNN (1D).
 
-In terms of feature input, we observe that PSSMs outperform one-hot encoding for every model. This suggests that the PSSM feature input may be more informative at expressing features about disordered regions within protein sequences.
+In terms of feature input, we observe that PSSMs outperform one-hot encoding for every model. This suggests that the PSSM feature input may be more informative at expressing features about disordered regions within protein sequences. Furthermore, Table \ref{tab:testwilcinput} evidences that the MCC of models using PSSM input is significantly statistically better; therefore, we conclude that PSSM feature input has helped to improve protein disorder predictions for this dataset.
 
-Overall, the highest performing models are the CNN (1D) and LSTM architectures with PSSM feature input. This CNN has an accuracy of 0.6939, the highest accuracy for this test dataset and an MCC of 0.2422. This LSTM has an accuracy of 0.6934 and an MCC of 0.2490 which is the highest MCC score on this test dataset. Given that the LSTM architecture also has the highest F1-score (0.4101), we conclude that on this test dataset the LSTM architecture has the best performance.
+Overall, the highest performing models are the CNN (1D) and LSTM architectures with PSSM feature input. This CNN has an accuracy of 0.6939, the highest accuracy for this test dataset and an MCC of 0.2422. This LSTM has an accuracy of 0.6934 and an MCC of 0.2490 which is the highest MCC score on this test dataset. The LSTM architecture also has the highest F1-score (0.4101). However, Table \ref{tab:testwilcarchitecture} shows that the improvement of MCC between the LSTM and CNN (1D) architecture is not statistically significant, therefore we accept the null hypothesis that there is no difference between these architectures. Furthermore, we do have strong statistical evidence to reject the null hypothesis when comparing these two architectures to our other CNN (2D); with Table \ref{tab:testwilcarchitecture} demonstrating there is a significant difference between the quality of predictions made.
+
+\begin{table}[!ht]
+    \centering
+    \caption{Results of the Wilcoxon signed-rank test on sequence MCC values for evaluating the significance of input features. A one-tailed test was used to see if the PSSM feature input had greater scores than one-hot feature input. We reject all null hypotheses as all p-values are lower than alpha (0.05).}
+    \begin{tabular}{@{}cccc@{}}
+    \toprule
+    Model architecture & Feature comparison & Wilcoxon Statistic & P-value \\ \midrule
+    CNN (2D) & PSSM, One-hot & 53729.0 & $1.5272\cdot{10^{-03}}$ \\
+    CNN (1D) & PSSM, One-hot & 54035.0 & $1.9047\cdot{10^{-03}}$ \\
+    RNN (LSTM) & PSSM, One-hot & 56711.0 & $2.6974\cdot{10^{-08}}$ \\ \bottomrule
+    \end{tabular}
+    
+    \label{tab:testwilcinput}
+\end{table}
+
+\begin{table}[!ht]
+    \centering
+    \caption{Results of the Wilcoxon signed-rank test on sequence MCC values for evaluating different model architectures. A two-tailed test was used to see if models were statistically different. We could not reject the null hypothesis stating the LSTM and CNN (1D) have no difference, as these p-values are not less than alpha (0.05).}
+    \begin{tabular}{@{}cccc@{}}
+    \toprule
+    Feature input & Architecture comparison & Wilcoxon Statistic & P-value \\ \midrule
+    \multirow{3}{*}{\begin{tabular}[c]{@{}c@{}}One-hot \\ encodings\end{tabular}} & CNN (1D), CNN (2D) & 30744.0 & $3.2158\cdot{10^{-09}}$ \\
+     & LSTM, CNN (2D) & 23735.0 & $9.8264\cdot{10^{-13}}$ \\
+     & LSTM, CNN (1D) & 44539.0 & $7.7522\cdot{10^{-01}}$ \\ \cmidrule(l){2-4}
+    \multirow{3}{*}{PSSMs} & CNN (1D), CNN (2D) & 25119.0 & $7.6701\cdot{10^{-17}}$ \\
+     & LSTM, CNN (2D) & 23241.0 & $2.1073\cdot{10^{-19}}$ \\
+     & LSTM, CNN (1D) & 43391.0 & $3.2658\cdot{10^{-01}}$ \\ \bottomrule
+    \end{tabular}
+    
+    \label{tab:testwilcarchitecture}
+\end{table}
 
 \subsection{Model confusion}
 \label{chap:eval sec:testconfusion}
 
-We can look at each model with more granularity by evaluating the classification report of each model, given by the scikit-learn library \citep{Pedregosa:11}. This looks at the overall true positives, true negatives, false positives and false negatives rather than regarding them for each sequence but is useful to see how well our two different classes, order and disorder, were classified. This gives us information about the overall precision, recall and F1-score of each class and we can also use a confusion matrix to see how much order and disorder was misclassified by different models. \\
+We can look at each model with more granularity by evaluating the classification report of each model, given by the scikit-learn library \citep{Pedregosa:11}. This looks at the overall true positives, true negatives, false positives and false negatives rather than regarding them for each sequence. This gives us similar information to Table \ref{tab:testDataset}, and we can also generate a confusion matrix to see how much order and disorder was misclassified by different models. \\
 \subsubsection{CNNs \newline}
-For our CNNs using the 2D convolutions within its architecture, our confusion matrices (Figure \ref{fig:cf2d1hot} and Figure \ref{fig:cf2dpssm}) show that this model is often classifying many ordered residues as disordered. Using the PSSM features lowers this misclassification, but there is still mostly disordered amino acids being predicted, despite the dataset containing a majority of ordered amino acids. This classification distribution helps us understand why the recall for this model is so high (Table \ref{tab:testDataset}), as it is much less likely to misclassify a disordered amino acid because it attempts to classify more amino acids as disordered.
+For our CNNs using the 2D convolutions within its architecture, our confusion matrices (Figure \ref{fig:cf2d1hot} and Figure \ref{fig:cf2dpssm}) show that this model is often classifying many ordered residues as disordered. Using the PSSM features lowers this misclassification, but there is still mostly disordered amino acids being predicted despite the dataset containing a majority of ordered amino acids. This classification distribution helps us understand why the recall for this model is so high (Table \ref{tab:testDataset}), as it is much less likely to misclassify a disordered amino acid because it attempts to classify more amino acids as disordered.
 
 For our CNNs using the 1D convolutions within its architecture, our confusion matrices (Figure \ref{fig:cf1d1hot} and Figure \ref{fig:cf1dpssm}) show there are better classifications being made than the previous CNN architecture. We can see a better balance between the two classes, with a lot more ordered amino acids being classified correctly than incorrectly. We can also see a slight improvement to the predictions made when we use the PSSMs as our feature input. This agrees with our analysis of the test set (Section \ref{chap:eval sec:test}), demonstrating using PSSM features improves the CNN models predictions. From analysing all the confusion matrices, we see that this CNN architecture has the lowest false negatives, which can also be seen in Table \ref{tab:testDataset}, as this model architecture has the greatest specificity.
 
@@ -698,7 +756,7 @@ For our CNNs using the 1D convolutions within its architecture, our confusion ma
         \caption{PSSM confusion matrix.}
         \label{fig:cf2dpssm}
     \end{subfigure}
-    \caption{Confusion matrices for CNN with 2D convolution kernels within its architecture. \subref{fig:cf2d1hot} shows the confusion matrix for the model using one-hot encoding feature input. \subref{fig:cf2dpssm} shows the confusion matrix for the model using one-hot encoding feature input. We see this models architecture...}
+    \caption{Confusion matrices for CNN with 2D convolution kernels within its architecture. \subref{fig:cf2d1hot} shows the confusion matrix for the model using one-hot encoding feature input. \subref{fig:cf2dpssm} shows the confusion matrix for the model using PSSM feature input. We see this models architecture performs poorly; misclassifying many ordered amino acids. It is clear that despite a high recall when predicting disordered regions, this architecture is not very precise, therefore it is not very sensible.}
     \label{fig:cf2d}
 \end{figure}
 
@@ -711,16 +769,16 @@ For our CNNs using the 1D convolutions within its architecture, our confusion ma
     \end{subfigure}
     ~
     \begin{subfigure}[b]{0.48\textwidth}
-        \includegraphics[width=\textwidth]{images/confmats/CNN1D1hot-cf.pdf}
+        \includegraphics[width=\textwidth]{images/confmats/CNN1Dpssm-cf.pdf}
         \caption{PSSM confusion matrix.}
         \label{fig:cf1dpssm}
     \end{subfigure}
-    \caption{Confusion matrices for CNN with 1D convolution kernels within its architecture. \subref{fig:cf2d1hot} shows the confusion matrix for the model using one-hot encoding feature input. \subref{fig:cf2dpssm} shows the confusion matrix for the model using one-hot encoding feature input. We see this models architecture...}
+    \caption{Confusion matrices for CNN with 1D convolution kernels within its architecture. \subref{fig:cf2d1hot} shows the confusion matrix for the model using one-hot encoding feature input. \subref{fig:cf2dpssm} shows the confusion matrix for the model using PSSM feature input. We see this models architecture has a sensible precision and recall. Furthermore, using PSSM features reduces misclassification, however this is not significant.}
     \label{fig:cf1d}
 \end{figure}
 
 \subsubsection{RNNs \newline}
-Finally, our RNNs, using a LSTM architecture, can be regarded as the best model architecture for predicting IDRs in the protein sequences of our test dataset. Our confusion matrices (Figure \ref{fig:cfrnn1hot} and Figure \ref{fig:cfrnnpssm}) help demonstrate how many ordered and disordered amino acids were misclassified by models using the LSTM architecture. Considering the different feature inputs, our one-hot encoding method tends to classify more disordered amino acids correctly at the cost of misclassifying more ordered amino acids as disordered. Whereas, the PSSM inputs have less misclassified ordered amino acids, but the model has a weaker recall and has predicted less disordered amino acids correctly.
+Finally, our RNNs, using the LSTM architecture can be regarded as the best model architecture for predicting IDRs in the protein sequences of our test dataset. Our confusion matrices (Figure \ref{fig:cfrnn1hot} and Figure \ref{fig:cfrnnpssm}) help demonstrate how many ordered and disordered amino acids were misclassified by models using the LSTM architecture. Considering the different feature inputs, our one-hot encoding method tends to classify more disordered amino acids correctly at the cost of misclassifying more ordered amino acids as disordered. Whereas, the PSSM inputs have less misclassified ordered amino acids, but the model has a weaker recall and has predicted less disordered amino acids correctly.
 
 \begin{figure}[!htb] 
     \centering
@@ -735,7 +793,7 @@ Finally, our RNNs, using a LSTM architecture, can be regarded as the best model 
         \caption{PSSM confusion matrix.}
         \label{fig:cfrnnpssm}
     \end{subfigure}
-    \caption{Confusion matrices for CNN with 2D convolution kernels within its architecture. \subref{fig:cf2d1hot} shows the confusion matrix for the model using one-hot encoding feature input. \subref{fig:cf2dpssm} shows the confusion matrix for the model using one-hot encoding feature input. We see this models architecture...}
+    \caption{Confusion matrices for RNN using an LSTM architecture. \subref{fig:cf2d1hot} shows the confusion matrix for the model using one-hot encoding feature input. \subref{fig:cf2dpssm} shows the confusion matrix for the model using PSSM feature input. Using this LSTM architecture results in the lowest number of misclassifications. The different feature inputs are seen to misclassify different classes.}
     \label{fig:cfrnn}
 \end{figure}
 
@@ -745,28 +803,76 @@ Finally, our RNNs, using a LSTM architecture, can be regarded as the best model 
     \centering
     \includegraphics[width=0.95\linewidth]{images/DisProtROC.pdf}    
 
-    \caption{ROC curves of probability-based IDR predictions for our 6 models on the withheld DisProt test data.}
+    \caption{ROC curves of probability-based IDR predictions for our 6 models on the withheld DisProt test data. It is clear the models with LSTM architectures have the best performance given a TPR and FPR trade off. Furthermore, every model performs above the dummy baseline.}
 
     \label{fig:roctest} 
 \end{figure}
 
-With our DisProt test dataset Figure \ref{fig:roctest} demonstrates that our LSTM with PSSM feature input is the best model in terms of trade-off between the true positive rate (TPR) and false positive rate (FPR). This agrees with our evaluation using our other metrics such as MCC and F1-score. The two models using the LSTM architecture have a higher area under the ROC Curve (AUC), showing the LSTM is better at identifying IDRs within protein sequences. The CNN models have a slightly lower performance than the LSTMs when using this metric; with the 2D CNN with PSSM input having the worst performance at correctly classifying confidently. However, all of these classifiers perform better than a dummy baseline. This can be seen in Figure \ref{fig:roctest} because, at 0.5 true positives there are less than 0.5 false positives; with the worst classifier only recording 0.2 false positives at 0.5 true positives.
+\begin{table}[!htb]
+    \centering
+    \caption{This table shows different models and their performance regarding AUC. These scores are calculated from the ROC curves generated in Figure \ref{fig:roctest} using the DisProt test data.}
+    \begin{tabular}{@{}ccccccc@{}}
+    \toprule
+    Model architecture & \multicolumn{2}{c}{CNN (2D)} & \multicolumn{2}{c}{CNN (1D)} & \multicolumn{2}{c}{RNN (LSTM)} \\ \cmidrule{0-0}
+    Feature input & One-hot & PSSM & One-hot & PSSM & One-hot & PSSM \\ \midrule
+    AUC & 0.7426 & 0.7043 & 0.7379 & 0.7403 & 0.\textbf{7794} & 0.7635 \\ \bottomrule
+    \end{tabular}
+    
+    \label{tab:auctest}
+\end{table}
+
+Using the DisProt test dataset, Figure \ref{fig:roctest} demonstrates that our LSTM with one-hot encoding feature input is the best model in terms of trade-off between the true positive rate (TPR) and false positive rate (FPR). The two models using the LSTM architecture have a higher area under the ROC Curve (AUC) (Table \ref{tab:auctest}), showing the LSTM is better at sensibly identifying IDRs within protein sequences. These improved metrics were seen for the LSTM in our evaluation of other metrics as well, such as MCC and F1-score. The CNN models have a slightly lower performance than the LSTMs when using this metric; with the 2D CNN with PSSM input having the worst performance at correctly classifying disordered amino acids confidently. 
+
+From conducting a Wilcoxon signed-rank test with these model's AUC scores (Table \ref{tab:auctestwilcinput} and Table \ref{tab:auctestwilcarchitecture}), we reach a number of conclusions. We cannot conclude there is a significant difference between the one-hot encoding and PSSM input for the LSTM architecture, but for the CNN (1D) model there is a significant difference when using different feature inputs, with PSSM showing a greater improvement. Furthermore, different architectures have difference performances dependent on the feature input using this metric, for example the LSTM and CNN (2D) having no significant difference when using one-hot encodings, but a clear statistical difference when using these architectures with PSSM input. Therefore, we will not make a conclusion about the best performing architectures with the AUC metric.
+
+Finally, all of these classifiers perform better than a dummy baseline. This can be seen in Figure \ref{fig:roctest} because at a TPR of 0.5 there is a FPR less than 0.5; with the worst classifier only recording approximately a 0.2 FPR at a 0.5 TPR.
+
+\begin{table}[!htb]
+    \centering
+    \caption{Results of the Wilcoxon signed-rank test on sequence AUC values for evaluating the significance of input features. A one-tailed test was used to see if the PSSM feature input had greater scores than one-hot feature input. We reject the null hypothesis for the CNN (1D) model architecture as this p-value is lower than alpha (0.05).}
+    \begin{tabular}{@{}cccc@{}}
+    \toprule
+    Model architecture & Feature comparison & Wilcoxon Statistic & P-value \\ \midrule
+    CNN (2D) & PSSM, One-hot & 32404.0 & $1.0000\cdot{10^{+00}}$ \\
+    CNN (1D) & PSSM, One-hot & 54441.0 & $1.1425\cdot{10^{-03}}$ \\
+    RNN (LSTM) & PSSM, One-hot & 50071.0 & $1.5568\cdot{10^{-01}}$ \\ \bottomrule
+    \end{tabular}
+    
+    \label{tab:auctestwilcinput}
+\end{table}
+
+\begin{table}[!htb]
+    \centering
+    \caption{Results of the Wilcoxon signed-rank test on sequence AUC values for evaluating different model architectures. A two-tailed test was used to see if models were statistically different. We could not reject the null hypothesis stating the LSTM and CNN (1D) have no difference when PSSM input is used, or the hypothesis stating the LSTM and CNN (2D) have no difference when one-hot encoding input is used, as these p-values are not less than alpha (0.05).}
+    \begin{tabular}{@{}cccc@{}}
+    \toprule
+    Feature input & Architecture comparison & Wilcoxon Statistic & P-value \\ \midrule
+    \multirow{3}{*}{\begin{tabular}[c]{@{}c@{}}One-hot\\ encodings\end{tabular}} & CNN (1D), CNN (2D) & 35839.0 & $3.4921\cdot{10^{-05}}$ \\
+     & LSTM, CNN (2D) & 43252.0 & $1.3128\cdot{10^{-01}}$ \\
+     & LSTM, CNN (1D) & 37561.0 & $3.9353\cdot{10^{-04}}$ \\ \cmidrule(l){2-4}
+    \multirow{3}{*}{PSSM} & CNN (1D), CNN (2D) & 33839.0 & $1.6086\cdot{10^{-07}}$ \\
+     & LSTM, CNN (2D) & 31908.0 & $2.3268\cdot{10^{-09}}$ \\
+     & LSTM, CNN (1D) & 44209.0 & $2.8746\cdot{10^{-01}}$ \\ \bottomrule
+    \end{tabular}
+    
+    \label{tab:auctestwilcarchitecture}
+\end{table}
 
 \section{Classification of CASP10 data}
 \label{chap:eval sec:casp10}
 
-\begin{table}[!ht]
+\begin{table}[!htb]
     \centering
     \caption{This table shows different models and their performance predicting protein disorder using different evaluation metrics on the CASP10 dataset.}
-    \begin{tabular}{|c|c|c|c|c|c|c|c|}
-    \hline
-    Model architecture & Feature input & Accuracy & Precision & Recall & Specificity & F1-score & MCC \\ \hline
-    \multirow{2}{*}{CNN (2D)} & One-hot & 0.6351 & 0.1766 & 0.5551 & 0.6466 & 0.2256 & 0.1195 \\ \cline{2-8} 
-     & PSSM & 0.4461 & 0.156 & 0.7758 & 0.3967 & 0.2318 & 0.0982 \\ \hline
-    \multirow{2}{*}{CNN (1D)} & One-hot & \textbf{0.7401} & 0.2148 & 0.4367 & \textbf{0.7647} & 0.2458 & 0.1587 \\ \cline{2-8} 
-     & PSSM & 0.7045 & 0.2279 & 0.5819 & 0.7096 & 0.2895 & \textbf{0.1909} \\ \hline
-    \multirow{2}{*}{RNN (LSTM)} & One-hot & 0.5414 & 0.1959 & \textbf{0.7891} & 0.4869 & 0.2775 & 0.1636 \\ \cline{2-8} 
-     & PSSM & 0.6596 & \textbf{0.2337} & 0.6108 & 0.6479 & \textbf{0.2896} & 0.1809 \\ \hline
+    \begin{tabular}{@{}cccccccc@{}}
+    \toprule
+    Model architecture & Feature input & Accuracy & Precision & Recall & Specificity & F1-score & MCC \\ \midrule
+    \multirow{2}{*}{CNN (2D)} & One-hot & 0.6351 & 0.1766 & 0.5551 & 0.6466 & 0.2256 & 0.1195 \\
+     & PSSM & 0.4461 & 0.156 & 0.7758 & 0.3967 & 0.2318 & 0.0982 \\
+    \multirow{2}{*}{CNN (1D)} & One-hot & \textbf{0.7401} & 0.2148 & 0.4367 & \textbf{0.7647} & 0.2458 & 0.1587 \\
+     & PSSM & 0.7045 & 0.2279 & 0.5819 & 0.7096 & 0.2895 & \textbf{0.1909} \\
+    \multirow{2}{*}{RNN (LSTM)} & One-hot & 0.5414 & 0.1959 & \textbf{0.7891} & 0.4869 & 0.2775 & 0.1636 \\
+     & PSSM & 0.6596 & \textbf{0.2337} & 0.6108 & 0.6479 & \textbf{0.2896} & 0.1809 \\ \cmidrule(l){1-8} 
     \end{tabular}
     
     \label{tab:caspDataset}
@@ -774,17 +880,17 @@ With our DisProt test dataset Figure \ref{fig:roctest} demonstrates that our LST
 
 The CASP10 dataset has been used to assess many protein disorder prediction tools. There are 94 targets (protein sequences) in this dataset that were used for analysis as some other sequences proposed in this dataset were removed by the organisers before or during the competition \citep{Moult:14}. For this dataset, we generate one-hot encoded and PSSM features similarly to our DisProt dataset. Furthermore, no sequences in this dataset were invalid for our vectorisation process and model input; therefore, no sequences had to be removed.
 
-We performed a similar analysis on the CASP dataset as we have done using the DisProt withheld test dataset. We used the same model architectures and features as above but trained out models using our entire DisProt dataset before making predictions on the CASP dataset. Table \ref{tab:caspDataset} presents the evaluation metrics of our different models' performances on the CASP10 dataset. From this table, we see a similar performance difference between the architectures and feature inputs as the previous unseen test dataset. Again, the CNN using 2D convolutions within its architecture has the worst performance. For the CNN using 1D convolutions and the LSTM it is clear again that using the PSSMs as our feature input does improve the prediction quality of protein disorder. Both of these models are once again comparably competitive, with the CNN model achieving the highest MCC of 0.1909 and the LSTM has the highest F1-score of 0.2896. It is also interesting to note that the with better CNN architecture, a model using one-hot encoding has the highest accuracy and specificity measure. Overall, we claim the CNN (1D) using PSSM features has the leading performance as it has the strongest distribution of metrics. However, we can see that both the CNN (1D) and LSTM perform similarly with the CASP10 dataset, making it more difficult to justify a best architecture. This has demonstrated the capability of different network architectures at this task.
+We performed a similar analysis on the CASP dataset as we have done using the DisProt withheld test dataset. We used the same model architectures and features as above but trained out models using our entire DisProt dataset before making predictions on the CASP dataset. Table \ref{tab:caspDataset} presents the evaluation metrics of our different models' performances on the CASP10 dataset. From this table, we see a similar performance difference between the architectures and feature inputs as the previous unseen test dataset. Again, the CNN using 2D convolutions within its architecture has the worst performance. For the CNN using 1D convolutions and the LSTM it is clear again that using the PSSMs as our feature input does improve the prediction quality of protein disorder. Both of these models are once again comparably competitive, with the CNN model achieving the highest MCC of 0.1909 and the LSTM has the highest F1-score of 0.2896. It is also interesting to note that the with better CNN architecture, a model using one-hot encoding has the highest accuracy and specificity measure. Overall, we claim the CNN (1D) using PSSM features has the leading performance as it has the strongest distribution of metrics. However, we can see that both the CNN (1D) and LSTM perform similarly with the CASP10 dataset, making it more difficult to justify a best architecture. This has demonstrated the capability of different network architectures at the task of disorder prediction.
 
 \subsection{Model confusion}
 
-Using our different model architectures and feature inputs predictions on the CASP dataset, we have seen similarities and differences to the confusion shown about predictions on our test dataset (Section \ref{chap:eval sec:testconfusion}).
+Using our different model architectures and feature inputs to make predictions on the CASP dataset, we have seen similarities and differences to the confusion shown about predictions on our test dataset (Section \ref{chap:eval sec:testconfusion}). \\
 
 \subsubsection{CNNs \newline}
 
 For the CNN architecture with 2D convolution kernels, the two models that use different feature inputs have very different confusion matrices. With one-hot encoding features, our model classifies half of the disordered amino acids correctly (Figure \ref{fig:caspcf2d1hot}), whereas the model using PSSM features classifies three-quarters of these disordered amino acids correctly at the expense of classifying more than half of the ordered amino acids incorrectly (Figure \ref{fig:caspcf2dpssm}). This is similar to this architecture’s performance on the DisProt test dataset (Section \ref{chap:eval sec:testconfusion}), where we saw that it often over-predicted disordered amino acids. This means this model has likely been unable to capture the unique intricate features that represent IDRs.
 
-The CNN architecture with 1D convolution kernels classifies only approximately half of the disordered amino acids correctly for both feature inputs, which can be seen by Figure \ref{fig:caspcf1d1hot} and Figure \ref{fig:caspcf1dpssm}. We can see the CNN with one-hot encoding features, which is our most accurate model (Table \ref{tab:caspDataset}), performs worse at classifying disordered amino acids, and the CNN with PSSM features performs worse at classifying ordered amino acids. However, this difference is not significant enough to determine the least confused model.
+The CNN architecture with 1D convolution kernels classifies only approximately half of the disordered amino acids correctly for both feature inputs, which can be seen by Figure \ref{fig:caspcf1d1hot} and Figure \ref{fig:caspcf1dpssm}. We can see the CNN with one-hot encoding features, which is our most accurate model (Table \ref{tab:caspDataset}), performs worse at classifying disordered amino acids, and the CNN with PSSM features performs worse at classifying ordered amino acids. However, this difference is not significant enough to determine the least confused model. \\
 
 \begin{figure}[!htb] 
     \centering
@@ -799,7 +905,7 @@ The CNN architecture with 1D convolution kernels classifies only approximately h
         \caption{PSSM confusion matrix.}
         \label{fig:caspcf2dpssm}
     \end{subfigure}
-    \caption{Confusion matrices for CNN with 2D convolution kernels within its architecture. \subref{fig:cf2d1hot} shows the confusion matrix for the model using one-hot encoding feature input. \subref{fig:cf2dpssm} shows the confusion matrix for the model using one-hot encoding feature input. We see this models architecture...}
+    \caption{Confusion matrices for CNN with 2D convolution kernels within its architecture. \subref{fig:cf2d1hot} shows the confusion matrix for the model using one-hot encoding feature input. \subref{fig:cf2dpssm} shows the confusion matrix for the model using PSSM feature input. We see this models architecture performs reasonably well with one-hot encoded features, but misclassifies many ordered amino acids when using PSSMs.}
     \label{fig:caspcf2d}
 \end{figure}
 
@@ -816,7 +922,7 @@ The CNN architecture with 1D convolution kernels classifies only approximately h
         \caption{PSSM confusion matrix.}
         \label{fig:caspcf1dpssm}
     \end{subfigure}
-    \caption{Confusion matrices for CNN with 1D convolution kernels within its architecture. \subref{fig:cf2d1hot} shows the confusion matrix for the model using one-hot encoding feature input. \subref{fig:cf2dpssm} shows the confusion matrix for the model using one-hot encoding feature input. We see this models architecture...}
+    \caption{Confusion matrices for CNN with 1D convolution kernels within its architecture. \subref{fig:cf2d1hot} shows the confusion matrix for the model using one-hot encoding feature input. \subref{fig:cf2dpssm} shows the confusion matrix for the model using PSSM feature input. We see this models architecture correctly identifies only half of the disordered amino acids. There is a minimal difference between the confusion regarding different inputs, and both of these models have a similar overall confusion as the CNN with 2D convolutions and one-hot encoding input (Figure \ref{fig:caspcf2d1hot}).}
     \label{fig:caspcf1d}
 \end{figure}
 
@@ -837,7 +943,7 @@ Our RNN models have less confusion. For the LSTM when one-hot encoding is used, 
         \caption{PSSM confusion matrix.}
         \label{fig:caspcfrnnpssm}
     \end{subfigure}
-    \caption{Confusion matrices for CNN with 1D convolution kernels within its architecture. \subref{fig:cf2d1hot} shows the confusion matrix for the model using one-hot encoding feature input. \subref{fig:cf2dpssm} shows the confusion matrix for the model using one-hot encoding feature input. We see this models architecture...}
+    \caption{Confusion matrices for RNN using an LSTM architecture. \subref{fig:cf2d1hot} shows the confusion matrix for the model using one-hot encoding feature input. \subref{fig:cf2dpssm} shows the confusion matrix for the model using PSSM feature input. We see this models architecture experiencing the least confusion again.}
     \label{fig:caspcfrnn}
 \end{figure}
 
@@ -847,14 +953,31 @@ Our RNN models have less confusion. For the LSTM when one-hot encoding is used, 
     \centering
     \includegraphics[width=0.95\linewidth]{images/CASPROC.pdf}    
 
-    \caption{ROC curves of probability-based IDR predictions for our 6 models on the withheld DisProt test data.}
+    \caption{ROC curves of probability-based IDR predictions for our 6 models on the CASP10 dataset. The CNN (1D) and LSTM models using one-hot encoding have the best performance given a TPR and FPR trade off. Both CNN (2D) models perform the poorest. Furthermore, every model does perform above the dummy baseline.}
 
     \label{fig:roccasp} 
 \end{figure}
 
-When analysing ROC curves with our CASP10 dataset, we see that the CNN (1D) and LSTM using one-hot encoding features achieve the best AUC. This is interesting because it is a different conclusion compared to the other results. We notice when considering the CNN (1D) and LSTM architectures that the one-hot encoding ROC curves are similar and the PSSM ROC curves are similar. This implies that different feature encodings may represent protein sequences in a fashion that different architectures can easily pickup feature patterns. We again conclude that the CNN with 2D convolutions in its architecture has the worst performance on this dataset. Furthermore, we can conclude that all of these models again perform better than the dummy baseline from inspection of that ROC curve graph \ref{fig:roccasp}, demonstrating at 0.5 true positive rate, the false positive rate is below 0.5 for all models.
+\begin{table}[!htb]
+    \centering
+    \caption{This table shows different models and their performance regarding AUC. These scores are calculated from the ROC curves generated in Figure \ref{fig:roccasp} using the CASP10 dataset.}
+    \begin{tabular}{@{}ccccccc@{}}
+    \toprule
+    Model architecture & \multicolumn{2}{c}{CNN (2D)} & \multicolumn{2}{c}{CNN (1D)} & \multicolumn{2}{c}{RNN (LSTM)} \\ \cmidrule{0-0}
+    Feature input & One-hot & PSSM & One-hot & PSSM & One-hot & PSSM \\ \midrule
+    AUC & 0.5958 & 0.6196 & \textbf{0.7511} & 0.7115 & 0.7477 & 0.7021 \\ \bottomrule
+    \end{tabular}
+    
+    \label{tab:auccasp}
+\end{table}
 
+When analysing ROC curves with our CASP10 dataset, we see that the CNN (1D) and LSTM using one-hot encoding features achieve the best AUC (Table \ref{tab:auccasp}). This is interesting because it is a different conclusion compared to the other results. We notice when considering the CNN (1D) and LSTM architectures that the one-hot encoding ROC curves are similar and the PSSM ROC curves are similar. This implies that different feature encodings may represent protein sequences in a fashion that different architectures can easily pickup similar feature patterns, regardless of the underlying architecture. We again conclude that the CNN with 2D convolutions in its architecture has the worst performance on this dataset. Furthermore, we can conclude that all of these models again perform better than the dummy baseline from inspection of that ROC curve graph (Figure \ref{fig:roccasp}), demonstrates at a 0.5 TPR, the FPR is below 0.5 for all models.
 
+\subsection{Comparison of other solutions}
+[Table comparison]
+
+\section{Evaluation of the web server}
+[Screenshot of prediction made by this web server and a different web server. Similarities/differences.]
 
 
 
