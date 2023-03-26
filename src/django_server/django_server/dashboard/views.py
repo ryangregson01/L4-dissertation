@@ -20,11 +20,16 @@ def index(request):
             
             # user_seq is a string, so convert it to Tensor
             full_seq = get_vector(str(user_seq))
+            # Mimics batch
+            full_seq = full_seq.unsqueeze(0)
 
             loaded_model = get_model()
+            loaded_model.eval()
             with torch.no_grad():
-                predicted_label = loaded_model(full_seq)
+                full_seq = torch.einsum('ijk->ikj', full_seq)
+                predicted_label, _ = loaded_model(full_seq)
             predicted_label = torch.squeeze(predicted_label)
+            predicted_label = torch.sigmoid(predicted_label)
             predicted_label[predicted_label>=0.5] = 1
             predicted_label[predicted_label<0.5] = 0
             pred_lab_list = ['1' if (float(val) == 1) else '0' for val in predicted_label]

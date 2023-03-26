@@ -26,3 +26,13 @@ td {
 .disordered {
     background-color: rgba(255,0,0,0.5);
 }
+
+button {
+    float: right;
+    margin-right: 5%;
+    position: relative;
+}
+
+#prediction {
+    width: 80%;
+}

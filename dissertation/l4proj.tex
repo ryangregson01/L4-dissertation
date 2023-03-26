@@ -7,8 +7,7 @@
 % put any additional packages here
 \usepackage{multirow}
 \usepackage{booktabs}
-
-\usepackage{svg}
+\usepackage{xurl}
 %
 
 \begin{document}
@@ -86,7 +85,7 @@
 
 \section{Motivation}
 
-Intrinsically disordered proteins do not have a fixed or ordered three-dimensional structure and there are significant differences between the amino acid sequences of intrinsically disordered proteins (IDPs) / intrinsically disordered regions (IDRs) compared to structured globular (functional) proteins \citep{Martinelli:19}. Figure \ref{fig:structured prot} demonstrates the difference between unstructured and structured proteins, where a solid ribbon-like representation is used to depict the well-defined three-dimensional structure, such as alpha helices and beta sheets, and disordered regions of the proteins are depicted using thinner strands, indicating the lack of fixed structure. The structural order of these sequences can be manually labelled from experiments with x-ray crystallographic analysis \citep{idp_wiki}. These experiments can be difficult and the number of newly occurring proteins submitted to the Protein Data Bank (PDB) \citep{pdb} each year makes it difficult to manually experiment with each one, meaning many proteins’ disorder structure have not been assessed.
+Intrinsically disordered proteins do not have a fixed or ordered three-dimensional structure and there are significant differences between the amino acid sequences of intrinsically disordered proteins (IDPs) / intrinsically disordered regions (IDRs) compared to structured globular (functional) proteins \citep{Martinelli:19}. Figure \ref{fig:structured prot} demonstrates the difference between unstructured and structured proteins, where a solid ribbon-like representation is used to depict the well-defined three-dimensional structure, such as alpha helices and beta sheets, and disordered regions of the proteins are depicted using thinner strands, indicating the lack of fixed structure. The structural order of these sequences can be manually labelled from experiments with x-ray crystallographic analysis \citep{idp:wiki}. These experiments can be difficult and the number of newly occurring proteins submitted to the Protein Data Bank (PDB) \citep{pdb} each year makes it difficult to manually experiment with each one, meaning many proteins’ disorder structure have not been assessed.
 
 \begin{figure}[!htb]
     \centering
@@ -122,7 +121,7 @@ An aim alongside comparing the deep neural networks is to create a web server, w
 
 \subsection{What is a protein?}
 
-Proteins are a linear sequence of amino acids \citep{prot_struct_lib}. The Insulin protein has a precursor molecule with a linear sequence of 110 amino acids (Figure \ref{fig:sequence example}). This globular protein controls blood sugar levels, and diabetics need to inject human insulin to control their blood sugar.
+Proteins are a linear sequence of amino acids \citep{Connor:10}. The Insulin protein has a precursor molecule with a linear sequence of 110 amino acids (Figure \ref{fig:sequence example}). This globular protein controls blood sugar levels, and diabetics need to inject human insulin to control their blood sugar.
 
 \begin{figure}[!h]
     \centering
@@ -133,14 +132,14 @@ Proteins are a linear sequence of amino acids \citep{prot_struct_lib}. The Insul
     \label{fig:sequence example} 
 \end{figure}
 
-There are twenty possible amino acids that protein sequences can be built from, and each of these amino acids have a unique side chain which have different structural properties \citep{aa_wiki}. Different proteins have different sequences of amino acids. The amino acids in the sequence will "interact with each other to form a well-defined, folded protein" \citep{protein_folding}. The folded protein with have a three-dimensional structure, and this three-dimensional structure determines the protein's function \citep{bbc_bitesize}. This function can be supporting frameworks inside cells, catalysing biological reactions, communication between different parts of the body and proteins are used for function inside the immune system \citep{bbc_bitesize}. Therefore, it is important that the folding of proteins is done correctly as misfolded proteins will lose their structure and function, such as the above insulin molecule, which can lead to diseases.
+There are twenty possible amino acids that protein sequences can be built from, and each of these amino acids have a unique side chain which have different structural properties \citep{aa:wiki}. Different proteins have different sequences of amino acids. The amino acids in the sequence will "interact with each other to form a well-defined, folded protein" \citep{Cheriyedath:19}. The folded protein with have a three-dimensional structure, and this three-dimensional structure determines the protein's function \citep{bbc_bitesize}. This function can be supporting frameworks inside cells, catalysing biological reactions, communication between different parts of the body and proteins are used for function inside the immune system \citep{bbc_bitesize}. Therefore, it is important that the folding of proteins is done correctly as misfolded proteins will lose their structure and function, such as the above insulin molecule, which can lead to diseases.
 
 \subsection{Intrinsically disordered proteins (IDPs)}
 \label{chap:background sec:IDPs}
 
-IDPs are different to structured proteins. These unstructured, disordered proteins are suggested to cause a number of diseases. For example, disordered mutations of the functional insulin molecule can form amyloid structures. These structures can lead to amyloid disease, such as Alzheimer's, and Parkinson's. IDPs amino acid sequences differ and contain a “low content of bulky hydrophobic amino acids and a high proportion of polar and charged amino acids” \citep{idp_wiki}. In comparison to structured proteins that fold correctly these sequences cannot fold into stable globular proteins, meaning that the protein lacks an ordered three-dimensional structure. The root cause of this lack of structure, causing disorder, is the proteins’ primary structure: the amino acid sequence. When disordered amino acids are grouped, this is labelled as an intrinsically disordered region (IDR) and is where the misfolding occurs. Therefore, making predictions about the probability that an amino acid residue is ordered or disordered within a protein sequence will help determine where this incorrect folding will occur. This means by focusing on the amino acids’ structure we can determine the outcome of the protein functioning correctly. 
+IDPs are different to structured proteins. These unstructured, disordered proteins are suggested to cause a number of diseases. For example, disordered mutations of the functional insulin molecule can form amyloid structures. These structures can lead to amyloid disease, such as Alzheimer's, and Parkinson's. IDPs amino acid sequences differ and contain a “low content of bulky hydrophobic amino acids and a high proportion of polar and charged amino acids” \citep{idp:wiki}. In comparison to structured proteins that fold correctly these sequences cannot fold into stable globular proteins, meaning that the protein lacks an ordered three-dimensional structure. The root cause of this lack of structure, causing disorder, is the proteins’ primary structure: the amino acid sequence. When disordered amino acids are grouped, this is labelled as an intrinsically disordered region (IDR) and is where the misfolding occurs. Therefore, making predictions about the probability that an amino acid residue is ordered or disordered within a protein sequence will help determine where this incorrect folding will occur. This means by focusing on the amino acids’ structure we can determine the outcome of the protein functioning correctly. 
 
-A current problem is the lack of labelled data about the structure of protein sequences as determining these via experiments such as nuclear magnetic resonance (NMR) and small-angle X-ray scattering (SAXS) is very costly and time-consuming \citep{disordered_prot_genus_camelus}. To tackle this challenge, bioinformatic tools have been created for protein sequence structure labelling. These tools are often accessible via a web server, such as the DISOPRED server \citep{disopred3_paper}, which uses machine learning methods to make predictions. This project will produce a similar tool for classifying intrinsically disordered proteins after experimentation with different deep learning architectures and approaches.
+A current problem is the lack of labelled data about the structure of protein sequences as determining these via experiments such as nuclear magnetic resonance (NMR) and small-angle X-ray scattering (SAXS) is very costly and time-consuming \citep{Alshehri:20}. To tackle this challenge, bioinformatic tools have been created for protein sequence structure labelling. These tools are often accessible via a web server, such as the DISOPRED server \citep{Jones:15}, which uses machine learning methods to make predictions. This project will produce a similar tool for classifying intrinsically disordered proteins after experimentation with different deep learning architectures and approaches.
 
 \section{Deep learning overview}
 
@@ -153,7 +152,7 @@ Deep neural networks are made up of stacked neural network layers. As these laye
 
 A CNN is a type of neural network that uses convolution kernels to extract features from an input. Convolution kernels can be 1D kernels of size $1\times K$ primarily used for sequence or series data, or 2D kernels of size $N\times M$ primarily used for classifying images. These kernels move across a grid shaped input, checking if a feature is present. With our protein sequences, we can use a kernel of $1\times K$ to slide along a $1\times sequence length$ grid, treating each amino acid as a different input channel and capturing unique features. We can also represent protein sequences as images by creating a $20\times sequence length$ length grid, where each amino acid is a $20\times 1$ vector and this lets us use a different 2D convolution kernel over the protein sequence. These ideas are discussed further in our design (Section \ref{chap:design section:cnn}).
 
-In classification tasks convolution kernels are translation-invariant and require few parameters. These are beneficial as this means it does not matter where the location of the disordered region exists in the sequence. Less parameters means the model can be trained well with smaller training sets. This is good as the labelled datasets of manually annotated disordered proteins, such as the curated database Disprot \citep{disprot}, are small in comparison to the data provided for other deep learning tasks. \cite{disopred3_paper} have stated further annotated training labels will be beneficial to train protein disorder prediction tools; therefore, using a model architecture that can cope with smaller datasets should be effective. \\
+In classification tasks convolution kernels are translation-invariant and require few parameters. These are beneficial as this means it does not matter where the location of the disordered region exists in the sequence. Less parameters means the model can be trained well with smaller training sets. This is good as the labelled datasets of manually annotated disordered proteins, such as the curated database Disprot \citep{disprot}, are small in comparison to the data provided for other deep learning tasks. \cite{Jones:15} have stated further annotated training labels will be beneficial to train protein disorder prediction tools; therefore, using a model architecture that can cope with smaller datasets should be effective. \\
 
 \subsubsection{Fully Convolutional Networks \newline}
 \label{chap:background sec:FCN}
@@ -174,7 +173,7 @@ Traditional RNNs experience the vanishing gradient problem. This happens during 
 \section{Review of current approaches}
 \label{sec:current approaches}
 
-There are currently many approaches to protein disorder prediction, with over 100 different predictors proposed \citep{Zhao:22}. Disorder classifiers implement different methods with the main approaches regarded as: composition-based methods (PONDR VLXT \citep{Romero:01}); hydropath-based methods (DISOPRED \citep{Ward:04}); structural methods (IUPred \citep{Dosztanyi:18}); physiochemical methods (FoldIndex \citep{Prilusky:05}); machine learning methods (DISOPRED3 \citep{disopred3_paper}) and the use of meta-predictors (Metapredict \citep{Emenecker:21}). The Critical Assessment of Structure Prediction (CASP) \citep{casp} motivated solutions for identifying disordered regions in target proteins between 2010-12 using CASP9 and CASP10. Results from the CASP10 assessment \citep{CASP10} show that the top disordered region classifiers consist of machine learning and meta-predictor methods \citep{Zhao:22}. CASP has discontinued the evaluation of IDR prediction, however the Critical Assessment of Intrinsic Protein Disorder community (CAID) \citep{Necci:21}, continued to release withheld testing datasets to assess new prediction tools. These assessments found that deep learning predictors had the best performance at identifying disordered regions accurately \citep{Zhao:22}. This motivates a reason for approaching this task using a deep learning method.
+There are currently many approaches to protein disorder prediction, with over 100 different predictors proposed \citep{Zhao:22}. Disorder classifiers implement different methods with the main approaches regarded as: composition-based methods (PONDR VLXT \citep{Romero:01}); hydropath-based methods (DISOPRED \citep{Ward:04}); structural methods (IUPred \citep{Dosztanyi:18}); physiochemical methods (FoldIndex \citep{Prilusky:05}); machine learning methods (DISOPRED3 \citep{Jones:15}) and the use of meta-predictors (Metapredict \citep{Emenecker:21}). The Critical Assessment of Structure Prediction (CASP) \citep{casp} motivated solutions for identifying disordered regions in target proteins between 2010-12 using CASP9 and CASP10. Results from the CASP10 assessment \citep{Moult:14} show that the top disordered region classifiers consist of machine learning and meta-predictor methods \citep{Zhao:22}. CASP has discontinued the evaluation of IDR prediction, however the Critical Assessment of Intrinsic Protein Disorder community (CAID) \citep{Necci:21}, continued to release withheld testing datasets to assess new prediction tools. These assessments found that deep learning predictors had the best performance at identifying disordered regions accurately \citep{Zhao:22}. This motivates a reason for approaching this task using a deep learning method.
 
 As well as performing well for intrinsic disorder prediction, deep learning methods also dominate in other protein structure prediction tasks such as AlphaFold \citep{Jumper:21}. Improved technology has assisted these neural networks to feasibly increase their depth as well as the increase of digitalised labelled data. Studies have analysed different deep learning architectures for protein disorder prediction and state: “that the architectures of current deep learners are considerably diverse,” and there is no decided optimal architecture yet \citep{Zhao:22}. This motivates us to experiment and compare different deep learning architectures. Furthermore, the top performing models in CAID “utilize deep convolutional and/or recurrent neural networks,” \citep{Hu:21} demonstrating these architectures are important for classifiers tackling this prediction task.
 
@@ -211,7 +210,7 @@ In our discussion of intrinsically disordered proteins (Section \ref{chap:backgr
 
 \section{Our dataset}
 
-As the identification of these disordered regions requires complex experimentation (Section \ref{chap:background sec:IDPs}), we must use a curated database of disordered proteins. The Disprot database \citep{disprot} has been used for a variety of machine learning tasks such as the training and testing of DISOPRED3 \citep{disopred3_paper}, PONDR \citep{Xue:10}, MFDp2 \citep{Mizianty:13} and SPOT-DISORDER \citep{Hanson:16}, which all involved classifying disordered proteins. This database is regarded as the “major repository of manually curated data for intrinsically disordered proteins” \citep{Quaglia:22} and is widely used by researchers studying disordered proteins. Disprot stores information about the positions of IDRs in sequences and uses a UniProtKB accession number to identify the protein. This identifier will allow us to retrieve the full protein sequence from the UniProt database \citep{uniprot:22}, another manually curated database for proteins, to help us train our network. 
+As the identification of these disordered regions requires complex experimentation (Section \ref{chap:background sec:IDPs}), we must use a curated database of disordered proteins. The Disprot database \citep{disprot} has been used for a variety of machine learning tasks such as the training and testing of DISOPRED3 \citep{Jones:15}, PONDR \citep{Xue:10}, MFDp2 \citep{Mizianty:13} and SPOT-DISORDER \citep{Hanson:16}, which all involved classifying disordered proteins. This database is regarded as the “major repository of manually curated data for intrinsically disordered proteins” \citep{Quaglia:22} and is widely used by researchers studying disordered proteins. Disprot stores information about the positions of IDRs in sequences and uses a UniProtKB accession number to identify the protein. This identifier will allow us to retrieve the full protein sequence from the UniProt database \citep{uniprot:22}, another manually curated database for proteins, to help us train our network. 
 
 \section{Labelled data}
 
@@ -232,7 +231,7 @@ Machine learning algorithms cannot operate on our protein sequences directly. Th
 
 \subsection{One-hot}
 
-Our first feature encoding approach is one-hot encoding \citep{One-hot:wiki} \citep{Fawcett:21}. We can treat each amino acid as a vector by using the one-hot encoding technique. Our vectors will have a size of 20 because of the twenty possible amino acids, therefore as these feature vectors are not excessively large, this one-hot approach is suitable. This has let us transform a raw amino acid sequence into a feature matrix, of shape $20 \times sequence length$, which now represents the sequence.
+Our first feature encoding approach is one-hot encoding \citep{Fawcett:21}. We can treat each amino acid as a vector by using the one-hot encoding technique. Our vectors will have a size of 20 because of the twenty possible amino acids, therefore as these feature vectors are not excessively large, this one-hot approach is suitable. This has let us transform a raw amino acid sequence into a feature matrix, of shape $20 \times sequence length$, which now represents the sequence.
 
 \subsection{Position-Specific Scoring Matrix (PSSM)}
 
@@ -271,7 +270,7 @@ With these evaluation metrics we will be able to compare our approaches and arch
 
 \section{Django server}
 
-In addition to evaluating deep learning models, it is necessary to create a Django-based server that enables users to submit a protein sequence and obtain a comprehensible representation of the disordered regions of the protein. From the literature, papers proposing protein disorder prediction tools also often set up an online server so their tool can be used such as UCL's PSIPRED workbench \citep{Jones:19} and the recently published Metapredict server \citep{Metapredict:server}. These protein prediction servers are important as they allow researchers to easily access these tools, allowing them to understand the structure and function of proteins which is useful for protein engineering \citep{prot_engineering:wiki}. 
+In addition to evaluating deep learning models, it is necessary to create a Django-based server that enables users to submit a protein sequence and obtain a comprehensible representation of the disordered regions of the protein. From the literature, papers proposing protein disorder prediction tools also often set up an online server so their tool can be used such as UCL's PSIPRED workbench \citep{Jones:19} and the recently published Metapredict server \citep{Emenecker:21}. These protein prediction servers are important as they allow researchers to easily access these tools, allowing them to understand the structure and function of proteins which is useful for protein engineering \citep{protengineering:wiki}. 
 
 A brief analysis of the server’s requirements are stated below; following the MoSCoW prioritisation method \citep{moscow}: 
 \label{chap:analysis sec:moscow}
@@ -526,7 +525,7 @@ An external tool is required to generate the encoded features for our model's PS
 
 \subsection{Web server}
 
-To create our web server, we will use the Django web framework \citep{Django:05}. Web pages will be built using standard web technologies (HTML, CSS and JavaScript). In Django’s backend we will have the views which can process requests and manipulate the data as needed. We will save our trained neural network as a serialized PyTorch state dictionary, which is a Python dictionary that includes the weights, biases, and other model state variables for a PyTorch model. This saved model can be reloaded within the views of the Django backend so that the web application can make use of it. Furthermore, this should be straightforward to do as Django is a Python web framework, PyTorch can be easily imported and loaded amongst the web application logic. Finally, we have used Docker \citep{Docker:14} along with Nginx \citep{Nginx:08} and Gunicorn \citep{gunicorn:wiki}, so that our web server can be containerised and is portable which is one of our initial requirements. 
+To create our web server, we will use the Django web framework \citep{Django:05}. Web pages will be built using standard web technologies (HTML, CSS and JavaScript). In Django’s backend we will have the views which can process requests and manipulate the data as needed. We will save our trained neural network as a serialized PyTorch state dictionary, which is a Python dictionary that includes the weights, biases, and other model state variables for a PyTorch model. This saved model can be reloaded within the views of the Django backend so that the web application can make use of it. Furthermore, this should be straightforward to do as Django is a Python web framework, PyTorch can be easily imported and loaded amongst the web application logic. Finally, we have used Docker \citep{Docker:14} along with Nginx \citep{Reese:08} and Gunicorn \citep{gunicorn:wiki}, so that our web server can be containerised and is portable which is one of our initial requirements. 
 
 %==================================================================================================================================
 \chapter{Implementation}
@@ -1025,7 +1024,7 @@ Finally, we can conclude that all of these models again perform better than the 
     biomine\_dr\_mixed & 628 & 368 & 22320 & 874 & 0.631 & 0.701 & 0.488 & 0.890 \\
     POODLE & 980 & 2064 & 20624 & 522 & 0.322 & 0.781 & 0.409 & 0.875 \\ 
     CNN (1D) PSSM & 919 & 5362 & 17326 & 583 & 0.177 & 0.715 & 0.183 & 0.752 \\
-    RNN (LSTM) PSSM & 944 & 6765 & 15923 & 6765 & 0.171 & 0.660 & 0.169 & 0.723 \\ \bottomrule
+    RNN (LSTM) PSSM & 944 & 6765 & 15923 & 558 & 0.171 & 0.660 & 0.169 & 0.723 \\ \bottomrule
     \end{tabular}
     
     \label{tab:casp10comp}
@@ -1035,70 +1034,29 @@ Finally, we can conclude that all of these models again perform better than the 
 [Screenshot of prediction made by this web server and a different web server. Similarities/differences.]
 
 
-
-\newpage
-
-How good is your solution? How well did you solve the general problem, and what evidence do you have to support that?
-
-\section{Guidance}
-\begin{itemize}
-    \item
-        Ask specific questions that address the general problem.
-    \item
-        Answer them with precise evidence (graphs, numbers, statistical
-        analysis, qualitative analysis).
-    \item
-        Be fair and be scientific.
-    \item
-        The key thing is to show that you know how to evaluate your work, not
-        that your work is the most amazing product ever.
-\end{itemize}
-
-\section{Evidence}
-Make sure you present your evidence well. Use appropriate visualisations, reporting techniques and statistical analysis, as appropriate.
-
-If you visualise, follow the basic rules, as illustrated in Figure \ref{fig:boxplot}:
-\begin{itemize}
-\item Label everything correctly (axis, title, units).
-\item Caption thoroughly.
-\item Reference in text.
-\item \textbf{Include appropriate display of uncertainty (e.g. error bars, Box plot)}
-\item Minimize clutter.
-\end{itemize}
-
-See the file \texttt{guide\_to\_visualising.pdf} for further information and guidance.
-
-\begin{figure}
-    \centering
-    \includegraphics[width=1.0\linewidth]{images/boxplot_finger_distance.pdf}    
-
-    \caption{Average number of fingers detected by the touch sensor at different heights above the surface, averaged over all gestures. Dashed lines indicate
-    the true number of fingers present. The Box plots include bootstrapped uncertainty notches for the median. It is clear that the device is biased toward 
-    undercounting fingers, particularly at higher $z$ distances.
-    }
-
-    % use the notation fig:name to cross reference a figure
-    \label{fig:boxplot} 
-\end{figure}
-
-
 %==================================================================================================================================
 \chapter{Conclusion}    
-Summarise the whole project for a lazy reader who didn't read the rest (e.g. a prize-awarding committee).
-\section{Guidance}
-\begin{itemize}
-    \item
-        Summarise briefly and fairly.
-    \item
-        You should be addressing the general problem you introduced in the
-        Introduction.        
-    \item
-        Include summary of concrete results (``the new compiler ran 2x
-        faster'')
-    \item
-        Indicate what future work could be done, but remember: \textbf{you
-        won't get credit for things you haven't done}.
-\end{itemize}
+
+\section{Summary}
+
+This project explored how different deep learning approaches and architectures perform at predicting protein disorder, given a protein sequence. We considered different feature encoding methods to represent protein sequences: one-hot encoding, and PSSMs which provides information about the evolution of a protein. We developed CNNs that used either 1D convolution kernels or 2D convolution kernels throughout the network, as well as a RNN that used the LSTM architecture. These were trained using different feature encoding approaches. We put a trained model within a web server, which makes it easier for bioscience researchers to evaluate protein sequences without interacting directly with the underlying technology. The predictions made by the model are displayed on a web page, which highlights disordered regions for a given sequence using a sequence-based visualisation.
+
+Our evaluation determined the effect different feature inputs and model architectures had on correctly identifying protein disorder. We found that models using PSSM feature input perform significantly better than models using one-hot encoding. We also demonstrated that LSTM and CNN (1D) architectures are similarly competitive, which highlights the importance of considering multiple architectures for the task. Furthermore, these architectures performed significantly better than our other CNN (2D) that had a simpler architecture. We used the Wilcoxon signed-rank test with MCC and ROC AUC values, to support these findings.
+
+However, we found that even our better models struggled to precisely classify disorder within the sequence. This was apparent as our deep neural networks had a much higher false positive rate when classifying sequences in the CASP10 dataset than other state-of-the-art methods. This could be due to our weighted loss function that was used to neutralise the imbalance of disordered amino acid labels. This weighting may have been too high of a penalty, resulting in more misclassifications of the ordered class.
+
+Overall, we have not achieved the same performance as other prediction tools created for protein disorder prediction; however, we have showed that deep learning methods can be applied to the task. In addition, we demonstrated our models using PSSM feature input have a significant performance improvement, and both LSTM and CNN (1D) architectures can capture some features well that are used to represent IDRs.
+
+\section{Future work}
+
+From our evaluation, we could first investigate more modifications to the loss function and consider alternative weighting strategies with this loss function. Moreover, focusing on carefully learning disordered features so that the disorder class was precisely predicted in future models when given more unseen test data. This may make our solution more competitive against state-of-the-art methods.
+
+As we saw an improvement using more complex features, we could consider including other input features. Some state-of-the-art methods have a significant number of complex features; for example, SPOT-DISORDER2 has 73 input features, including evolutionary PSSMs alongside other structural properties such as secondary structure and protein contact map information \cite{Hanson:19}.
+
+As well as further modifications to our model architectures, we could use the models that complement each other in an ensemble approach. This ensemble would implement different deep learning methods and let us analyse if increasing the complexity of our solution by using different networks together could provide significant change in the performance of our models.
+
+Finally, we aim to extend the web server, satisfying more requirements. The web server interface could be improved by adding more advanced visualisation tools, such as graphs demonstrating the probability-based value predictions. A more technical improvement to the web server would be to include an external database of generated PSSMs, to allow for efficiency when using models requiring PSSM input. The BLAST query servers are shared; therefore, our server cannot use these resources constantly. By creating an efficient store of PSSM data given users queries, we can lower the computational expense generated by the web server.
+
 
 %==================================================================================================================================
 %
@@ -1177,6 +1135,7 @@ submitted separately.
 % The bibliography always appears last, after the appendices.
 
 \bibliographystyle{abbrvnat}
+%\bibliographystyle{}
 
 \bibliography{l4proj}
 

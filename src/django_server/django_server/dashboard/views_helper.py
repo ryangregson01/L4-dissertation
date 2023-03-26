@@ -8,27 +8,42 @@ import torch.nn.functional as F
 
 
 def get_model():
-    class FCN_Net(nn.Module):
-        def __init__(self):
-            super().__init__()
-            self.conv1 = nn.Conv1d(20, 10, 21, padding=10)
-            self.conv2 = nn.Conv1d(10, 10, 21, padding=10)
-            self.conv3 = nn.Conv1d(10, 1, 21, padding=10)
+  class RNN_Net(nn.Module):
+    def __init__(self):
+      super().__init__()
+      # 20 inputs - for each amino acid
+      self.input_dim = 20
+      self.hidden_dim = 32
+      self.num_layers = 2
+      self.rnn1 = nn.LSTM(input_size=20, hidden_size=self.hidden_dim, num_layers=self.num_layers, batch_first=True, bidirectional=True)
+      self.linear = nn.Linear(self.hidden_dim*2, 8)
+      self.relu1 = nn.ReLU()
+      self.linear2 = nn.Linear(8, 1)
+      #self.sig1 = nn.Sigmoid()
 
-        def forward(self, x):
-            x = F.relu(self.conv1(x))
-            x = F.relu(self.conv2(x))
-            x = torch.sigmoid(self.conv3(x))
-            return x
+    def init_hidden(self, batch_size):
+      # Initialise hidden state
+      return (torch.zeros(self.num_layers*2, batch_size, self.hidden_dim), 
+              torch.zeros(self.num_layers*2, batch_size, self.hidden_dim))
 
-    # Loading model
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    STATIC_DIR = os.path.join(BASE_DIR, 'static')
-    # Where cnn_net.pth has been downloaded from google colab
-    model_path = STATIC_DIR+'/models/cnn_net.pth'
-    loaded_model = FCN_Net()
-    loaded_model.load_state_dict(torch.load(model_path))
-    return loaded_model
+    def forward(self, x):
+      batch_size = x.size(0)
+      h    = self.init_hidden(batch_size)
+
+      y, h = self.rnn1(x,h)
+      y = self.relu1(self.linear(y))
+      y = self.linear2(y)
+      
+      return y, h
+    
+  # Loading model
+  BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+  STATIC_DIR = os.path.join(BASE_DIR, 'static')
+  # Where DNN has been downloaded from google colab
+  model_path = STATIC_DIR+'/models/server_net.pth'
+  loaded_model = RNN_Net()
+  loaded_model.load_state_dict(torch.load(model_path))
+  return loaded_model
 
 def make_empty_channels(seq):
   seq_channels = {

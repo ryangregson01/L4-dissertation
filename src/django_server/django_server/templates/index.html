@@ -41,8 +41,11 @@
     <p>Positions in the sequence that have been identified as being disordered are coloured red, ordered residues are green.</p>
 
     <script>
-        labelled_table("{{ input_seq }}", "{{ generated_label }}")
+        var table = labelled_table("{{ input_seq }}", "{{ generated_label }}")
     </script>
+
+    <button onclick="downloadTableAsImage('{{ input_seq_id }}')">Download Prediction as PNG</button>
+
     {% endif %}
 </div>
 

@@ -479,3 +479,12 @@
 
 ### 24 Mar 2023
 * *5 hours* Dissertation evaluation. Recorded all new CASP10 results, updated everything in dissertation as required. Read through the evaluation section tidying parts up. Wrote comparison of external models.
+* *1 hour* Dissertation editing.
+
+### 25 Mar 2023
+* *2.5 hours* Fixing bibliography. Using Google Scholar citation extension. Accessing all used websites to add last accessed date and check content still exists.
+* *2.5 hours* Drafting conclusion.
+
+### 26 Mar 2023
+* *1.5 hours* Finishing conclusion and putting it into the dissertation.
+* *2 hours* Tidying up web server. PNG download. Updated model.
