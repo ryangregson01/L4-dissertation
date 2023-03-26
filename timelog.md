@@ -488,3 +488,4 @@
 ### 26 Mar 2023
 * *1.5 hours* Finishing conclusion and putting it into the dissertation.
 * *2 hours* Tidying up web server. PNG download. Updated model.
+* *1.5 hours* Wrote evaluation of web server.

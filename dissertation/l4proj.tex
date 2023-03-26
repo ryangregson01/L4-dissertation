@@ -8,6 +8,7 @@
 \usepackage{multirow}
 \usepackage{booktabs}
 \usepackage{xurl}
+\usepackage{pdfpages}
 %
 
 \begin{document}
@@ -282,7 +283,7 @@ A brief analysis of the server’s requirements are stated below; following the 
     \item Must have: The server can make a prediction on a protein sequence using a deep neural network. This model will be chosen from our evaluation.
     \item Should have: The web interface will have a clear visualisation displaying the sequence to the user with clearly identified IDRs.
     \item Could have: The web interface will have a graphical representation of the identified IDRs.
-    \item Will not have this time: The visualisation of the disordered sequence cannot be saved.
+    \item Could have: The visualisation of the disordered sequence can be saved, allowing for further analysis.
     \item Will not have this time: The server will not allow multiple sequences to be entered in a single form submission.
 \end{itemize}
 
@@ -483,6 +484,7 @@ Furthermore, we will use the CASP10 dataset to evaluate our model. This dataset 
 \section{The web server}
 
 \subsection{User interface}
+\label{chap:design sec:UI}
 
 The user interface was designed to be similar to other protein disorder prediction websites. All websites used an input form, stated what input was valid and displayed the output to the user in a timely manner for single sequences. From checking popular protein prediction web servers, I felt the most user-friendly websites included an example of what sequence input was valid, therefore I made this a consideration when building the website. 
 
@@ -986,7 +988,7 @@ Our RNN models have less confusion. For the LSTM when one-hot encoding is used, 
 
 \begin{figure}[!htb]
     \centering
-    \includegraphics[width=0.95\linewidth]{images/CASPROCSVG.pdf}    
+    \includegraphics[width=0.95\linewidth]{images/CASPROC.pdf}    
 
     \caption{ROC curves of probability-based IDR predictions for our 6 models on the CASP10 dataset. The LSTM model using one-hot encoding has the best performance given a TPR and FPR trade off. Both CNN (2D) models perform the poorest. Furthermore, every model does perform above the dummy baseline.}
 
@@ -1011,6 +1013,7 @@ When analysing ROC curves with our CASP10 dataset, we see the LSTM using one-hot
 Finally, we can conclude that all of these models again perform better than the dummy baseline from inspection of the ROC curve graph (Figure \ref{fig:roccasp}), where each models ROC curve is above the dummy baseline.
 
 \subsection{Comparison of other solutions}
+\label{chap:evaluation sec:CASP10comp}
 \cite{Monastyrskyy:14} released an assessment of protein disorder region predictions in CASP10, highlighting the performance of state-of the art solutions. Table \ref{tab:casp10comp} shows our top performing models, LSTM and CNN (1D) with PSSM features, against top performing models that use different architectures. We see from this table that our models grossly overpredict disorder, which can be seen by a much larger false positive value. This has had an effect on other metrics such as the precision and MCC scores. These state-of-the-art models have a common use of SVMs, and some use ensemble approaches alongside other machine learning methods. These outperform our deep learning strategies. However, from this comparison it is clear that we could increase regularisation to prevent our models likelihood of predicting disorder. Furthermore, our upweighted loss function could be trailled with different weights instead of the ratio difference of labels to assess if this could lower overprediction of disorder when given unseen test data.
 
 \begin{table}[!htb]
@@ -1031,8 +1034,29 @@ Finally, we can conclude that all of these models again perform better than the 
 \end{table}
 
 \section{Evaluation of the web server}
-[Screenshot of prediction made by this web server and a different web server. Similarities/differences.]
+With our web server, we have fulfilled the minimum viable product by assessing our proposed MoSCoW requirements (Section \ref{chap:analysis sec:moscow}). The web interface follows from the designed wireframes (Section \ref{chap:design sec:UI}) and can be used locally. Predictions made on this web server use our model with the LSTM architecture.
 
+We evaluate our web server’s prediction graphic in comparison to the DISOPRED3 prediction method \citep{Jones:15}, using the PSIPRED server \citep{Jones:19}. We compare these using the first protein sequence in the CASP10 dataset (T0644.dr, which is found in Appendix \ref{chap:appendix sec:T0644label} alongside its true disorder label).
+
+Our server’s classifier predicts many of these amino acids as disordered (Figure \ref{fig:mypredclipped}), whereas DISOPRED3 misclassifies only a few amino acids (Figure \ref{fig:disopredclipped}). This misclassification of ordered amino acids is apparent through our earlier evaluation (Section \ref{chap:evaluation sec:CASP10comp}). This informs us that we should refine our models in the future to increase the quality of disorder predictions, which will benefit bioscience researchers.
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=\linewidth]{images/web_eval/mypred-clipped.pdf}
+    
+    \caption{Prediction made for CASP target T0644 using the LSTM model on our web server. We see many disordered amino acids at both the start and end of this sequence highlighted in red. A full screenshot of this web page can be found in Appendix \ref{chap:appendix sec:webpagepred}.}
+    
+    \label{fig:mypredclipped}
+\end{figure}
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=\linewidth]{images/web_eval/disopred-clipped.pdf}
+    
+    \caption{Prediction made for CASP target T0644 using DISOPRED3. We see disordered amino acids at the start and end of this sequence highlighted with coloured borders. Full web page found in Appendix \ref{chap:appendix sec:webpagepred}.}
+    
+    \label{fig:disopredclipped}
+\end{figure}
 
 %==================================================================================================================================
 \chapter{Conclusion}    
@@ -1065,8 +1089,7 @@ Finally, we aim to extend the web server, satisfying more requirements. The web 
 %  APPENDICES  
 
 \begin{appendices}
-
-\chapter{Appendices}
+\chapter{Evaluation}
 
 \section{Evaluation Tables}
 
@@ -1104,6 +1127,36 @@ Finally, we aim to extend the web server, satisfying more requirements. The web 
     \label{tab:auccaspwilcarchitecture}
 \end{table}
 
+\section{Web server evaluation}
+
+\subsection{Test protein sequence true label}
+\label{chap:appendix sec:T0644label}
+\includepdf[pages=-]{images/web_eval/T0644.pdf}
+
+\subsection{Web page prediction}
+\label{chap:appendix sec:webpagepred}
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=\linewidth]{images/web_eval/mypredCasp.pdf}
+
+    \caption{Prediction made for CASP target T0644 using the LSTM model on our web server. This full web page shows users can also navigate back to the home page, and save an image of the sequence disorder prediction.}
+
+    \label{fig:fullmypred} 
+\end{figure}
+
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=\linewidth]{images/web_eval/DISOPREDCasp.pdf}
+
+    \caption{Prediction made for CASP target T0644 using DISOPRED3. This full web page demonstrates the additional features the PSIPRED server has around the sequence disorder prediction.}
+
+    \label{fig:sequence example} 
+\end{figure}
+
+
+
 
 \newpage
 Typical inclusions in the appendices are:
@@ -1135,7 +1188,6 @@ submitted separately.
 % The bibliography always appears last, after the appendices.
 
 \bibliographystyle{abbrvnat}
-%\bibliographystyle{}
 
 \bibliography{l4proj}
 
