@@ -96,7 +96,7 @@ Intrinsically disordered proteins do not have a fixed or ordered three-dimension
     \label{fig:structured prot} 
 \end{figure}
 
-We can use bioinformatic tools to label the disordered regions in these protein sequences by creating a model that can learn the differences between ordered and disordered amino acid sequences. With more labelled sequences, doctors and researchers can understand more about disordered protein sequences. Insights about these disordred regions helps drive research for the development of drugs that are applied to disordered proteins, understanding the functionality of these regions and contributes to keeping a well-maintained knowledge database of proteins. It is important this research is supported as disordered proteins cause neurodegenerative diseases such as Alzheimer’s, Parkinson’s and Huntington’s. Therefore, it is important drugs can be designed and applied to IDPs in an attempt to counteract these diseases. Furthermore, some disordered regions in proteins are vital for creating functionality in the protein as they can give elastic properties to proteins. These elastic properties are usually difficult to create with ordered protein chains. An example of this is the entropic spring in Titin, which is composed of both ordered and disordered regions \citep{Morgan:17}. This entropic spring allows muscle fibres to stretch and contract efficiently, making it an essential component of muscle function and demonstrating that IDPs can be useful within our bodies.
+We can use bioinformatic tools to label the disordered regions in these protein sequences by creating a model that can learn the differences between ordered and disordered amino acid sequences. With more labelled sequences, doctors and researchers can understand more about disordered protein sequences. Insights about these disordered regions helps drive research for the development of drugs that are applied to disordered proteins, understanding the functionality of these regions and contributes to keeping a well-maintained knowledge database of proteins. It is important this research is supported as disordered proteins cause neurodegenerative diseases such as Alzheimer’s, Parkinson’s and Huntington’s. Therefore, it is important drugs can be designed and applied to IDPs in an attempt to counteract these diseases. Furthermore, some disordered regions in proteins are vital for creating functionality in the protein as they can give elastic properties to proteins. These elastic properties are usually difficult to create with ordered protein chains. An example of this is the entropic spring in Titin, which is composed of both ordered and disordered regions \citep{Morgan:17}. This entropic spring allows muscle fibres to stretch and contract efficiently, making it an essential component of muscle function and demonstrating that IDPs can be useful within our bodies.
 
 Deep learning approaches have become incredibly popular recently, and these approaches currently dominate classification tasks. Deep learning architectures are prevalent in classifying the IDRs in protein sequences, where state of the art predictors such as SPOT-DISORDER2 \citep{Hanson:19} also have their own online protein disorder prediction servers for others to use their deep learning model.
 
@@ -107,9 +107,9 @@ Protein sequences are made up of amino acids. The problem we are attempting to s
 The aim of this project is to explore how different deep learning approaches and architectures perform at predicting protein disorder. To assess these deep learning methods, we will: 
 \begin{itemize}
     \item Discuss current solutions to protein disorder prediction (Section \ref{sec:current approaches}).
-    \item Discuss our approach for creating a protein disorder classifier (Section \ref{chap:analysis}).
-    \item Design and implement different deep neural networks, such as a convolutional neural network (CNN) and recurrent neural network (RNN) (Section \ref{chap:design} and Section \ref{chap:implementation}). 
-    \item Evaluate our implemented neural networks using standard metrics and the test datasets proposed by CASP \citep{casp}, which have been used for evaluating protein disorder prediction models (Section \ref{chap:evaluation}). 
+    \item Discuss our approach for creating a protein disorder classifier (Chapter \ref{chap:analysis}).
+    \item Design and implement different deep neural networks, such as a convolutional neural network (CNN) and recurrent neural network (RNN) (Chapter \ref{chap:design} and Chapter \ref{chap:implementation}). 
+    \item Evaluate our implemented neural networks using standard metrics and the test datasets proposed by CASP \citep{casp}, which have been used for evaluating protein disorder prediction models (Chapter \ref{chap:evaluation}). 
 \end{itemize}
 An aim alongside comparing the deep neural networks is to create a web server, where a user can input a protein sequence via a web page form and see the predictions of disordered regions. This will make my models accessible, which will result in bioscience researchers being able to interact with my developed solution easily.
 
@@ -151,7 +151,7 @@ Deep neural networks are made up of stacked neural network layers. As these laye
 \subsection{Convolutional Neural Networks (CNNs)}
 \label{chap:background sec:CNN}
 
-A CNN is a type of neural network that uses convolution kernels to extract features from an input. Convolution kernels can be 1D kernels of size $1\times K$ primarily used for sequence or series data, or 2D kernels of size $N\times M$ primarily used for classifying images. These kernels move across a grid shaped input, checking if a feature is present. With our protein sequences, we can use a kernel of $1\times K$ to slide along a $1\times sequence length$ grid, treating each amino acid as a different input channel and capturing unique features. We can also represent protein sequences as images by creating a $20\times sequence length$ length grid, where each amino acid is a $20\times 1$ vector and this lets us use a different 2D convolution kernel over the protein sequence. These ideas are discussed further in our design (Section \ref{chap:design section:cnn}).
+A CNN is a type of neural network that uses convolution kernels to extract features from an input. Convolution kernels can be 1D kernels of size $1\times K$ primarily used for sequence or series data, or 2D kernels of size $N\times M$ primarily used for classifying images. These kernels move across a grid shaped input, checking if a feature is present. With our protein sequences, we can use a kernel of $1\times K$ to slide along a $1\times sequence\ length$ grid, treating each amino acid as a different input channel and capturing unique features. We can also represent protein sequences as images by creating a $20\times sequence\ length$ length grid, where each amino acid is a $20\times 1$ vector and this lets us use a different 2D convolution kernel over the protein sequence. These ideas are discussed further in our design (Section \ref{chap:design section:cnn}).
 
 In classification tasks convolution kernels are translation-invariant and require few parameters. These are beneficial as this means it does not matter where the location of the disordered region exists in the sequence. Less parameters means the model can be trained well with smaller training sets. This is good as the labelled datasets of manually annotated disordered proteins, such as the curated database Disprot \citep{disprot}, are small in comparison to the data provided for other deep learning tasks. \cite{Jones:15} have stated further annotated training labels will be beneficial to train protein disorder prediction tools; therefore, using a model architecture that can cope with smaller datasets should be effective. \\
 
@@ -232,11 +232,11 @@ Machine learning algorithms cannot operate on our protein sequences directly. Th
 
 \subsection{One-hot}
 
-Our first feature encoding approach is one-hot encoding \citep{Fawcett:21}. We can treat each amino acid as a vector by using the one-hot encoding technique. Our vectors will have a size of 20 because of the twenty possible amino acids, therefore as these feature vectors are not excessively large, this one-hot approach is suitable. This has let us transform a raw amino acid sequence into a feature matrix, of shape $20 \times sequence length$, which now represents the sequence.
+Our first feature encoding approach is one-hot encoding \citep{Fawcett:21}. We can treat each amino acid as a vector by using the one-hot encoding technique. Our vectors will have a size of 20 because of the twenty possible amino acids, therefore as these feature vectors are not excessively large, this one-hot approach is suitable. This has let us transform a raw amino acid sequence into a feature matrix, of shape $20 \times sequence\ length$, which now represents the sequence.
 
 \subsection{Position-Specific Scoring Matrix (PSSM)}
 
-Our other feature encoding approach is to generate a position-specific scoring matrix (PSSM) \citep{PSSM:wiki}. This technique is used in many protein structure problems, such as predicting protein secondary structure \citep{McGuffin:00}, identifying sequence-contact relationships \citep{Wang:17} and used within current approaches previously discussed in our review of the literature. A PSSM is a “matrix that involves information about the probability of amino acids or nucleotides occurrence in each position, which is derived from a multiple sequence alignment” \citep{Mohammadi:22}. These PSSMs provide an informative representation about the amino acids at positions within the protein sequences. Specifically, PSSMs capture information about the evolution of the protein in terms of which amino acids can occur at different positions in the sequence and this is used to determine whether a specific residue position will be a small amino acid, a bulky amino acid, a negatively charged amino acid, or have any other specific amino acid property. This information will be helpful for our network to identify patterns and relationships within protein sequences. Furthermore, as PSSMs are also of shape $20 \times sequence length$, the neural network models will be able to take both one-hot encoded sequence matrices and PSSMs as input without any changes, allowing us to compare these different feature encoding methods.
+Our other feature encoding approach is to generate a position-specific scoring matrix (PSSM) \citep{PSSM:wiki}. This technique is used in many protein structure problems, such as predicting protein secondary structure \citep{McGuffin:00}, identifying sequence-contact relationships \citep{Wang:17} and used within current approaches previously discussed in our review of the literature. A PSSM is a “matrix that involves information about the probability of amino acids or nucleotides occurrence in each position, which is derived from a multiple sequence alignment” \citep{Mohammadi:22}. These PSSMs provide an informative representation about the amino acids at positions within the protein sequences. Specifically, PSSMs capture information about the evolution of the protein in terms of which amino acids can occur at different positions in the sequence and this is used to determine whether a specific residue position will be a small amino acid, a bulky amino acid, a negatively charged amino acid, or have any other specific amino acid property. This information will be helpful for our network to identify patterns and relationships within protein sequences. Furthermore, as PSSMs are also of shape $20 \times sequence\ length$, the neural network models will be able to take both one-hot encoded sequence matrices and PSSMs as input without any changes, allowing us to compare these different feature encoding methods.
 
 \section{Architectures}
 
@@ -381,26 +381,26 @@ Our final key processing step is to divide our dataset into a training, validati
 
 \subsection{Model input}
 
-Giving the model input is the initial stage in training a DNN. The input to our models will be our feature encoded sequence (either a one-hot or position-specific scoring matrix), which will have shape $20\times sequence length$. We will only give a model one protein sequence to evaluate at each forward pass as we know that sequence lengths differ between proteins; therefore, we cannot batch multiple sequences together. Batching multiple sequences would create an unexpected, irregular shape, which neural network layers cannot handle. Thus, we use a batch size of one as input to our DNN models.
+Giving the model input is the initial stage in training a DNN. The input to our models will be our feature encoded sequence (either a one-hot or position-specific scoring matrix), which will have shape $20\times sequence\ length$. We will only give a model one protein sequence to evaluate at each forward pass as we know that sequence lengths differ between proteins; therefore, we cannot batch multiple sequences together. Batching multiple sequences would create an unexpected, irregular shape, which neural network layers cannot handle. Thus, we use a batch size of one as input to our DNN models.
 
 \subsection{CNNs}
 \label{chap:design section:cnn}
 
-Our CNNs must actually be fully convolutional neural networks (FCNs) because our protein sequences have different lengths, therefore we cannot use a fully connected layer as it expects a fixed size tensor \citep{fcn_seg}. So, we will only use convolution layers which create feature maps for our model to identify information about the protein sequences used for the disorder classification task. These layers must also reshape our input to a $1\times sequence length$ length tensor for our loss function.
+Our CNNs must actually be fully convolutional neural networks (FCNs) because our protein sequences have different lengths, therefore we cannot use a fully connected layer as it expects a fixed size tensor \citep{fcn_seg}. So, we will only use convolution layers which create feature maps for our model to identify information about the protein sequences used for the disorder classification task. These layers must also reshape our input to a $1\times sequence\ length$ length tensor for our loss function.
 
 There are two different convolutional neural networks we can design: one that treats our protein sequence as a black and white image and uses 2D convolutions, or one that treats each row in the encoded matrix (different amino acids) as a different feature representation of the input sequence and uses 1D convolutions over these separate feature input channels. 
 
 \subsection*{Using 2D Convolutions}
 
-Usually, a 2D convolutional kernel is applied to images, therefore given our $20\times sequence length$, the height of the proposed image is the number of possible amino acids, and the width of the image is determined by the sequence. Our input to a CNN using 2D convolutions must follow the [batch size, channels, height, width] constraint, therefore our input will be a tensor of shape [1, 1, sequence length, 20] due to batching of size 1 and treating the colour channel as black and white. 
+Usually, a 2D convolutional kernel is applied to images, therefore given our $20\times sequence\ length$, the height of the proposed image is the number of possible amino acids, and the width of the image is determined by the sequence. Our input to a CNN using 2D convolutions must follow the [batch size, channels, height, width] constraint, therefore our input will be a tensor of shape [1, 1, sequence length, 20] due to batching of size 1 and treating the colour channel as black and white. 
 
 As discussed earlier, we want our convolution kernel to behave like a sliding window (Section \ref{chap:background sec:litrevCNN}), therefore it must overlay the entire height of the image to take in a full context window of amino acid information. Capturing the entire height involves using a kernel of size 20, however we cannot appropriately pad the width of the sequence with this kernel shape such that the same width is returned after convolving with a kernel of this shape. The width cannot be changed as it is necessary to compare each amino acid disorder classification against its true label. Therefore, we will use a non-square convolution kernel so that the width of our kernel is an odd value and appropriate padding can be included. 
 
-After the first convolution layer, layers after this will be dependent on the feature map created by this first layer and further layers. The number of feature channels produced by this first convolution layer can be experimented with and we have chosen to use ten hidden channels. After further convolution layers we want our final feature map output to take shape $1\times sequence length$ so our predictions can be compared against the true label. 
+After the first convolution layer, layers after this will be dependent on the feature map created by this first layer and further layers. The number of feature channels produced by this first convolution layer can be experimented with and we have chosen to use ten hidden channels. After further convolution layers we want our final feature map output to take shape $1\times sequence\ length$ so our predictions can be compared against the true label. 
 
 \subsection*{Using 1D Convolutions}
 
-Our other fully convolutional network uses 1D convolutions. Usually, a 1D convolution kernel is applied to sequences and accepts an input of $1\times sequence length$ shape. For our neural network, we will treat each amino acid feature representation as a separate input channel, giving us 20 channels, each with shape $1\times sequence length$. The input to the model must follow the [batch size, input channels, width] constraint, therefore our input will be a tensor of shape [1, 20, sequence length]. This 1D convolution kernel also behaves like a sliding window, and a kernel will produce one output feature map which represents all the amino acid input channels. This ensures all amino acid information is captured for a context window at each position along the sequence. Furthermore, an odd numbered kernel must be chosen so that appropriate padding can be included to the width of our sequence similarly to the 2D CNN. Like the 2D CNN, all further convolution layers can be changed within the network as long as the final layer produces a $1\times sequence length$ feature map as its output for comparison with our ground truth labels.
+Our other fully convolutional network uses 1D convolutions. Usually, a 1D convolution kernel is applied to sequences and accepts an input of $1\times sequence\ length$ shape. For our neural network, we will treat each amino acid feature representation as a separate input channel, giving us 20 channels, each with shape $1\times sequence\ length$. The input to the model must follow the [batch size, input channels, width] constraint, therefore our input will be a tensor of shape [1, 20, sequence length]. This 1D convolution kernel also behaves like a sliding window, and a kernel will produce one output feature map which represents all the amino acid input channels. This ensures all amino acid information is captured for a context window at each position along the sequence. Furthermore, an odd numbered kernel must be chosen so that appropriate padding can be included to the width of our sequence similarly to the 2D CNN. Like the 2D CNN, all further convolution layers can be changed within the network as long as the final layer produces a $1\times sequence\ length$ feature map as its output for comparison with our ground truth labels.
 
 \subsection{RNN}
 \label{chap:design section:rnn}
@@ -411,7 +411,7 @@ We also need to initialise our hidden state for our LSTMs. These will be initial
 
 Finally, our LSTM will be a bidirectional LSTM (BLSTM). This performs better than a traditional LSTM and can capture long-term dependencies about the IDPs using information from the start and end of these sequences. With information flowing in both directions, we can capture more contextual information about each amino acid. Furthermore, a protein sequence does not have a flow of information like a time series, and the start (N-terminus) and end (C-terminus) of a sequence is chosen arbitrarily, meaning this protein could be written in the opposite direction. Thus, it is useful to assess each sequence from both directions. A limitation of implementing a bidirectional network is that it will be much slower to compute because forward propagation requires both forward and backward recursions, which creates a long dependency chain and affects our gradient calculation using backpropagation \citep{Zhang:2021}.  
 
-Like our other networks, our LSTM will use a final linear layer to reduce our feature map down to a single feature (the disorder classification), so that a $1\times sequence length$ output is returned for the rest of our training loop to handle.
+Like our other networks, our LSTM will use a final linear layer to reduce our feature map down to a single feature (the disorder classification), so that a $1\times sequence\ length$ output is returned for the rest of our training loop to handle.
 
 \subsection{Activation functions}
 \label{chap:design section:activations}
@@ -919,7 +919,7 @@ The LSTM and CNN (1D) models are once again comparably competitive, with the CNN
 \end{table}
 
 
-\subsection{Model confusion (CASP10 data)}
+\subsection{Model confusion (external CASP10 data)}
 
 Using our different model architectures and feature inputs to make predictions on the CASP dataset, we have seen similarities and differences to the confusion shown about predictions on our test dataset (Section \ref{chap:eval sec:testconfusion}). \\
 
@@ -984,7 +984,7 @@ Our RNN models have less confusion. For the LSTM when one-hot encoding is used, 
     \label{fig:caspcfrnn}
 \end{figure}
 
-\subsection{Analysis of probability-based predictions (CASP10 data)}
+\subsection{Analysis of probability-based predictions (external CASP10 data)}
 
 \begin{figure}[!htb]
     \centering
@@ -1075,7 +1075,7 @@ Overall, we have not achieved the same performance as other prediction tools cre
 
 From our evaluation, we could first investigate more modifications to the loss function and consider alternative weighting strategies with this loss function. Moreover, focusing on carefully learning disordered features so that the disorder class was precisely predicted in future models when given more unseen test data. This may make our solution more competitive against state-of-the-art methods.
 
-As we saw an improvement using more complex features, we could consider including other input features. Some state-of-the-art methods have a significant number of complex features; for example, SPOT-DISORDER2 has 73 input features, including evolutionary PSSMs alongside other structural properties such as secondary structure and protein contact map information \cite{Hanson:19}.
+As we saw an improvement using more complex features, we could consider including other input features. Some state-of-the-art methods have a significant number of complex features; for example, SPOT-DISORDER2 has 73 input features, including evolutionary PSSMs alongside other structural properties such as secondary structure and protein contact map information \citep{Hanson:19}.
 
 As well as further modifications to our model architectures, we could use the models that complement each other in an ensemble approach. This ensemble would implement different deep learning methods and let us analyse if increasing the complexity of our solution by using different networks together could provide significant change in the performance of our models.
 
@@ -1152,7 +1152,7 @@ Finally, we aim to extend the web server, satisfying more requirements. The web 
 
     \caption{Prediction made for CASP target T0644 using DISOPRED3. This full web page demonstrates the additional features the PSIPRED server has around the sequence disorder prediction.}
 
-    \label{fig:sequence example} 
+    \label{fig:disopredpred} 
 \end{figure}
 
 
