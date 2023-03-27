@@ -512,7 +512,7 @@ This page was made to be intuitive, and its main feature is a form to let the us
 
 \begin{figure}[!htb]
     \centering
-    \includegraphics[width=\linewidth]{images/Index-forminput.pdf}
+    \includegraphics[width=0.90\linewidth]{images/Index-forminput.pdf}
     
     \caption{The home page of our web server. This wireframe shows that users can navigate to external protein database websites, and enter their protein sequence in FASTA format to our input form.}
     
@@ -525,7 +525,7 @@ This page displays the IDR predictions. We have used a sequence-based visualisat
 
 \begin{figure}[!htb]
     \centering
-    \includegraphics[width=\linewidth]{images/Index-disorderprediction.pdf}
+    \includegraphics[width=0.90\linewidth]{images/Index-disorderprediction.pdf}
     
     \caption{The disorder prediction web page. This wireframe demonstrates how our deep learning models classification of disordered regions will be displayed after a protein sequence has been submitted.}
     
@@ -543,7 +543,7 @@ An external tool is required to generate the encoded features for our model's PS
 
 \subsection{Web server}
 
-To create our web server, we will use the Django web framework \citep{Django:05}. Web pages will be built using standard web technologies (HTML, CSS and JavaScript). In Django’s backend we will have the views which can process requests and manipulate the data as needed. We will save our trained neural network as a serialized PyTorch state dictionary, which is a Python dictionary that includes the weights, biases, and other model state variables for a PyTorch model. This saved model can be reloaded within the views of the Django backend so that the web application can make use of it. Furthermore, this should be straightforward to do as Django is a Python web framework, PyTorch can be easily imported and loaded amongst the web application logic. Finally, we have used Docker \citep{Docker:14} along with Nginx \citep{Reese:08} and Gunicorn \citep{gunicorn:wiki}, so that our web server can be containerised and is portable which is one of our initial requirements. 
+To create our web server, we will use the Django web framework \citep{Django:05}. Web pages will be built using web technologies (HTML, CSS and JavaScript). In Django’s backend we will have the views which can process requests and manipulate data. We will save our trained neural network as a serialized PyTorch state dictionary, which is a Python dictionary that includes the weights, biases, and other model state variables for a PyTorch model. This saved model can be reloaded within the views of the Django backend so that the web application can make use of it. Furthermore, this should be straightforward to do as Django is a Python web framework, PyTorch can be easily imported and loaded amongst the web application logic. Finally, we have used Docker \citep{Docker:14} along with Nginx \citep{Reese:08} and Gunicorn \citep{gunicorn:wiki}, so that our web server can be containerised and is portable which is one of our initial requirements. 
 
 %==================================================================================================================================
 \chapter{Implementation}
@@ -606,7 +606,7 @@ As discussed in our design (Section \ref{chap:design section:cnn}), our CNNs are
     \label{fig:2DCNN} 
 \end{figure}
 
-Our other CNN uses multiple 1D convolution kernels and its network architecture is described in Figure \ref{fig:1DCNN}. We used a convolution kernel of size 21, like the width of our 2D convolution kernels. We found using 10 channels as our hidden dimension helped the model to learn and keeping this channel size as 1, like our 2D CNN, did not work. This model uses the same activation functions as our above model and the BCEWithLogitsLoss loss function. Finally, for this model, we employed dropout because it was overfitting and this regularisation that was added during training helped reduce the overfitting.
+Our other CNN uses multiple 1D convolution kernels and its network architecture is described in Figure \ref{fig:1DCNN}. We used a convolution kernel of size 21, like the width of our 2D convolution kernels. We found using 10 channels as our hidden dimension was appropriate in helping our model learn, as keeping this channel size as 1 did not reduce training loss and increasing using more than 10 channels prevented generalisability with our validation set. This model uses the same activation functions as our above model and the BCEWithLogitsLoss loss function. Finally, for this model, we employed dropout because it was overfitting and this regularisation that was added during training helped reduce the overfitting.
 
 \begin{figure}
     \centering
@@ -633,7 +633,7 @@ Our long short-term memory recurrent neural network (LSTM) is bidirectional, and
 
 \section{Training the network}
 
-All of the models were trained using a training loop, which was run for many epochs. Throughout training, calculations are made more efficient using the CUDA GPU \citep{Nickolls:08}, which can be run on Google Colaboratory. This lowered training times. To utilise CUDA within the training loop we first moved our tensors to this GPU device. Then, our PyTorch training loop is as expected: first evaluating the models' predictions through our BCEWithLogitsLoss loss function, setting our current gradient to zero, using backpropagation through time to calculate a gradient, then making a step with our optimiser from the gradient calculation. Furthermore, as we were using a batch size of one, we experimented with gradient accumulation, which imitates having a larger batch size \citep{Bhattacharyya:20}. This feature did not give improvements to our learning task, so we removed it. The optimiser we used for training was SGD and this was seen to work well with a standard momentum of 0.9, low learning rates and low weight decay values as discussed in our hyperparameter tuning section (Section \ref{chap:implementation section:hyperparameters}).
+All of the models were trained using a training loop, which was run for many epochs, with each model requiring a different number of training epochs. We determined the required amount of epochs using manual inspection of training and validation loss curves, which monitors when a model would start to overfit. This gave us the maximum number of epochs that model would be trained for, and each model and its number of training epochs can be seen in Appendix \ref{tab:trainepochs}. Throughout training, calculations are made more efficient using the CUDA GPU \citep{Nickolls:08}, which can be run on Google Colaboratory. This lowered training times. To utilise CUDA within the training loop we first moved our tensors to this GPU device. Then, our PyTorch training loop is as expected: first evaluating the models' predictions through our BCEWithLogitsLoss loss function, setting our current gradient to zero, using backpropagation through time to calculate a gradient, then making a step with our optimiser from the gradient calculation. Furthermore, as we were using a batch size of one, we experimented with gradient accumulation, which imitates having a larger batch size \citep{Bhattacharyya:20}. This feature did not give improvements to our learning task, so we removed it. The optimiser we used for training was SGD and this was seen to work well with a standard momentum of 0.9, low learning rates and low weight decay values as discussed in our hyperparameter tuning section (Section \ref{chap:implementation section:hyperparameters}).
 
 \section{Hyperparameter optimisation}
 \label{chap:implementation section:hyperparameters}
@@ -660,7 +660,7 @@ Many options for the depth of these neural networks, the size of neural network 
 \section{Django server}
 We have also implemented a small web application to make our solution accessible. This web server has two web pages. These visually follow the wireframes, and this user interface aims to be user-friendly. For our first page, we use a Django form which when submitted sends a POST request where the Django views conducts the classification of the disordered regions in the protein sequence. This form validates that the inputted sequence is a FASTA file and that every amino acid code is one of the 20 recognised amino acids. If these constraints are not satisfied, the classification will not continue as our solution cannot handle invalid amino acids. As we used Python throughout our deep learning evaluation, we have used code from our notebooks in a helper file to generate our features and make a prediction using our best performing model.
 
-Our other page is the sequence visualisation indicating the IDRs using colour: where red implies disorder and green implies order. The purpose of these colours is described as well to improve usability. We implemented the visualisation using a JavaScript function that creates a fake table so that the sequence characters are equally spaced, making the visualisation is pleasant. Furthermore, this table has 60 columns, therefore 60 characters long, because this is how many amino acid characters there are before the newline character in a FASTA file. This was done to maintain consistency with how protein sequences are read.
+Our other page is the sequence visualisation indicating the IDRs using colour: where red implies disorder and green implies order. The purpose of these colours is described as well to improve usability. We implemented the visualisation using a JavaScript function that creates a fake table so that the sequence characters are equally spaced, making the visualisation pleasant. Furthermore, this table has 60 columns, therefore is 60 characters long, because this is how many amino acid characters there are before the newline character in a FASTA file from UniProt. FASTA files can be any length; however, it is customary to use 60-70 characters before a newline, with the recommendation that "each line of sequence be no longer than 80 characters" \citep{NCBI:88}. Therefore, this table size was chosen to maintain consistency with how protein sequences are read.
 
 \subsection{Containerising the web application}
 
@@ -704,9 +704,9 @@ In terms of feature input, we observe that PSSMs outperform one-hot encoding for
 
 Overall, the highest performing models are the CNN (1D) and LSTM architectures with PSSM feature input. This CNN has an accuracy of 0.6939, the highest accuracy for this test dataset and an MCC of 0.2422. This LSTM has an accuracy of 0.6934 and an MCC of 0.2490 which is the highest MCC score on this test dataset. The LSTM architecture also has the highest F1-score (0.4101). However, Table \ref{tab:testwilcarchitecture} shows that the improvement of MCC between the LSTM and CNN (1D) architecture is not statistically significant, therefore we accept the null hypothesis that there is no difference between these architectures. Furthermore, we do have strong statistical evidence to reject the null hypothesis when comparing these two architectures to our other CNN (2D): Table \ref{tab:testwilcarchitecture} demonstrates there is a significant difference between the quality of predictions made.
 
-\begin{table}[]
+\begin{table}
     \centering
-    \caption{This table shows different models and their performance predicting protein disorder using different evaluation metrics. It is clear PSSM feature input produces better predictions than one-hot encoding. Furthermore, the model architectures of CNN (1D) and the LSTM are competitive against each other, whereas CNN (2D) does not perform as well with this test dataset.}
+    \caption{This table shows different models and their performance predicting protein disorder using different evaluation metrics. It is clear PSSM feature input produces better predictions than one-hot encoding. Furthermore, the model architectures of CNN (1D) and the LSTM are competitive against each other, whereas CNN (2D) (which has the simplest architecture) does not perform as well with this test dataset.}
     \begin{tabular}{@{}cccccccc@{}}
     \toprule
     Model architecture & Feature input & Accuracy & Precision & Recall & Specificity & F1-score & MCC \\ \midrule
@@ -721,7 +721,7 @@ Overall, the highest performing models are the CNN (1D) and LSTM architectures w
     \label{tab:testDataset}
 \end{table}
 
-\begin{table}[!ht]
+\begin{table}
     \centering
     \caption{Results of the Wilcoxon signed-rank test on sequence MCC values for evaluating the significance of input features. A one-tailed test was used to see if the PSSM feature input had greater scores than one-hot feature input. We reject all null hypotheses as all p-values are lower than alpha (0.05).}
     \begin{tabular}{@{}cccc@{}}
@@ -735,7 +735,7 @@ Overall, the highest performing models are the CNN (1D) and LSTM architectures w
     \label{tab:testwilcinput}
 \end{table}
 
-\begin{table}[!ht]
+\begin{table}[!h]
     \centering
     \caption{Results of the Wilcoxon signed-rank test on sequence MCC values for evaluating different model architectures. A two-tailed test was used to see if models were statistically different. We could not reject the null hypothesis stating the LSTM and CNN (1D) have no difference, as these p-values are not less than alpha (0.05).}
     \begin{tabular}{@{}cccc@{}}
@@ -791,7 +791,7 @@ For our CNNs using the 1D convolutions within its architecture, our confusion ma
         \caption{PSSM confusion matrix.}
         \label{fig:cf1dpssm}
     \end{subfigure}
-    \caption{Confusion matrices for CNN with 1D convolution kernels within its architecture. \subref{fig:cf2d1hot} shows the confusion matrix for the model using one-hot encoding feature input. \subref{fig:cf2dpssm} shows the confusion matrix for the model using PSSM feature input. We see this models architecture has a sensible precision and recall. Furthermore, using PSSM features reduces misclassification, however only marginally. Despite this, the model using PSSMs is significantly better (Table \ref{tab:auctestwilcinput}).}
+    \caption{Confusion matrices for CNN with 1D convolution kernels within its architecture. \subref{fig:cf2d1hot} shows the confusion matrix for the model using one-hot encoding feature input. \subref{fig:cf2dpssm} shows the confusion matrix for the model using PSSM feature input. We see this models architecture has a sensible precision and recall. Furthermore, using PSSM features reduces misclassification, however only marginally. Despite this, the model using PSSMs is significantly better (Table \ref{tab:testwilcinput}).}
     \label{fig:cf1d}
 \end{figure}
 
@@ -844,7 +844,7 @@ Using the DisProt test dataset, Figure \ref{fig:roctest} demonstrates that our L
 
 From conducting a Wilcoxon signed-rank test with these model's AUC scores (Table \ref{tab:auctestwilcinput} and Table \ref{tab:auctestwilcarchitecture}), we reach a number of conclusions. We cannot conclude there is a significant difference between the one-hot encoding and PSSM input for the LSTM architecture, but for the CNN (1D) model there is a significant difference when using different feature inputs, with PSSM showing a greater improvement. Furthermore, different architectures have difference performances dependent on the feature input using this metric, for example the LSTM and CNN (2D) having no significant difference when using one-hot encodings, but a clear statistical difference when using these architectures with PSSM input. Therefore, we will not make a conclusion about the best performing architectures with the AUC metric.
 
-Finally, all of these classifiers perform better than a dummy baseline. This can be seen in Figure \ref{fig:roctest} since all the ROC curves are above the dummy baseline.
+Finally, all of these classifiers perform better than a random dummy baseline. This can be seen in Figure \ref{fig:roctest} since all the ROC curves are above the dummy baseline.
 
 \begin{table}[!htb]
     \centering
@@ -880,7 +880,7 @@ Finally, all of these classifiers perform better than a dummy baseline. This can
 \section{Classification of CASP10 data}
 \label{chap:eval sec:casp10}
 
-\begin{table}[!htb]
+\begin{table}
     \centering
     \caption{This table shows different models and their performance predicting protein disorder using different evaluation metrics on the CASP10 dataset.}
     \begin{tabular}{@{}cccccccc@{}}
@@ -1104,14 +1104,40 @@ Finally, we aim to extend the web server, satisfying more requirements. The web 
 %  APPENDICES  
 
 \begin{appendices}
-\chapter{Evaluation}
 
-\section{Evaluation Tables}
+\chapter{Appendices}
 
-\subsection{Wilcoxon-signed rank test for CASP10 AUC values}
-\label{chap:appendix sec:casp10auc}
+\section{Implementation}
+
+\subsection{Training epochs}
 
 \begin{table}[!htb]
+    \centering
+    \caption{Training epochs used for each model. The CNNs required much less training epochs than the LSTM before overfitting. These figures were generated from inspection of validation loss not improving during training.}
+    \begin{tabular}{@{}ccc@{}}
+    \toprule
+    Model architecture & Feature input & Number of training epochs \\ \midrule
+    \multirow{2}{*}{CNN (2D)} & One-hot & 40 \\
+     & PSSM & 30 \\
+    \multirow{2}{*}{CNN (1D)} & One-hot & 40 \\
+     & PSSM & 20 \\
+    \multirow{2}{*}{RNN (LSTM)} & One-hot & 100 \\
+     & PSSM & 100 \\ \cmidrule(l){1-3} 
+    \end{tabular}
+    
+    \label{tab:trainepochs}
+\end{table}
+
+\newpage
+\section{Evaluation}
+
+\subsection{Evaluation Tables}
+
+\subsubsection{Wilcoxon-signed rank test for CASP10 AUC values.}
+\label{chap:appendix sec:casp10auc}
+This Wilcoxon-signed rank test was performed on our CASP10 AUC values, comparing feature inputs and model architectures, but no null hypotheses stating there was no difference between these approaches or architectures could be rejected.
+
+\begin{table}[!h]
     \centering
     \caption{Results of the Wilcoxon signed-rank test on CASP10 sequence AUC values for evaluating the significance of input features. A one-tailed test was used to see if the PSSM feature input had greater scores than one-hot feature input. We reject the null hypothesis for the CNN (1D) model architecture as this p-value is lower than alpha (0.05).}
     \begin{tabular}{@{}cccc@{}}
@@ -1125,7 +1151,7 @@ Finally, we aim to extend the web server, satisfying more requirements. The web 
     \label{tab:auccaspwilcinput}
 \end{table}
 
-\begin{table}[!htb]
+\begin{table}[!h]
     \centering
     \caption{Results of the Wilcoxon signed-rank test on sequence AUC values for evaluating different model architectures. A two-tailed test was used to see if models were statistically different. We could not reject the null hypothesis stating the LSTM and CNN (1D) have no difference when PSSM input is used, or the hypothesis stating the LSTM and CNN (2D) have no difference when one-hot encoding input is used, as these p-values are not less than alpha (0.05).}
     \begin{tabular}{@{}cccc@{}}
@@ -1142,14 +1168,16 @@ Finally, we aim to extend the web server, satisfying more requirements. The web 
     \label{tab:auccaspwilcarchitecture}
 \end{table}
 
-\section{Web server evaluation}
+\subsection{Web server evaluation}
 
-\subsection{Test protein sequence true label}
+\subsubsection{Test protein sequence true label}
 \label{chap:appendix sec:T0644label}
+Below is the protein sequence and disorder label for target T0644 from the CASP10 disordered protein dataset. This file T0644.dr can be obtained from the online zipped folder of CASP10 targets.
 \includepdf[pages=-]{images/web_eval/T0644.pdf}
 
-\subsection{Web page prediction}
+\subsubsection{Web page prediction.}
 \label{chap:appendix sec:webpagepred}
+Given the above sequence (translated to FASTA format), Figure \ref{fig:fullmypred} shows the prediction made by our web server, and Figure \ref{fig:disopredpred} shows the prediction made on the PSIPRED server using the DISOPRED3 method.
 
 \begin{figure}[!htb]
     \centering
@@ -1170,29 +1198,6 @@ Finally, we aim to extend the web server, satisfying more requirements. The web 
     \label{fig:disopredpred} 
 \end{figure}
 
-
-
-
-\newpage
-Typical inclusions in the appendices are:
-
-\begin{itemize}
-\item
-  Copies of ethics approvals (required if obtained)
-\item
-  Copies of questionnaires etc. used to gather data from subjects.
-\item
-  Extensive tables or figures that are too bulky to fit in the main body of
-  the report, particularly ones that are repetitive and summarised in the body.
-
-\item Outline of the source code (e.g. directory structure), or other architecture documentation like class diagrams.
-
-\item User manuals, and any guides to starting/running the software.
-
-\end{itemize}
-
-\textbf{Don't include your source code in the appendices}. It will be
-submitted separately.
 
 \end{appendices}
 
