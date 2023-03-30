@@ -490,3 +490,18 @@
 * *2 hours* Tidying up web server. PNG download. Updated model.
 * *1.5 hours* Wrote evaluation of web server.
 * *1.5 hours* Edited dissertation.
+
+## Week 24
+
+### 27 Mar 2023
+* *3 hours* Editing dissertation.
+* *2 hours* Presentation. Started slides.
+
+### 28 Mar 2023
+* *5 hours* Presentation. Finished slides, started writing some script notes.
+
+### 29 Mar 2023
+* *6.5 hours* Presentation. Redfined slides. Added design through powerpoint.
+
+### 30 Mar 2023
+* *1 hour* Worked on feedback of evaluation section.
