@@ -5,7 +5,7 @@
 * 2469038G
 * Kevin Bryson
 
-## Week 1
+## Week 0
 
 ### 19 Sep 2022
 * *2 hours* Read the project guidance notes.
@@ -14,7 +14,7 @@
 ### 21 Sep 2022
 * *6 hours* Refined and submitted choices.
 
-## Week 2
+## Week 1
 
 ### 28 Sep 2022
 * *1 hour* Project receieved and thought about what I could do from description.
@@ -25,7 +25,7 @@
 ### 2 Oct 2022
 * *3 hours* Read through recommended wikipedia readings.
 
-## Week 3
+## Week 2
 
 ### 3 Oct 2022
 
@@ -36,6 +36,8 @@
 ### 4 Oct 2022
 
 * *1.5 hours* Initial meeting with supervisor (Kevin) and Alexandros (similar project with protein domains). Discussed previous research published that is similar to this project, what proteins are and discussed potential first initial plans.
+
+## Week 3
 
 ### 11 Oct 2022
 
@@ -51,6 +53,8 @@
 
 * *1 hour* Met with Kevin to discuss project. Helped me get a clearer understanding of deep learning. Discussed viable technologies. 
 * *1 hour* Created minutes from this which lets me see my long-term goals and what I want to complete next week.
+
+## Week 4
 
 ### 17 Oct 2022
 
@@ -75,6 +79,8 @@
 ### 23 Oct 2022
 * *3.5 hours* Worked through most of lab 2 from DL moodle - "Experiments with basic networks and visualising the results".
 
+## Week 5
+
 ### 24 Oct 2022
 * *1 hour* Fixed GitHub.
 
@@ -90,6 +96,8 @@
 * *1.5 hours* Meeting with Kevin. Discussed Dataset loader, how the data could look and kernels.
 * *1 hour* Wrote up minutes after meeting.
 
+## Week 6
+
 ### 1 Nov 2022
 * *2 hours* Dataloader class trialing.
 
@@ -97,6 +105,8 @@
 * *1 hour* Wrote up Dataloader class developments and errors to discuss at the meeting.
 * *1 hour* Meeting with Kevin. Discussed problems and steps for next week.
 * *1 hour* Wrote up minutes after meeting
+
+## Week 7
 
 ### 7 Nov 2022
 * *1 hour* Made corrections to custom class. Now getitem returns the label for the sequence (0 for ordered, 1 for disordered).
@@ -115,6 +125,8 @@
 * *0.5 hours* Meeting with Kevin. Discussed problems with current neural network setup.
 * *0.5 hours* Wrote up minutes after meeting.
 
+## Week 8
+
 ### 14 Nov 2022
 * *2 hours* Going through 'Fully Convolutional Networks for Semantic Segmentation' paper and looking into parts I didn't understand.
 
@@ -126,6 +138,8 @@
 ### 17 Nov 2022
 * *1.5 hours* Experiments with conv2D on random tensors, then applying convolution to a single protein sequence.
 
+## Week 9
+
 ### 23 Nov 2022
 * *1.5 hours* Applying multiple convolutions to two protein sequences. Experimented with padding.
 
@@ -136,10 +150,14 @@
 * *1 hour* Wrote up minutes after meeting.
 * *1 hour* Cleaned up Notebook. Inserted markdown throughout notebook to help the notebook read well and be understandle. Can commit this code so far (src/Notebooks).
 
+## Week 11
+
 ### 9 Dec 2022
 * *1 hour* Refactored amino acid map so that protein images now have 20 channels. Vectorised one protein with this map. Tested a 1D convolution on this protein.
 * *1 hour* Meeting with Kevin.
 * *0.5 hours* Wrote up minutes after meeting.
+
+## Week 12
 
 ### 12 Dec 2022
 * *2 hours* Implemented my FCN model with 1D convolutions.
@@ -505,3 +523,4 @@
 
 ### 30 Mar 2023
 * *1 hour* Worked on feedback of evaluation section.
+* *3.5 hours* Dissertation work. Formulating abstract, making corrections to red/green colour scheme. Now red/blue for colour blind accessibility.

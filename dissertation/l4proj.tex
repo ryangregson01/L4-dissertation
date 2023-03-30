@@ -26,12 +26,15 @@
 %==============================================================================
 %% ABSTRACT
 \begin{abstract}
-    Every abstract follows a similar pattern. Motivate; set aims; describe work; explain results.
-    \vskip 0.5em
-    ``XYZ is bad. This project investigated ABC to determine if it was better. 
-    ABC used XXX and YYY to implement ZZZ. This is particularly interesting as XXX and YYY have
-    never been used together. It was found that  
-    ABC was 20\% better than XYZ, though it caused rabies in half of subjects.''
+
+Protein disorder prediction is an important problem in the field of bioinformatics as it provides an insight into the function and structure of proteins. In this project we developed multiple deep neural networks to predict intrinsic disorder within protein sequences. We assessed different methods for feature encoding and implemented convolutional and recurrent neural networks.
+
+We found our neural networks could identify intrinsic disorder. We discovered that CNNs using 1D convolutions and long short-term memory (LSTM) RNN architectures performed similarly to each other. These archictures were both significantly better than the other simpler CNN using 2D convolutions. In addition, we found position-specific scoring matrix (PSSM) feature input significantly improves prediction accuracy compared to a one-hot encoding approach.
+
+We evaluate our models against state-of-the-art methods using the CASP10 benchmark experiment, demonstrating our models lacked the capability to identify disorder precisely. This was apparent via the result of a high false positive rate. We acknowledge this as a limitation of our study and believe further experimentation with our models will be useful to address this issue.
+
+Furthermore, we developed a web server that uses our trained neural network, providing bioscience researchers with a user-friendly tool for analysing disorder in protein sequences. This web server can be run locally; accessed from: \url{https://github.com/ryangregson01/L4-dissertation}.
+
 \end{abstract}
 
 %==============================================================================
@@ -39,7 +42,7 @@
 \chapter*{Acknowledgements}
 % Enter any acknowledgements here. This is optional; you may leave this blank if you wish,
 % or remove the entire chapter
-%
+I would like to thank my supervisor, Dr. Kevin Bryson, for the guidance, support, and encouragement given throughout the entire project.
 % We give thanks to the Gods of LaTeX, who in their eternal graciousness, 
 % have granted that this document may compile without errors or overfull hboxes.
 %
@@ -543,7 +546,7 @@ An external tool is required to generate the encoded features for our model's PS
 
 \subsection{Web server}
 
-To create our web server, we will use the Django web framework \citep{Django:05}. Web pages will be built using web technologies (HTML, CSS and JavaScript). In Django’s backend we will have the views which can process requests and manipulate data. We will save our trained neural network as a serialized PyTorch state dictionary, which is a Python dictionary that includes the weights, biases, and other model state variables for a PyTorch model. This saved model can be reloaded within the views of the Django backend so that the web application can make use of it. Furthermore, this should be straightforward to do as Django is a Python web framework, PyTorch can be easily imported and loaded amongst the web application logic. Finally, we used Docker \citep{Docker:14} along with Nginx \citep{Reese:08} and Gunicorn \citep{gunicorn:wiki}, so that our web server can be containerised and is portable which is a initial requirement. 
+To create our web server, we will use the Django web framework \citep{Django:05}. Web pages will be built using web technologies (HTML, CSS and JavaScript). In Django’s backend we will have the views which can process requests and manipulate data. We will save our trained neural network as a serialized PyTorch state dictionary, which is a Python dictionary that includes the weights, biases, and other model state variables for a PyTorch model. This saved model can be reloaded within the views of the Django backend so that the web application can make use of it. Furthermore, this should be straightforward to do as Django is a Python web framework, PyTorch can be easily imported and loaded amongst the web application logic. Finally, we used Docker \citep{Docker:14} along with Nginx \citep{Reese:08} and Gunicorn \citep{gunicorn:wiki}, so that our web server can be containerised and is portable which is an initial requirement. 
 
 %==================================================================================================================================
 \chapter{Implementation}
@@ -660,7 +663,7 @@ Many options for the depth of these neural networks, the size of neural network 
 \section{Django server}
 We have also implemented a small web application to make our solution accessible. This web server has two web pages. These visually follow the wireframes, and this user interface aims to be user-friendly. For our first page, we use a Django form which when submitted sends a POST request where the Django views conducts the classification of the disordered regions in the protein sequence. This form validates that the inputted sequence is a FASTA file and that every amino acid code is one of the 20 recognised amino acids. If these constraints are not satisfied, the classification will not continue as our solution cannot handle invalid amino acids. As we used Python throughout our deep learning evaluation, we have used code from our notebooks in a helper file to generate our features and make a prediction using our best performing model.
 
-Our other page is the sequence visualisation indicating the IDRs using colour: where red implies disorder and green implies order. The purpose of these colours is described as well to improve usability. We implemented the visualisation using a JavaScript function that creates a fake table so that the sequence characters are equally spaced, making the visualisation pleasant. Furthermore, this table has 60 columns, therefore is 60 characters long, because this is how many amino acid characters there are before the newline character in a FASTA file from UniProt. FASTA files can be any length; however, it is customary to use 60-70 characters before a newline, with the recommendation that "each line of sequence be no longer than 80 characters" \citep{NCBI:88}. Therefore, this table size was chosen to maintain consistency with how protein sequences are read.
+Our other page is the sequence visualisation indicating the IDRs using colour: where red implies disorder and blue implies order. The purpose of these colours is described as well to improve usability. We implemented the visualisation using a JavaScript function that creates a fake table so that the sequence characters are equally spaced, making the visualisation pleasant. Furthermore, this table has 60 columns, therefore is 60 characters long, because this is how many amino acid characters there are before the newline character in a FASTA file from UniProt. FASTA files can be any length; however, it is customary to use 60-70 characters before a newline, with the recommendation that "each line of sequence be no longer than 80 characters" \citep{NCBI:88}. Therefore, this table size was chosen to maintain consistency with how protein sequences are read.
 
 \subsection{Containerising the web application}
 
@@ -1053,7 +1056,7 @@ With our web server, we have fulfilled the minimum viable product by assessing o
 
 We evaluate our web server’s prediction graphic in comparison to the DISOPRED3 prediction method \citep{Jones:15}, using the PSIPRED server \citep{Jones:19}. We compare these using the first protein sequence in the CASP10 dataset (T0644.dr, which is found in Appendix \ref{chap:appendix sec:T0644label} alongside its true disorder label).
 
-Our server’s classifier predicts many of these amino acids as disordered (Figure \ref{fig:mypredclipped}), whereas DISOPRED3 misclassifies only a few amino acids (Figure \ref{fig:disopredclipped}). This misclassification of ordered amino acids is apparent through our earlier evaluation (Section \ref{chap:evaluation sec:CASP10comp}). This informs us that we should refine our models in the future to increase the quality of disorder predictions, which will benefit bioscience researchers. Furthermore, we believe highlighting the disorder using bold colour accentuates the disorder, improving readability of our disorder visualisation. 
+Our server’s classifier predicts many of these amino acids as disordered (Figure \ref{fig:mypredclipped}), whereas DISOPRED3 misclassifies only a few amino acids (Figure \ref{fig:disopredclipped}). This misclassification of ordered amino acids is apparent through our earlier evaluation (Section \ref{chap:evaluation sec:CASP10comp}). This informs us that we should refine our models in the future to increase the quality of disorder predictions, which will benefit bioscience researchers. Furthermore, we believe highlighting the disorder using full colour accentuates the disorder, improving readability of our disorder visualisation. 
 \begin{figure}[!htb]
     \centering
     \includegraphics[width=\linewidth]{images/web_eval/mypred-clipped.pdf}
