@@ -519,8 +519,12 @@
 * *5 hours* Presentation. Finished slides, started writing some script notes.
 
 ### 29 Mar 2023
-* *6.5 hours* Presentation. Redfined slides. Added design through powerpoint.
+* *6.5 hours* Presentation. Redefined slides. Added design through powerpoint.
 
 ### 30 Mar 2023
 * *1 hour* Worked on feedback of evaluation section.
 * *3.5 hours* Dissertation work. Formulating abstract, making corrections to red/green colour scheme. Now red/blue for colour blind accessibility.
+* *2.5 hours* Presentation. Full video downloaded.
+
+### 31 Mar 2023
+* *5 hours* Tidied everything and submitted.
